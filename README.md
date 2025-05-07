@@ -2,13 +2,14 @@
 # statlingua
 
 <!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of statlingua is to ...
+**statlingua** is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.
 
 ## Installation
 
-**statlingua** is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.
+The **statlingua** package is currently not available on CRAN, but you can install the development version from GitHub.
 
 ``` r
 # Install the latest development version from GitHub:
@@ -20,7 +21,7 @@ remotes::install_github("bgreenwell/statlingua")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+The following example uses the generic function `explain()` to explain the output from a fitted [Poisson GLM](https://en.wikipedia.org/wiki/Poisson_regression) using simple Markdown syntax:
 
 ``` r
 library(statlingua)
