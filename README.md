@@ -197,7 +197,34 @@ counts <- c(18,17,15,20,10,20,25,13,12)
 outcome <- gl(3,1,9)
 treatment <- gl(3,3)
 data.frame(treatment, outcome, counts) # showing data
-glm.D93 <- glm(counts ~ outcome + treatment, family = poisson())
+summary(glm.D93 <- glm(counts ~ outcome + treatment, family = poisson()))
+
+# Call:
+# glm(formula = counts ~ outcome + treatment, family = poisson())
+# 
+# Deviance Residuals: 
+#        1         2         3         4         5         6         7  
+# -0.67125   0.96272  -0.16965  -0.21999  -0.95552   1.04939   0.84715  
+#        8         9  
+# -0.09167  -0.96656  
+# 
+# Coefficients:
+#               Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)  3.045e+00  1.709e-01  17.815   <2e-16 ***
+# outcome2    -4.543e-01  2.022e-01  -2.247   0.0246 *  
+# outcome3    -2.930e-01  1.927e-01  -1.520   0.1285    
+# treatment2  -3.242e-16  2.000e-01   0.000   1.0000    
+# treatment3  -2.148e-16  2.000e-01   0.000   1.0000    
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# (Dispersion parameter for poisson family taken to be 1)
+# 
+#     Null deviance: 10.5814  on 8  degrees of freedom
+# Residual deviance:  5.1291  on 4  degrees of freedom
+# AIC: 56.761
+# 
+# Number of Fisher Scoring iterations: 4
 
 # Use Google Gemini to explain the output; requires an API key; see
 # ?ellmer::chat_gemini for details
