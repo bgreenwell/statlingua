@@ -2,20 +2,15 @@
 % Please edit documentation in R/explain.R
 \name{explain}
 \alias{explain}
+\alias{explain.htest}
 \alias{explain.glm}
 \title{Explain statistical output}
 \usage{
 explain(object, chat, ...)
 
-\method{explain}{glm}(
-  object,
-  chat,
-  level = 0.95,
-  context = NULL,
-  echo = NULL,
-  verbose = FALSE,
-  ...
-)
+\method{explain}{htest}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{glm}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{An appropriate statistical object. For example, \code{object} can be
@@ -29,9 +24,6 @@ the output from calling \link[stats:t.test]{t.test()} or \link[stats:glm]{glm()}
 
 \item{...}{Additional optional arguments. (Currently ignored.)}
 
-\item{level}{The confidence level used to interpret the output. Default is
-0.95.}
-
 \item{context}{Optional character string providing additional context, such
 as background on the experiment and information about the data.}
 
@@ -42,6 +34,9 @@ received. If \code{NULL} (the default), then the value of \code{echo} set when t
 
 \item{verbose}{Logical indicating whether to print the system  prompt and
 chatbot input, which can be useful for debugging. Default is \code{FALSE}.}
+
+\item{level}{The confidence level used to interpret the output. Default is
+0.95.}
 }
 \description{
 Use an LLM to explain the output from various statistical objects using

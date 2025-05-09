@@ -51,38 +51,74 @@ explain <- function(object, chat, ...) {
 
 #' @rdname explain
 #' @export
-explain.glm <- function(object, chat, level = 0.95, context = NULL,
-                        echo = NULL, verbose = FALSE, ...) {
+explain.htest <- function(object, chat, context = NULL, echo = NULL,
+                          verbose = FALSE, ...) {
   stopifnot(inherits(chat, what = c("Chat", "R6")))
   if (is.null(context)) {
     context <- "No additional information available.\n"
   }
-  path <- system.file("prompts/system_prompt_glm.txt", package = "statlingua")
-  system_prompt <- readChar(path, nchars = file.info(path)$size)
-  system_prompt <- ellmer::interpolate(
-    prompt = system_prompt,
-    level = level,
+  path <- system.file("prompts/system_prompt_htest.md", package = "statlingua")
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+  usr_prompt <-
+  "
+  Explain the output from the following {{method}}:
+
+  {{object}}
+
+  ## Additional context
+
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    method = object$method,
+    object = capture_output(object),
     context = context
   )
-  input <-
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+#' @rdname explain
+#' @export
+explain.glm <- function(object, chat, context = NULL, echo = NULL,
+                        verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+  path <- system.file("prompts/system_prompt_glm.md", package = "statlingua")
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+  usr_prompt <-
   "
-  Please explain the output from the following {{family}} GLM with {{link}}
-  link.
+  Explain the output from the following {{family}} generalized linear model with
+  a {{link}} link function.
 
   ## Model summary
+
   {{model}}
+
+  ## Additional context
+
+  {{context}}
   "
   fam <- stats::family(object)
-  input <- ellmer::interpolate(
-    input,
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
     family = fam$family,
     link = fam$link,
-    model = capture_output(summary(object))
+    model = capture_output(summary(object)),
+    context = context
   )
   if (isTRUE(verbose)) {
-    message("System prompt:\n\n", system_prompt)
-    message("Chatbot input:\n\n", input)
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
   }
-  chat$set_system_prompt(system_prompt)
-  chat$chat(input, echo = echo)
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
 }
