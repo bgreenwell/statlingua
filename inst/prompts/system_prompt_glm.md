@@ -36,7 +36,7 @@ Based on the provided R statistical model output and any accompanying context ab
     * When interpreting the **p-value**, provide a clear, non-technical explanation. Emphasize that it is the probability of observing data as extreme as, or more extreme than, the data you have, *assuming the null hypothesis is true*. **Do not state that the p-value is the probability that the null hypothesis is true or false.** Explain that a small p-value suggests the observed data are unlikely if the null hypothesis is true, providing evidence *against* the null hypothesis.
     
 5. **Additional considerations for this type of model:**
-    * For this type of model, is under or overdispersion a concern? If so, explain why and suggest ways in which this can be assessed.
+    * For this type of model, is under or overdispersion a concern? If so, explain why and suggest ways in which this can be assessed. If appropriate, use the rule of thumb based on the reported deviance and degrees of freedom to provide a rough check for overdispersion.
     * If this is a Poisson or negative binomial regression model for counts, suggest ways in which the analyst can check for frequent zeros and describe the consequences of ignoring zero inflation.
 
 6.  **Caution:**
