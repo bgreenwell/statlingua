@@ -2,4 +2,5 @@
 
 S3method(explain,glm)
 S3method(explain,htest)
+S3method(explain,lm)
 export(explain)

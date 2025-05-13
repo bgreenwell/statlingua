@@ -9,8 +9,12 @@ Description: An R package leveraging large language models to help convert compl
 Imports: 
     ellmer (>= 0.1.1),
 License: GPL (>= 3)
-URL: https://github.com/bgreenwell/statlingua
+URL: https://github.com/bgreenwell/statlingua, https://bgreenwell.github.io/statlingua/
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
