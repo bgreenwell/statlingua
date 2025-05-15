@@ -5,6 +5,7 @@
 \alias{explain.htest}
 \alias{explain.lm}
 \alias{explain.glm}
+\alias{explain.polr}
 \title{Explain statistical output}
 \usage{
 explain(object, chat, ...)
@@ -14,6 +15,8 @@ explain(object, chat, ...)
 \method{explain}{lm}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
 
 \method{explain}{glm}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{polr}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{An appropriate statistical object. For example, \code{object} can be
