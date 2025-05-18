@@ -11,9 +11,6 @@
 #' [chat_openai()][ellmer::chat_openai] or
 #' [chat_gemini()][ellmer::chat_gemini)]).
 #'
-#' @param level The confidence level used to interpret the output. Default is
-#' 0.95.
-#'
 #' @param context Optional character string providing additional context, such
 #' as background on the experiment and information about the data.
 #'
@@ -209,3 +206,382 @@ explain.polr <- function(object, chat, context = NULL, echo = NULL,
   chat$chat(usr_prompt, echo = echo)
 }
 
+
+#' @rdname explain
+#' @export
+explain.lme <- function(object, chat, context = NULL, echo = NULL,
+                        verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+  # Potentially more specific/robust way to get family and link if applicable
+  # For lme, family is typically gaussian
+  model_family <- "Gaussian (assumed for lme)"
+  model_link <- "identity (assumed for lme)"
+
+  # Calling `summary.lme()` can be quite verbose, so let's break it up manually
+  # into different components:
+  #
+  # * Fixed effects - summary(object)$tTable
+  # * Random effects - summary(object)$coef$random
+  # * Variance components - summary(object)$modelStruct$reStruct
+  # * Correlation structure (if any) - summary(object)$modelStruct$corStruct
+  model_summary <- capture_output(summary(object))
+  fixed_effects <- capture_output(stats::anova(object, type = "marginal"))
+  # fixed_effects <- capture_output(summary(object)$tTable)
+  random_effects_summary <- capture_output(nlme::VarCorr(object))
+
+  # Read system prompt
+  path <- system.file("prompts/system_prompt_lme.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_lme.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  # Construct user prompt
+  usr_prompt <-
+  "
+  Explain the output from the following Linear Mixed-Effects Model (from nlme package).
+
+  ## Model Family and Link Function
+  Family: {{family}}
+  Link: {{link}}
+
+  ## Model Summary
+  {{model_summary}}
+
+
+  ## Fixed Effects (Type III ANOVA or equivalent if summary doesn't provide p-values directly)
+  {{fixed_effects}}
+
+
+  ## Random Effects (Variance Components)
+  {{random_effects_summary}}
+
+
+  ## Additional context
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    family = model_family,
+    link = model_link,
+    model_summary = model_summary,
+    fixed_effects = fixed_effects,
+    random_effects_summary = random_effects_summary,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+#' @rdname explain
+#' @export
+explain.lmerMod <- function(object, chat, context = NULL, echo = NULL,
+                            verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+
+  # FIXME: lme4 typically assumes Gaussian family for lmerMod, but make this
+  # more robust
+  model_family <- "Gaussian"
+  model_link <- "identity"
+
+  model_summary <- capture_output(summary(object))
+  fixed_effects <- capture_output(print(stats::coef(summary(object))))
+  random_effects_summary <- capture_output(print(lme4::VarCorr(object)))
+  # ANOVA for fixed effects (using lmerTest if available for p-values)
+  anova_summary <- if (requireNamespace("lmerTest", quietly = TRUE)) {
+    capture_output(print(stats::anova(object)))
+  } else {
+    paste(
+      "ANOVA p-values for fixed effects require them'lmerTest' package.",
+      "Consider installing and loading it for more detailed output on fixed",
+      "effects significance."
+    )
+  }
+
+  # Read system prompt
+  path <- system.file("prompts/system_prompt_lmerMod.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_lmerMod.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  # Construct user prompt
+  usr_prompt <-
+  "
+  Explain the output from the following Linear Mixed-Effects Model (from lme4 package).
+
+  ## Model Family and Link Function
+  Family: {{family}}
+  Link: {{link}}
+
+  ## Model Summary
+  {{model_summary}}
+
+
+  ## Fixed Effects Coefficients
+  {{fixed_effects}}
+
+
+  ## ANOVA for Fixed Effects (Type III with Satterthwaite's method if lmerTest is used)
+  {{anova_summary}}
+
+
+  ## Random Effects (Variance Components)
+  {{random_effects_summary}}
+
+
+  ## Additional context
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    family = model_family,
+    link = model_link,
+    model_summary = model_summary,
+    fixed_effects = fixed_effects,
+    anova_summary = anova_summary,
+    random_effects_summary = random_effects_summary,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+#' @rdname explain
+#' @export
+explain.glmerMod <- function(object, chat, context = NULL, echo = NULL,
+                             verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+
+  model_family_info <- summary(object)$family
+  model_link_info <- summary(object)$link
+
+  model_summary <- capture_output(summary(object))
+  fixed_effects <- capture_output(print(stats::coef(summary(object))))
+  random_effects_summary <- capture_output(print(lme4::VarCorr(object)))
+  # ANOVA for fixed effects (using lmerTest or car package for Type II/III tests)
+  # Note: anova() for glmerMod objects is more complex than for lmerMod.
+  # Likelihood Ratio Tests are common, or Wald tests from car::Anova.
+  # For simplicity, we might just point to the fixed effects table for p-values.
+  anova_summary <- if (requireNamespace("car", quietly = TRUE)) {
+    # Using tryCatch in case of convergence issues or model complexity for car::Anova
+    tryCatch({
+      capture_output(car::Anova(object, type = "III")) # Or type = "II"
+    }, error = function(e) {
+      paste(
+        "Could not compute ANOVA table for fixed effects (possibly due to",
+        "model complexity or issues). Refer to fixed effects coefficients for",
+        "Wald tests."
+      )
+    })
+  } else {
+    paste(
+      "ANOVA table for fixed effects (e.g., Type II or III tests) often",
+      "requires the 'car' package. Consider installing and loading it. Wald",
+      "z-tests for individual coefficients are available in the fixed effects",
+      "summary."
+    )
+  }
+
+  # Read system prompt
+  path <- system.file("prompts/system_prompt_glmerMod.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_glmerMod.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  # Construct user prompt
+  usr_prompt <-
+  "
+  Explain the output from the following Generalized Linear Mixed-Effects Model
+  (from lme4 package).
+
+  ## Model Family and Link Function
+  Family: {{family}}
+  Link: {{link}}
+
+  ## Model Summary
+  {{model_summary}}
+
+
+  ## Fixed Effects Coefficients (Wald z-tests)
+  {{fixed_effects}}
+
+
+  ## ANOVA for Fixed Effects (e.g., Type III Wald chi-square tests if 'car' package is used)
+  {{anova_summary}}
+
+
+  ## Random Effects (Variance Components)
+  {{random_effects_summary}}
+
+
+  ## Additional context
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    family = model_family_info,
+    link = model_link_info,
+    model_summary = model_summary,
+    fixed_effects = fixed_effects,
+    anova_summary = anova_summary,
+    random_effects_summary = random_effects_summary,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+#' @rdname explain
+#' @export
+explain.gam <- function(object, chat, context = NULL, echo = NULL,
+                        verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+
+  model_family_info <- summary(object)$family$family
+  model_link_info <- summary(object)$family$link
+
+  # Full summary can be very long, especially with many smooth terms
+  model_summary_output <- capture_output(summary(object))
+  parametric_coef_summary <- capture_output(summary(object)$p.table)
+  smooth_terms_summary <- capture_output(summary(object)$s.table)
+
+  path <- system.file("prompts/system_prompt_gam.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_gam.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  usr_prompt <-
+  "
+  Explain the output from the following Generalized Additive Model (GAM) from
+  the mgcv package.
+
+  ## Model Family and Link Function
+  Family: {{family}}
+  Link: {{link}}
+
+  ## Full Model Summary (selected parts may follow)
+  {{model_summary_output}}
+
+
+  ## Parametric Coefficients (if any)
+  {{parametric_coef_summary}}
+
+
+  ## Approximate Significance of Smooth Terms
+  {{smooth_terms_summary}}
+
+
+  ## Additional context
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    family = model_family_info,
+    link = model_link_info,
+    model_summary_output = model_summary_output,
+    parametric_coef_summary = parametric_coef_summary,
+    smooth_terms_summary = smooth_terms_summary,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+#' @rdname explain
+#' @export
+explain.survreg <- function(object, chat, context = NULL, echo = NULL,
+                            verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+
+  # Extract distribution
+  # The dist is not directly in the summary object in a clean way, need from object itself
+  model_distribution <- object$dist
+  if (is.null(model_distribution)) { # Sometimes it might be in the call
+    call_dist <- tryCatch(object$call$dist, error = function(e) NULL)
+    if (!is.null(call_dist)) model_distribution <- as.character(call_dist)
+    else model_distribution <- "unknown (check model call)"
+  }
+
+  model_summary_output <- capture_output(summary(object))
+  # Coefficients are in summary(object)$table
+  # Log-likelihood is summary(object)$loglik
+
+  # Construct system prompt
+  path <- system.file("prompts/system_prompt_survreg.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_survreg.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  # Construct user prompt
+  usr_prompt <-
+  "
+  Explain the output from the following Parametric Survival Model
+  (from survival package, using survreg).
+
+  ## Assumed Survival Time Distribution
+  Distribution: {{model_distribution}}
+
+  ## Model Summary
+  {{model_summary_output}}
+
+
+  ## Additional context
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    model_distribution = model_distribution,
+    model_summary_output = model_summary_output,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}

@@ -6,6 +6,11 @@
 \alias{explain.lm}
 \alias{explain.glm}
 \alias{explain.polr}
+\alias{explain.lme}
+\alias{explain.lmerMod}
+\alias{explain.glmerMod}
+\alias{explain.gam}
+\alias{explain.survreg}
 \title{Explain statistical output}
 \usage{
 explain(object, chat, ...)
@@ -17,6 +22,16 @@ explain(object, chat, ...)
 \method{explain}{glm}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
 
 \method{explain}{polr}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{lme}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{lmerMod}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{glmerMod}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{gam}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{survreg}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{An appropriate statistical object. For example, \code{object} can be
@@ -40,9 +55,6 @@ received. If \code{NULL} (the default), then the value of \code{echo} set when t
 
 \item{verbose}{Logical indicating whether to print the system  prompt and
 chatbot input, which can be useful for debugging. Default is \code{FALSE}.}
-
-\item{level}{The confidence level used to interpret the output. Default is
-0.95.}
 }
 \description{
 Use an LLM to explain the output from various statistical objects using
