@@ -54,6 +54,15 @@
 <!-- badges: start -->
 
 <p><strong>statlingua</strong> is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.</p>
+<p>As of now, <strong>statlingua</strong> supports the following types of statistical models:</p>
+<ul>
+<li>Object of class <code>"htest"</code> (e.g., R’s built-in <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code> and <code><a href="https://rdrr.io/r/stats/prop.test.html" class="external-link">prop.test()</a></code> functions).</li>
+<li>Linear and generalized linear models (i.e., R’s built-in <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> functions).</li>
+<li>Linear and generalized linear mixed-effects model from packages <a href="https://cran.r-project.org/package=nlme" class="external-link">nlme</a> and <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a>.</li>
+<li>Generalized additive models from package <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a>.</li>
+<li>Survival regression models from package <a href="https://cran.r-project.org/package=survival" class="external-link">survival</a>.</li>
+<li>Proportional odds regression models from package <a href="https://cran.r-project.org/package=MASS" class="external-link">MASS</a>.</li>
+</ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>

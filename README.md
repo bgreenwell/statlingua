@@ -12,7 +12,7 @@
 
 As of now, **statlingua** supports the following types of statistical models:
 
-* Object of class `"htest"` (e.g., R's built in `t.test()` and `prop.test()` functions).
+* Object of class `"htest"` (e.g., R's built-in `t.test()` and `prop.test()` functions).
 * Linear and generalized linear models (i.e., R's built-in `lm()` and `glm()` functions).
 * Linear and generalized linear mixed-effects model from packages [nlme](https://cran.r-project.org/package=nlme) and [lme4](https://cran.r-project.org/package=lme4).
 * Generalized additive models from package [mgcv](https://cran.r-project.org/package=mgcv).

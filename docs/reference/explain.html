@@ -55,6 +55,24 @@ descriptions.</p>
 <span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'glm'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'polr'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'lme'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'lmerMod'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'glmerMod'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'gam'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'survreg'</span></span>
 <span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,11 +111,6 @@ received. If <code>NULL</code> (the default), then the value of <code>echo</code
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical indicating whether to print the system  prompt and
 chatbot input, which can be useful for debugging. Default is <code>FALSE</code>.</p></dd>
-
-
-<dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
-<dd><p>The confidence level used to interpret the output. Default is
-0.95.</p></dd>
 
 </dl></div>
 
