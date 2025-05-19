@@ -33,7 +33,7 @@ if (!requireNamespace("remotes")) {
 remotes::install_github("bgreenwell/statlingua")
 ```
 
-## Possible TODOs
+## TODO/wishlist
 
 Some ideas on ways to enhance the package:
 
