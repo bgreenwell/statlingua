@@ -11,3 +11,16 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
   }
   return(x)
 }
+
+
+#' @noRd
+#' @keywords internal
+.get_system_prompt <- function(name) {
+  filename <- paste0("system_prompt_", model_class, ".md")
+  filepath <- system.file("prompts", filename, package = "statlingua")
+  if (!nzchar(filepath)) {
+    stop("System prompt for class '", name, "' not found.", call. = FALSE)
+  }
+  # sys_prompt <- readChar(path, nchars = file.info(path)$size)
+  return(paste(readLines(filepath), collapse = "\n"))
+}

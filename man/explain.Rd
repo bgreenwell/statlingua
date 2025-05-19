@@ -11,6 +11,9 @@
 \alias{explain.glmerMod}
 \alias{explain.gam}
 \alias{explain.survreg}
+\alias{explain.coxph}
+\alias{explain.rpart}
+\alias{explain.Arima}
 \title{Explain statistical output}
 \usage{
 explain(object, chat, ...)
@@ -32,6 +35,12 @@ explain(object, chat, ...)
 \method{explain}{gam}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
 
 \method{explain}{survreg}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{coxph}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{rpart}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+
+\method{explain}{Arima}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{An appropriate statistical object. For example, \code{object} can be

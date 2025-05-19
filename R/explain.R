@@ -526,6 +526,8 @@ explain.gam <- function(object, chat, context = NULL, echo = NULL,
 }
 
 
+# Methods for package survival--------------------------------------------------
+
 #' @rdname explain
 #' @export
 explain.survreg <- function(object, chat, context = NULL, echo = NULL,
@@ -574,6 +576,211 @@ explain.survreg <- function(object, chat, context = NULL, echo = NULL,
   usr_prompt <- ellmer::interpolate(
     usr_prompt,
     model_distribution = model_distribution,
+    model_summary_output = model_summary_output,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+#' @rdname explain
+#' @export
+explain.coxph <- function(object, chat, context = NULL, echo = NULL,
+                          verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+
+  # Get model summary
+  model_summary_output <- capture_output(summary(object))
+  # Key components from summary(object) include:
+  # summary(object)$coefficients : Hazard Ratios, CIs, p-values
+  # summary(object)$conf.int : Confidence intervals for exp(coef)
+  # summary(object)$loglik : Log-likelihood
+  # summary(object)$n : Number of observations
+  # summary(object)$nevent : Number of events
+  # Concordance: summary(object)$concordance
+  # Wald test, Likelihood ratio test, Logrank test scores
+
+  # Check for time-dependent covariates if possible (more advanced, but good to note)
+  # For example, if cox.zph() was run, its output could be summarized.
+  # For now, we'll stick to the basic summary.
+
+  # Read system prompt
+  path <- system.file("prompts/system_prompt_coxph.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_coxph.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  # Construct user prompt
+  usr_prompt <-
+  "
+  Explain the output from the following Cox Proportional Hazards Model
+  (from survival package).
+
+  ## Model Summary
+  {{model_summary_output}}
+
+
+  ## Additional context
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    model_summary_output = model_summary_output,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+# Methods for package rpart ----------------------------------------------------
+
+#' @rdname explain
+#' @export
+explain.rpart <- function(object, chat, context = NULL, echo = NULL,
+                          verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+
+  # The print.rpart output is the primary textual representation of the tree.
+  # summary.rpart gives more detail, especially on splits and surrogate splits.
+  # For a general explanation, the print output is often a good starting point.
+  # The complexity parameter (cp) table is also very important.
+  tree_structure_print <- capture_output(print(object))
+  cp_table_print <- capture_output(printcp(object))
+  # summary.rpart can be very verbose, so we might choose to focus on parts
+  # or allow the LLM to parse the standard print output.
+  # For more detail on splits, one might consider:
+  # summary_details <- capture_output(summary(object)) # Can be very long
+
+  # Determine tree type
+  model_type <- object$method
+  if (is.null(model_type)) model_type <- "unknown (check object$method)"
+
+  # Read system prompt
+  path <- system.file("prompts/system_prompt_rpart.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_rpart.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  # COnstruct user prompt
+  usr_prompt <-
+  "
+  Explain the output from the following Recursive Partitioning and Regression
+  Tree (rpart object from rpart package).
+
+  ## Model Type (inferred)
+  Type: {{model_type}} (e.g., 'class' for classification, 'anova' for regression)
+
+  ## Tree Structure (Print Output)
+  {{tree_structure_print}}
+
+  ## Complexity Parameter (CP) Table
+  {{cp_table_print}}
+
+  ## Additional context
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    model_type = model_type,
+    tree_structure_print = tree_structure_print,
+    cp_table_print = cp_table_print,
+    context = context
+  )
+
+  if (isTRUE(verbose)) {
+    message("System prompt:\n\n", sys_prompt)
+    message("Chatbot input:\n\n", usr_prompt)
+  }
+  chat$set_system_prompt(sys_prompt)
+  chat$chat(usr_prompt, echo = echo)
+}
+
+
+# Methods for package forecast -------------------------------------------------
+
+#' @rdname explain
+#' @export
+explain.Arima <- function(object, chat, context = NULL, echo = NULL,
+                          verbose = FALSE, ...) {
+  stopifnot(inherits(chat, what = c("Chat", "R6")))
+  if (!requireNamespace("forecast", quietly = TRUE)) {
+    stop("Package 'forecast' needed for this function to work. ",
+         "Please install it.", call. = FALSE)
+  }
+  if (is.null(context)) {
+    context <- "No additional information available.\n"
+  }
+
+  model_summary_output <- capture_output(summary(object))
+
+  # Robustly construct ARIMA order string
+  arima_order_vector <- forecast::arimaorder(object)
+
+  base_order_string <- paste0("ARIMA(",
+                              # Handle potential NA from arimaorder if object is weird
+                              ifelse(is.na(arima_order_vector["p"]), "?", arima_order_vector["p"]), ",",
+                              ifelse(is.na(arima_order_vector["d"]), "?", arima_order_vector["d"]), ",",
+                              ifelse(is.na(arima_order_vector["q"]), "?", arima_order_vector["q"]), ")")
+
+  seasonal_string <- ""
+  # Check if 'm' is present, not NA, and greater than 1 for seasonal components
+  if (!is.null(arima_order_vector["m"]) &&
+      !is.na(arima_order_vector["m"]) && arima_order_vector["m"] > 1) {
+    seasonal_string <- paste0("(",
+                              ifelse(is.na(arima_order_vector["P"]), "?", arima_order_vector["P"]), ",",
+                              ifelse(is.na(arima_order_vector["D"]), "?", arima_order_vector["D"]), ",",
+                              ifelse(is.na(arima_order_vector["Q"]), "?", arima_order_vector["Q"]), ")[",
+                              arima_order_vector["m"], "]")
+  }
+
+  arima_order_string_for_prompt <- paste0(base_order_string, seasonal_string)
+
+  # Read system prompt
+  path <- system.file("prompts/system_prompt_Arima.md", package = "statlingua")
+  if (!file.exists(path)) {
+    stop("System prompt file not found: system_prompt_Arima.md")
+  }
+  sys_prompt <- readChar(path, nchars = file.info(path)$size)
+
+  # Construct user prompt
+  usr_prompt <-
+  "
+  Explain the output from the following ARIMA Model (Arima object from forecast package).
+
+  ## Identified ARIMA Order
+  Order: {{arima_order_string}}
+  (The model summary below will provide details on coefficients, including any
+  drift or intercept terms.)
+
+  ## Model Summary (Coefficients, Fit Statistics)
+  {{model_summary_output}}
+
+  ## Additional context (e.g., nature of time series, forecasting goal)
+  {{context}}
+  "
+  usr_prompt <- ellmer::interpolate(
+    usr_prompt,
+    arima_order_string = arima_order_string_for_prompt,
     model_summary_output = model_summary_output,
     context = context
   )
