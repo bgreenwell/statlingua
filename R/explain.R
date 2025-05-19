@@ -792,3 +792,18 @@ explain.Arima <- function(object, chat, context = NULL, echo = NULL,
   chat$set_system_prompt(sys_prompt)
   chat$chat(usr_prompt, echo = echo)
 }
+
+
+#' @rdname explain
+#' @export
+explain.default <- function(object, chat, ...) {
+  stop(
+    paste0(
+      "statlingua does not support explaining objects of class '", class(object)[1], "'.\n",
+      "Supported classes include: htest, lm, glm, polr, lme, lmerMod, glmerMod, gam,\n",
+      "survreg, coxph, rpart, Arima.\n",
+      "Please use one of those or check available methods via `methods(explain)`."
+    )
+  )
+}
+
