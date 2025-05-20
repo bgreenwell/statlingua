@@ -1,0 +1,39 @@
+---
+title: "Linear and Generalized Linear Models"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(statlingua)
+```
+
+In this article, we'll see how **statlingua** can help explain the output from both linear models (LMs) and generalized linear models (GLMs). 
+
+
+## Linear models
+
+We'll start with a simple polynomial regression model using the built-in `cars` data set; see `?cars` for details. The data give the speed of cars (`speed`) and the distances taken to stop (`dist`). Note that the data were recorded in the 1920s. Below, we regress `dist` on `speed` using a quadratic regression model:
+
+```{r cars-lm}
+fm <- lm(dist ~ poly(speed, degree = 2), data = cars)
+summary(fm)
+```
+
+For statisticians and most data scientists the output is pretty straightforward to interpret. However, it can be challenging for others to understand (or remember) how to interpret all the different components. Let's see how a Large Language Model (LLM) can help explain this output.
+
+First, we need to set up a client using the [ellmer](https://cran.r-project.org/package=ellmer) package. Then we can just call **statlingua**'s `explain()` generic to help explain the model's output. Note that we're using Google Gemini, which requires an API key; see `?ellmer::client_gemini` for details.
+
+```{r cars-lm-explain, cache=TRUE, results="asis"}
+context <- paste("The data give the speed of cars (mph) and the distances",
+                 "taken to stop (ft). Note that the data were recorded in the",
+                 "1920s.")
+client <- ellmer::chat_gemini(echo = "none")
+ex <- explain(fm, client = client, context = context)
+cat(ex)
+```

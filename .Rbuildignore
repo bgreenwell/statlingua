@@ -6,3 +6,4 @@
 ^docs$
 ^pkgdown$
 ^slowtests$
+^vignettes/articles$

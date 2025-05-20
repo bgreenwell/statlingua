@@ -13,40 +13,37 @@
 \alias{explain.survreg}
 \alias{explain.coxph}
 \alias{explain.rpart}
-\alias{explain.Arima}
 \title{Explain statistical output}
 \usage{
-explain(object, chat, ...)
+explain(object, client, ...)
 
-\method{explain}{htest}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{htest}(object, client, context = NULL, ...)
 
-\method{explain}{lm}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{lm}(object, client, context = NULL, ...)
 
-\method{explain}{glm}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{glm}(object, client, context = NULL, ...)
 
-\method{explain}{polr}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{polr}(object, client, context = NULL, ...)
 
-\method{explain}{lme}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{lme}(object, client, context = NULL, ...)
 
-\method{explain}{lmerMod}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{lmerMod}(object, client, context = NULL, ...)
 
-\method{explain}{glmerMod}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{glmerMod}(object, client, context = NULL, ...)
 
-\method{explain}{gam}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{gam}(object, client, context = NULL, ...)
 
-\method{explain}{survreg}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{survreg}(object, client, context = NULL, ...)
 
-\method{explain}{coxph}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{coxph}(object, client, context = NULL, echo = NULL, verbose = FALSE, ...)
 
-\method{explain}{rpart}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
-
-\method{explain}{Arima}(object, chat, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{rpart}(object, client, context = NULL, ...)
 }
 \arguments{
 \item{object}{An appropriate statistical object. For example, \code{object} can be
 the output from calling \link[stats:t.test]{t.test()} or \link[stats:glm]{glm()}.}
 
-\item{chat}{A \link[ellmer:Chat]{Chat} object (e.g., from calling
+\item{client}{A \link[ellmer:Chat]{Chat} object (e.g., from calling
 \link[ellmer:chat_openai]{chat_openai()} or
 [chat_gemini()][ellmer::chat_gemini)]).
 
@@ -56,14 +53,6 @@ the output from calling \link[stats:t.test]{t.test()} or \link[stats:glm]{glm()}
 
 \item{context}{Optional character string providing additional context, such
 as background on the experiment and information about the data.}
-
-\item{echo}{Logical specifying whether to emit the response to stdout as it's
-received. If \code{NULL} (the default), then the value of \code{echo} set when the
-\code{chat} object was created will be used. See the \verb{$chat()} method described in
-\link[ellmer:Chat]{Chat}.}
-
-\item{verbose}{Logical indicating whether to print the system  prompt and
-chatbot input, which can be useful for debugging. Default is \code{FALSE}.}
 }
 \description{
 Use an LLM to explain the output from various statistical objects using
@@ -79,9 +68,9 @@ The data give the speed of cars (mph) and the distances taken to stop (ft).
 Note that the data were recorded in the 1920s.
 "
 # Use Google Gemini to explain the output; requires an API key; see
-# ?ellmer::chat_gemini for details
-chat <- ellmer::chat_gemini()
-explain(cars_lm, chat = chat, context = context)
+# ?ellmer::client_gemini for details
+client <- ellmer::client_gemini(echo = "none")
+explain(cars_lm, client = client, context = context)
 
 # Poisson regression example from ?stats::glm
 counts <- c(18,17,15,20,10,20,25,13,12)
@@ -91,9 +80,9 @@ data.frame(treatment, outcome, counts) # showing data
 D93_glm <- glm(counts ~ outcome + treatment, family = poisson())
 
 # Use Google Gemini to explain the output; requires an API key; see
-# ?ellmer::chat_gemini for details
-chat <- ellmer::chat_gemini()
-explain(D93_glm, chat = chat, verbose = TRUE)
+# ?ellmer::client_gemini for details
+client <- ellmer::client_gemini()
+explain(D93_glm, client = client, verbose = TRUE)
 }
 
 

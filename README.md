@@ -19,7 +19,7 @@ As of now, **statlingua** supports the following types of statistical models:
 * Survival regression models from package [survival](https://cran.r-project.org/package=survival).
 * Proportional odds regression models from package [MASS](https://cran.r-project.org/package=MASS).
 * Decision trees from package [rpart](https://cran.r-project.org/package=rpart).
-* ARIMA models from package [forecast](https://cran.r-project.org/package=forecast).
+* ~~ARIMA models from package [forecast](https://cran.r-project.org/package=forecast).~~
 
 ## Installation
 

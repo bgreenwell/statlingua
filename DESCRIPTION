@@ -25,3 +25,4 @@ Suggests:
     survival,
     tibble
 VignetteBuilder: knitr
+Config/Needs/website: rmarkdown
