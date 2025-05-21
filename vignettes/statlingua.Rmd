@@ -14,12 +14,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(statlingua)
-```
+**WARNING:** This vignette is incomplete and still very much a work in progress!
 
+**TODO:**
 
-## Example: inappropriate use of two-sample t-test
+1. Provide more context for each chosen example.
+2. Explain why we're using `cat()` to format the output here.
+
+## Explaining the output from statistical models
 
 The following example is taken from a [tutorial on paired t-tests](https://www.jmp.com/en/statistics-knowledge-portal/t-test/paired-t-test). Here we use an independent two-sample t-test to (inappropriately) analyze paired data.
 
@@ -71,19 +73,40 @@ exam_scores <- tibble::tribble(
 (tt <- t.test(exam_scores$exam_1_score, y = exam_scores$exam_2_score))
 ```
 
-Next, we initialize a call the `explain()` method to explain the output from the statistical test.
+Next, we initialize a client to chat with a Google Gemini model and call the `explain()` method to explain the output from the statistical test. Calling `explain()` essentially provides the client with an appropriate system prompt and user query to generate an explanation about the provided statistical output. (Note that we can establish a client to chat with any model supported by the [ellmer](https://cran.r-project.org/package=ellmer) package.) 
 
 ```{r ex-t-test-explain, cache=TRUE, results="asis"}
-# Explain the output
-chat <- ellmer::chat_gemini(echo = "none")
-ex <- explain(tt, chat = chat, context = context) 
-cat(ex)
+library(statlingua)
+
+client <- ellmer::chat_google_gemini(echo = "none")
+(ex <- explain(tt, client = client, context = context))
+```
+
+Note that the `explain()` function in **statlingua** is designed to return a single character string. This string is often formatted by the Large Language Model using Markdown, which includes special characters to structure the text, most notably:
+
+* Newline characters (`\n`) which are used to create line breaks, separate paragraphs, define list items, and structure headings in Markdown.
+* Other white space (like spaces for indentation) used for formatting lists or code blocks.
+
+Hence, it's more useful to pass the output of `explain()` into R's built-in `cat()` function for readability in an R console. This is also useful for displaying the output properly in Markdown (like we do in this vignette)!
+
+```{r ex-t-test-explain-cat, cache=TRUE, results="asis"}
+cat(ex)  # for readability (this produces the Markdown that follows)
+```
+
+We can also print the `client` object itself, which will display the following components:
+
+1) The system prompt (defining how the LLM should respond).
+2) The user query (constructed internally by `explain()`).
+3) The LLM's response.
+
+```{r ex-t-test-explanation-client}
+print(client)
 ```
 
 
 ## Example: polynomial regression
 
-The following example fits a quadradic linear model to the built-in `cars` data set.
+The following example fits a quadratic linear model to the built-in `cars` data set.
 
 ```{r ex-lm-polynomial}
 # Polynomial regression
@@ -96,11 +119,16 @@ context <- "
 The data give the speed of cars (mph) and the distances taken to stop (ft).
 Note that the data were recorded in the 1920s.
 "
-chat <- ellmer::chat_gemini(echo = "none")
-ex <- explain(cars_lm, chat = chat, context = context)
+client <- ellmer::chat_google_gemini(echo = "none")
+ex <- explain(cars_lm, client = client, context = context)
 cat(ex)
 ```
 
+Oftentimes you may have additional follow up questions about the output or explanation. In this case, it is useful to query the LLM again using the original `client` object:
+
+```{r ex-lm-polynomial-explain-query, cache=TRUE, results="asis"}
+client$chat("Elaborate further on the meaning of R-squared in this example.") |> cat()
+```
 
 ## Example: Poisson regression
 
@@ -115,7 +143,7 @@ summary(D93_glm <- glm(counts ~ outcome + treatment, family = poisson()))
 ```
 
 ```{r ex-glm-poisson-explain, cache=TRUE, results="asis"}
-chat <- ellmer::chat_gemini(echo = "none")
-ex <- explain(D93_glm, chat = chat) 
+chat <- ellmer::chat_google_gemini(echo = "none")
+ex <- explain(D93_glm, client = client) 
 cat(ex)
 ```

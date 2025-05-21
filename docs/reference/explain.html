@@ -46,34 +46,43 @@ descriptions.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Default S3 method</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'htest'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'lm'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'glm'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'polr'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'lme'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'lmerMod'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'glmerMod'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'gam'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'survreg'</span></span>
-<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">chat</span>, context <span class="op">=</span> <span class="cn">NULL</span>, echo <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'coxph'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'rpart'</span></span>
+<span><span class="fu">explain</span><span class="op">(</span><span class="va">object</span>, <span class="va">client</span>, context <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -85,34 +94,28 @@ descriptions.</p>
 the output from calling <a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a> or <a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a>.</p></dd>
 
 
-<dt id="arg-chat">chat<a class="anchor" aria-label="anchor" href="#arg-chat"></a></dt>
+<dt id="arg-client">client<a class="anchor" aria-label="anchor" href="#arg-client"></a></dt>
 <dd><p>A <a href="https://ellmer.tidyverse.org/reference/Chat.html" class="external-link">Chat</a> object (e.g., from calling
 <a href="https://ellmer.tidyverse.org/reference/chat_openai.html" class="external-link">chat_openai()</a> or
 [chat_gemini()][ellmer::chat_gemini)]).</p>
 <p>[ellmer::chat_gemini)]: R:ellmer::chat_gemini)</p></dd>
 
 
+<dt id="arg-context">context<a class="anchor" aria-label="anchor" href="#arg-context"></a></dt>
+<dd><p>Optional character string providing additional context, such
+as background on the research question and information about the data.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional optional arguments. (Currently ignored.)</p></dd>
 
-
-<dt id="arg-context">context<a class="anchor" aria-label="anchor" href="#arg-context"></a></dt>
-<dd><p>Optional character string providing additional context, such
-as background on the experiment and information about the data.</p></dd>
-
-
-<dt id="arg-echo">echo<a class="anchor" aria-label="anchor" href="#arg-echo"></a></dt>
-<dd><p>Logical specifying whether to emit the response to stdout as it's
-received. If <code>NULL</code> (the default), then the value of <code>echo</code> set when the
-<code>chat</code> object was created will be used. See the <code>$chat()</code> method described in
-<a href="https://ellmer.tidyverse.org/reference/Chat.html" class="external-link">Chat</a>.</p></dd>
-
-
-<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Logical indicating whether to print the system  prompt and
-chatbot input, which can be useful for debugging. Default is <code>FALSE</code>.</p></dd>
-
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>Either a character string providing the LLM explanation
+(<code>return_client = FALSE</code>) or a list containing the LLM client and response
+(<code>return_client = TRUE</code>).</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -124,9 +127,9 @@ chatbot input, which can be useful for debugging. Default is <code>FALSE</code>.
 <span class="r-in"><span><span class="st">Note that the data were recorded in the 1920s.</span></span></span>
 <span class="r-in"><span><span class="st">"</span></span></span>
 <span class="r-in"><span><span class="co"># Use Google Gemini to explain the output; requires an API key; see</span></span></span>
-<span class="r-in"><span><span class="co"># ?ellmer::chat_gemini for details</span></span></span>
-<span class="r-in"><span><span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/chat_gemini.html" class="external-link">chat_gemini</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">explain</span><span class="op">(</span><span class="va">cars_lm</span>, chat <span class="op">=</span> <span class="va">chat</span>, context <span class="op">=</span> <span class="va">context</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># ?ellmer::chat_google_gemini for details</span></span></span>
+<span class="r-in"><span><span class="va">client</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/chat_google_gemini.html" class="external-link">chat_google_gemini</a></span><span class="op">(</span>echo <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu">explain</span><span class="op">(</span><span class="va">cars_lm</span>, client <span class="op">=</span> <span class="va">client</span>, context <span class="op">=</span> <span class="va">context</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Poisson regression example from ?stats::glm</span></span></span>
 <span class="r-in"><span><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">18</span>,<span class="fl">17</span>,<span class="fl">15</span>,<span class="fl">20</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">25</span>,<span class="fl">13</span>,<span class="fl">12</span><span class="op">)</span></span></span>
@@ -136,9 +139,9 @@ chatbot input, which can be useful for debugging. Default is <code>FALSE</code>.
 <span class="r-in"><span><span class="va">D93_glm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">counts</span> <span class="op">~</span> <span class="va">outcome</span> <span class="op">+</span> <span class="va">treatment</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use Google Gemini to explain the output; requires an API key; see</span></span></span>
-<span class="r-in"><span><span class="co"># ?ellmer::chat_gemini for details</span></span></span>
-<span class="r-in"><span><span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/chat_gemini.html" class="external-link">chat_gemini</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">explain</span><span class="op">(</span><span class="va">D93_glm</span>, chat <span class="op">=</span> <span class="va">chat</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># ?ellmer::chat_google_gemini for details</span></span></span>
+<span class="r-in"><span><span class="va">client</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/chat_google_gemini.html" class="external-link">chat_google_gemini</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">explain</span><span class="op">(</span><span class="va">D93_glm</span>, client <span class="op">=</span> <span class="va">client</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>

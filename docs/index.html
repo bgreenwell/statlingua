@@ -54,15 +54,18 @@
 <!-- badges: start -->
 
 <p><strong>statlingua</strong> is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.</p>
-<p>As of now, <strong>statlingua</strong> supports the following types of statistical models:</p>
+<p>As of now, <strong>statlingua</strong> explicitly supports the following types of statistical models:</p>
 <ul>
-<li>Object of class <code>"htest"</code> (e.g., R’s built-in <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code> and <code><a href="https://rdrr.io/r/stats/prop.test.html" class="external-link">prop.test()</a></code> functions).</li>
+<li>Objects of class <code>"htest"</code> (e.g., R’s built-in <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code> and <code><a href="https://rdrr.io/r/stats/prop.test.html" class="external-link">prop.test()</a></code> functions).</li>
 <li>Linear and generalized linear models (i.e., R’s built-in <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> functions).</li>
 <li>Linear and generalized linear mixed-effects model from packages <a href="https://cran.r-project.org/package=nlme" class="external-link">nlme</a> and <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a>.</li>
 <li>Generalized additive models from package <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a>.</li>
 <li>Survival regression models from package <a href="https://cran.r-project.org/package=survival" class="external-link">survival</a>.</li>
 <li>Proportional odds regression models from package <a href="https://cran.r-project.org/package=MASS" class="external-link">MASS</a>.</li>
+<li>Decision trees from package <a href="https://cran.r-project.org/package=rpart" class="external-link">rpart</a>.</li>
+<li><del>ARIMA models from package <a href="https://cran.r-project.org/package=forecast" class="external-link">forecast</a>.</del></li>
 </ul>
+<p>For non supported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -73,6 +76,69 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"bgreenwell/statlingua"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="todowishlist">TODO/wishlist<a class="anchor" aria-label="anchor" href="#todowishlist"></a>
+</h2>
+<p>Some ideas on ways to enhance the package:</p>
+<div class="section level3">
+<h3 id="granular-control-over-explanation-output">Granular Control Over Explanation Output<a class="anchor" aria-label="anchor" href="#granular-control-over-explanation-output"></a>
+</h3>
+<p>Currently, the explanations are guided by pre-defined prompts offering a standardized output. To make it more versatile:</p>
+<ul>
+<li>User-Defined Detail Level: Allow users to specify the desired verbosity of the explanation, for example, through an argument like detail_level = “brief”, “moderate”, or “detailed”. This would adjust the system prompt to ask the LLM for more concise or more elaborate interpretations.</li>
+<li>Target Audience Customization: Introduce an option to tailor the explanation’s technical depth to different audiences (e.g., <code>audience = "novice"</code>, <code>"researcher"</code>, <code>"domain_expert_no_stats_bg"</code>). This would modify the prompt to use simpler language and analogies for novices, or more technical terms for experts.</li>
+<li>Selective Explanations: Enable users to request explanations for specific parts of the model output, such as focusing only on “coefficients,” “model fit statistics,” or “random effects” for mixed models.</li>
+</ul>
+<p>This could be implemented by adding parameters to the <code><a href="reference/explain.html">explain()</a></code> function which dynamically adjust the system prompts sent to the LLM.</p>
+</div>
+<div class="section level3">
+<h3 id="interactive-explanation-mode--follow-up-questions">Interactive Explanation Mode &amp; Follow-up Questions<a class="anchor" aria-label="anchor" href="#interactive-explanation-mode--follow-up-questions"></a>
+</h3>
+<p>The current explain() function provides a comprehensive, one-time explanation. Enhancing this with interactivity could significantly boost its utility as a learning and exploration tool:</p>
+<ul>
+<li>Conversational Analysis: After the initial explanation is generated, allow users to ask follow-up questions directly within the R console (e.g., “Can you explain the intercept in simpler terms?” or “What does the R-squared value imply here?”).</li>
+<li>Contextual Memory: The system would need to maintain the context of the initial model output and the LLM’s first explanation to answer follow-up questions coherently. This could leverage the chat history capabilities of the underlying ellmer package’s chat objects.</li>
+</ul>
+<p>This would transform statlingua from a static explanation generator into a more dynamic, conversational partner for statistical understanding.</p>
+</div>
+<div class="section level3">
+<h3 id="support-for-model-comparison-explanations">Support for Model Comparison Explanations<a class="anchor" aria-label="anchor" href="#support-for-model-comparison-explanations"></a>
+</h3>
+<p>Users often fit multiple models and need to compare them. statlingua could be extended to assist with this:</p>
+<ul>
+<li>Comparative Analysis: Develop functionality where users can input two or more model objects (e.g., lm objects from a nested model sequence, or different models fit to the same data).</li>
+<li>Guided Interpretation: The LLM would be prompted to explain the key differences between the models, interpret comparison statistics (like those from anova() calls, or differences in AIC/BIC), and discuss potential reasons for preferring one model over another, based on the provided context and statistical output.</li>
+</ul>
+<p>This would address a common and often complex task in statistical modeling.</p>
+</div>
+<div class="section level3">
+<h3 id="enhanced-integration-with-reporting-workflows--diverse-output-formats">Enhanced Integration with Reporting Workflows &amp; Diverse Output Formats<a class="anchor" aria-label="anchor" href="#enhanced-integration-with-reporting-workflows--diverse-output-formats"></a>
+</h3>
+<p>While Markdown is a good default, providing more output options and smoother integration with R’s reporting ecosystem would be beneficial:</p>
+<ul>
+<li>Multiple Output Formats: Beyond the current Markdown, offer options to directly output explanations in formats such as:
+<ul>
+<li>HTML: For direct inclusion in web pages or RMarkdown HTML outputs beyond standard rendering.</li>
+<li>LaTeX: For users preparing academic papers.</li>
+<li>R Objects: Convert parts of the explanation (like structured summaries or key findings) into R objects like gt tables or flextable objects for more programmatic control in reports.</li>
+</ul>
+</li>
+<li>Reporting Helpers: Include helper functions to simplify the embedding of statlingua explanations into RMarkdown or Quarto documents. This might involve custom knitr S3 methods for statlingua_explanation objects or dedicated functions that handle chunk options for verbosity, audience, etc.</li>
+</ul>
+<p>This would make it easier for users to incorporate statlingua’s insights into their documents and presentations.</p>
+</div>
+<div class="section level3">
+<h3 id="deeper-guidance-on-model-assumption-checking">Deeper Guidance on Model Assumption Checking<a class="anchor" aria-label="anchor" href="#deeper-guidance-on-model-assumption-checking"></a>
+</h3>
+<p>The current prompts already do a good job of mentioning model assumptions and suggesting checks (as seen in files like inst/prompts/system_prompt_lm.md and inst/prompts/system_prompt_coxph.md). This could be taken a step further:</p>
+<ul>
+<li>Interpreting Diagnostic Plots/Tests: Allow users to optionally pass the output of common diagnostic functions (e.g., plots generated by plot(model_object), results from car::Anova(), performance::check_model(), or survival::cox.zph()) to the explain() function.</li>
+<li>Holistic Interpretation: The LLM could then be prompted to interpret these diagnostic outputs in conjunction with the main model summary. This would provide users with a more integrated understanding of whether model assumptions are met, the potential implications of any violations, and how these might affect the interpretation of the primary model results.</li>
+<li>Contextual Caveats: The explanation could then also include more specific caveats or recommendations based on the supplied diagnostic information.</li>
+</ul>
+<p>This would empower users not just to understand their model output, but also to critically evaluate its validity.</p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

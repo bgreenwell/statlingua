@@ -2,6 +2,7 @@
 % Please edit documentation in R/explain.R
 \name{explain}
 \alias{explain}
+\alias{explain.default}
 \alias{explain.htest}
 \alias{explain.lm}
 \alias{explain.glm}
@@ -15,7 +16,9 @@
 \alias{explain.rpart}
 \title{Explain statistical output}
 \usage{
-explain(object, client, ...)
+explain(object, client, context = NULL, ...)
+
+\method{explain}{default}(object, client, context = NULL, ...)
 
 \method{explain}{htest}(object, client, context = NULL, ...)
 
@@ -35,7 +38,7 @@ explain(object, client, ...)
 
 \method{explain}{survreg}(object, client, context = NULL, ...)
 
-\method{explain}{coxph}(object, client, context = NULL, echo = NULL, verbose = FALSE, ...)
+\method{explain}{coxph}(object, client, context = NULL, ...)
 
 \method{explain}{rpart}(object, client, context = NULL, ...)
 }
@@ -49,10 +52,15 @@ the output from calling \link[stats:t.test]{t.test()} or \link[stats:glm]{glm()}
 
 [ellmer::chat_gemini)]: R:ellmer::chat_gemini)}
 
-\item{...}{Additional optional arguments. (Currently ignored.)}
-
 \item{context}{Optional character string providing additional context, such
-as background on the experiment and information about the data.}
+as background on the research question and information about the data.}
+
+\item{...}{Additional optional arguments. (Currently ignored.)}
+}
+\value{
+Either a character string providing the LLM explanation
+(\code{return_client = FALSE}) or a list containing the LLM client and response
+(\code{return_client = TRUE}).
 }
 \description{
 Use an LLM to explain the output from various statistical objects using
@@ -68,9 +76,9 @@ The data give the speed of cars (mph) and the distances taken to stop (ft).
 Note that the data were recorded in the 1920s.
 "
 # Use Google Gemini to explain the output; requires an API key; see
-# ?ellmer::client_gemini for details
-client <- ellmer::client_gemini(echo = "none")
-explain(cars_lm, client = client, context = context)
+# ?ellmer::chat_google_gemini for details
+client <- ellmer::chat_google_gemini(echo = "none")
+ex <- explain(cars_lm, client = client, context = context)
 
 # Poisson regression example from ?stats::glm
 counts <- c(18,17,15,20,10,20,25,13,12)
@@ -80,9 +88,9 @@ data.frame(treatment, outcome, counts) # showing data
 D93_glm <- glm(counts ~ outcome + treatment, family = poisson())
 
 # Use Google Gemini to explain the output; requires an API key; see
-# ?ellmer::client_gemini for details
-client <- ellmer::client_gemini()
-explain(D93_glm, client = client, verbose = TRUE)
+# ?ellmer::chat_google_gemini for details
+client <- ellmer::chat_google_gemini()
+explain(D93_glm, client = client)
 }
 
 

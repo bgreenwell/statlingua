@@ -10,7 +10,7 @@
 
 **statlingua** is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.
 
-As of now, **statlingua** supports the following types of statistical models:
+As of now, **statlingua** explicitly supports the following types of statistical models:
 
 * Objects of class `"htest"` (e.g., R's built-in `t.test()` and `prop.test()` functions).
 * Linear and generalized linear models (i.e., R's built-in `lm()` and `glm()` functions).
@@ -20,6 +20,8 @@ As of now, **statlingua** supports the following types of statistical models:
 * Proportional odds regression models from package [MASS](https://cran.r-project.org/package=MASS).
 * Decision trees from package [rpart](https://cran.r-project.org/package=rpart).
 * ~~ARIMA models from package [forecast](https://cran.r-project.org/package=forecast).~~
+
+For non supported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.
 
 ## Installation
 
