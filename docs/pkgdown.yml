@@ -2,5 +2,6 @@ pandoc: '3.2'
 pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
+  articles/examples: examples.html
   statlingua: statlingua.html
-last_built: 2025-05-21T02:31Z
+last_built: 2025-05-23T20:09Z

@@ -16,31 +16,31 @@
 \alias{explain.rpart}
 \title{Explain statistical output}
 \usage{
-explain(object, client, context = NULL, ...)
+explain(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{default}(object, client, context = NULL, ...)
+\method{explain}{default}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{htest}(object, client, context = NULL, ...)
+\method{explain}{htest}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{lm}(object, client, context = NULL, ...)
+\method{explain}{lm}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{glm}(object, client, context = NULL, ...)
+\method{explain}{glm}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{polr}(object, client, context = NULL, ...)
+\method{explain}{polr}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{lme}(object, client, context = NULL, ...)
+\method{explain}{lme}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{lmerMod}(object, client, context = NULL, ...)
+\method{explain}{lmerMod}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{glmerMod}(object, client, context = NULL, ...)
+\method{explain}{glmerMod}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{gam}(object, client, context = NULL, ...)
+\method{explain}{gam}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{survreg}(object, client, context = NULL, ...)
+\method{explain}{survreg}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{coxph}(object, client, context = NULL, ...)
+\method{explain}{coxph}(object, client, context = NULL, concatenate = FALSE, ...)
 
-\method{explain}{rpart}(object, client, context = NULL, ...)
+\method{explain}{rpart}(object, client, context = NULL, concatenate = FALSE, ...)
 }
 \arguments{
 \item{object}{An appropriate statistical object. For example, \code{object} can be
@@ -54,6 +54,10 @@ the output from calling \link[stats:t.test]{t.test()} or \link[stats:glm]{glm()}
 
 \item{context}{Optional character string providing additional context, such
 as background on the research question and information about the data.}
+
+\item{concatenate}{Logical indicating whether to return an unformatted
+character string (\code{FALSE}) or to concatenate the results into formatted
+output (\code{TRUE}) using \link[base:cat]{cat()}. Default is \code{FALSE}.}
 
 \item{...}{Additional optional arguments. (Currently ignored.)}
 }

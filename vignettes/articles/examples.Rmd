@@ -1,0 +1,75 @@
+---
+title: "examples"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+**WARNING:** This article is incomplete and still very much a work in progress!
+
+This article aims to show a wide variety of examples in which we use Large Language Models (LLMs) to help explain the output from various statistical tests and models.
+
+## Explaining the output from a two-sample t-test
+
+The following example is taken from a [tutorial on paired t-tests](https://www.jmp.com/en/statistics-knowledge-portal/t-test/paired-t-test). Here we use an independent two-sample t-test to (inappropriately) analyze paired data.
+
+```{r ex-t-test, cache=TRUE, results="asis"}
+library(statlingua)
+
+# Define additional context to pass to `explain()`; this should include 
+# any additional background information about the data and research question.
+context <- "
+An instructor wants to use two exams in her classes next year. This year, she gives both exams to the students. She wants to know if the exams are equally difficult and wants to check this by comparing the two sets of scores. Here is the data:
+
+ student exam_1_score exam_2_score
+     Bob           63           69
+    Nina           65           65
+     Tim           56           62
+    Kate          100           91
+  Alonzo           88           78
+    Jose           83           87
+  Nikhil           77           79
+   Julia           92           88
+   Tohru           90           85
+ Michael           84           92
+    Jean           68           69
+   Indra           74           81
+   Susan           87           84
+   Allen           64           75
+    Paul           71           84
+  Edwina           88           82
+"
+
+# Create the data set
+exam_scores <- tibble::tribble(
+  ~student,  ~exam_1_score, ~exam_2_score,
+  "Bob",     63,            69,
+  "Nina",    65,            65,
+  "Tim",     56,            62,
+  "Kate",    100,           91,
+  "Alonzo",  88,            78,
+  "Jose",    83,            87,
+  "Nikhil",  77,            79,
+  "Julia",   92,            88,
+  "Tohru",   90,            85,
+  "Michael", 84,            92,
+  "Jean",    68,            69,
+  "Indra",   74,            81,
+  "Susan",   87,            84,
+  "Allen",   64,            75,
+  "Paul",    71,            84,
+  "Edwina",  88,            82
+)
+
+# Run a two-sample t-test
+(tt <- t.test(exam_scores$exam_1_score, y = exam_scores$exam_2_score))
+
+# Inititalize client
+client <- ellmer::chat_google_gemini(echo = "none")
+ex <- explain(tt, client = client, context = context)
+cat(ex)
+```

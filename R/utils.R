@@ -60,7 +60,7 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
 #' system prompt.
 #'
 #' @param model Character string specifying the type of model to be explained.
-.explain_core <- function(object, client, context, name, model) {
+.explain_core <- function(object, client, context, name, model, concatenate) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
   sys_prompt <- .get_system_prompt(name)
   output <- summarize(object)  # create text summary of object
@@ -72,7 +72,12 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
   # } else {
   #   resp
   # }
-  client$chat(usr_prompt)
+  ex <- client$chat(usr_prompt)
+  if (isTRUE(concatenate)) {
+    return(cat(ex))
+  } else {
+    return(ex)
+  }
 }
 
 

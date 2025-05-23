@@ -16,6 +16,7 @@ RoxygenNote: 7.3.2
 Suggests: 
     car,
     ellmer (>= 0.2.0),
+    ISLR2,
     knitr,
     lme4,
     lmerTest,

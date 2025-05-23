@@ -14,6 +14,10 @@
 #' @param context Optional character string providing additional context, such
 #' as background on the research question and information about the data.
 #'
+#' @param concatenate Logical indicating whether to return an unformatted
+#' character string (`FALSE`) or to concatenate the results into formatted
+#' output (`TRUE`) using [cat()][base::cat]. Default is `FALSE`.
+#'
 #' @param ... Additional optional arguments. (Currently ignored.)
 #'
 #' @returns Either a character string providing the LLM explanation
@@ -48,21 +52,26 @@
 #'
 #'
 #' @export
-explain <- function(object, client, context = NULL, ...) {
+explain <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   UseMethod("explain")
 }
 
 
 #' @rdname explain
 #' @export
-explain.default <- function(object, client, context = NULL, ...) {
+explain.default <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
   sys_prompt <- .get_system_prompt("default")
   output <- capture_output(object)
   usr_prompt <- .build_user_prompt("R object", output = output,
                                    context = context)
   client$set_system_prompt(sys_prompt)
-  client$chat(usr_prompt)
+  ex <- client$chat(usr_prompt)
+  if (isTRUE(concatenate)) {
+    cat(return(ex))
+  } else {
+    return(ex)
+  }
 }
 
 
@@ -70,33 +79,35 @@ explain.default <- function(object, client, context = NULL, ...) {
 
 #' @rdname explain
 #' @export
-explain.htest <- function(object, client, context = NULL, ...) {
+explain.htest <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "htest",
-    model = object$method
+    model = object$method,
+    concatenate = concatenate
   )
 }
 
 
 #' @rdname explain
 #' @export
-explain.lm <- function(object, client, context = NULL, ...) {
+explain.lm <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "lm",
-    model = "linear regression model"
+    model = "linear regression model",
+    concatenate = concatenate
   )
 }
 
 
 #' @rdname explain
 #' @export
-explain.glm <- function(object, client, context = NULL, ...) {
+explain.glm <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -104,7 +115,8 @@ explain.glm <- function(object, client, context = NULL, ...) {
     client = client,
     context = context,
     name = "glm",
-    model = paste(.family, "generalized linear model with", .link, "link")
+    model = paste(.family, "generalized linear model with", .link, "link"),
+    concatenate = concatenate
   )
 }
 
@@ -113,14 +125,15 @@ explain.glm <- function(object, client, context = NULL, ...) {
 
 #' @rdname explain
 #' @export
-explain.polr <- function(object, client, context = NULL, ...) {
+explain.polr <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .method <- object$method
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "polr",
-    model = paste("proportional odds", .method, "regression model")
+    model = paste("proportional odds", .method, "regression model"),
+    concatenate = concatenate
   )
 }
 
@@ -129,13 +142,14 @@ explain.polr <- function(object, client, context = NULL, ...) {
 
 #' @rdname explain
 #' @export
-explain.lme <- function(object, client, context = NULL, ...) {
+explain.lme <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "lme",
-    model = "linear mixed-effects model"
+    model = "linear mixed-effects model",
+    concatenate = concatenate
   )
 }
 
@@ -144,20 +158,21 @@ explain.lme <- function(object, client, context = NULL, ...) {
 
 #' @rdname explain
 #' @export
-explain.lmerMod <- function(object, client, context = NULL, ...) {
+explain.lmerMod <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "lmerMod",
-    model = "linear mixed-effects model"
+    model = "linear mixed-effects model",
+    concatenate = concatenate
   )
 }
 
 
 #' @rdname explain
 #' @export
-explain.glmerMod <- function(object, client, context = NULL, ...) {
+explain.glmerMod <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -166,7 +181,8 @@ explain.glmerMod <- function(object, client, context = NULL, ...) {
     context = context,
     name = "glmerMod",
     model = paste(.family, "generalized linear mixed-effects model with",
-                       .link, "link")
+                       .link, "link"),
+    concatenate = concatenate
   )
 }
 
@@ -175,7 +191,7 @@ explain.glmerMod <- function(object, client, context = NULL, ...) {
 
 #' @rdname explain
 #' @export
-explain.gam <- function(object, client, context = NULL, ...) {
+explain.gam <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -183,7 +199,8 @@ explain.gam <- function(object, client, context = NULL, ...) {
     client = client,
     context = context,
     name = "gam",
-    model = paste(.family, "generalized additive model with", .link, "link")
+    model = paste(.family, "generalized additive model with", .link, "link"),
+    concatenate = concatenate
   )
 }
 
@@ -192,26 +209,28 @@ explain.gam <- function(object, client, context = NULL, ...) {
 
 #' @rdname explain
 #' @export
-explain.survreg <- function(object, client, context = NULL, ...) {
+explain.survreg <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "survreg",
-    model = "parametric survival regression model"
+    model = "parametric survival regression model",
+    concatenate = concatenate
   )
 }
 
 
 #' @rdname explain
 #' @export
-explain.coxph <- function(object, client, context = NULL, ...) {
+explain.coxph <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "coxph",
-    model = "Cox proportional hazards regression model"
+    model = "Cox proportional hazards regression model",
+    concatenate = concatenate
   )
 }
 
@@ -220,12 +239,13 @@ explain.coxph <- function(object, client, context = NULL, ...) {
 
 #' @rdname explain
 #' @export
-explain.rpart <- function(object, client, context = NULL, ...) {
+explain.rpart <- function(object, client, context = NULL, concatenate = FALSE, ...) {
   .explain_core(
     object = object,
     client = client,
     context = context,
     name = "rpart",
-    model = "recursive partitioning tree model"
+    model = "recursive partitioning tree model",
+    concatenate = concatenate
   )
 }
