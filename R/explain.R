@@ -67,7 +67,8 @@ explain.default <- function(object, client, context = NULL, concatenate = FALSE,
   client$set_system_prompt(sys_prompt)
   ex <- client$chat(usr_prompt)
   if (isTRUE(concatenate)) {
-    cat(return(ex))
+    cat(ex)
+    return(invisible(ex))
   } else {
     return(ex)
   }

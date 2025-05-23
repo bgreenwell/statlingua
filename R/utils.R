@@ -68,7 +68,8 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
   client$set_system_prompt(sys_prompt)
   ex <- client$chat(usr_prompt)
   if (isTRUE(concatenate)) {
-    return(cat(ex))
+    cat(ex)
+    return(invisible(ex))
   } else {
     return(ex)
   }
