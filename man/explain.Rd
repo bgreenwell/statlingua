@@ -63,8 +63,7 @@ output (\code{TRUE}) using \link[base:cat]{cat()}. Default is \code{FALSE}.}
 }
 \value{
 Either a character string providing the LLM explanation
-(\code{return_client = FALSE}) or a list containing the LLM client and response
-(\code{return_client = TRUE}).
+(\code{concatenate = FALSE}) or nothing (i.e., invisible \code{NULL}).
 }
 \description{
 Use an LLM to explain the output from various statistical objects using
