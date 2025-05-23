@@ -1,0 +1,103 @@
+---
+title: "statlingua"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{statlingua}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+# Execute the code from the vignette
+# knitr::knit("vignettes/statlingua.Rmd.orig", output = "vignettes/statlingua.Rmd")
+```
+
+**WARNING:** This vignette is incomplete and still very much a work in progress!
+
+## Explaining the output from statistical models
+
+**statlingua** is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise. 
+
+The package is designed to work with the [ellmer](https://cran.r-project.org/package=ellmer) interface to LLMs. In short, we'll use [ellmer](https://cran.r-project.org/package=ellmer) to establish a connection to an LLM provider (e.g., [OpenAI](https://openai.com/api/) or [Google Gemini](https://ai.google.dev/gemini-api/docs)). Then, we can leverage **statlingua**'s `explain()` generic to help explain the output from various statistical tests and models. Calling `explain()` on an appropriate R object (e.g., an ["lm"](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/lm.html) object) essentially provides the LLM client with an appropriate system prompt and user query to generate an explanation about the provided statistical output. (Note that we can establish a client to chat with any model supported by the [ellmer](https://cran.r-project.org/package=ellmer) package.)
+
+The following example was taken from [James et al. (2023)](https://www.statlearning.com/) Here we use a linear model to predict the conditional mean sales of child car seats at 400 different stores.
+
+```{r ex-carseats-lm}
+carseats <- ISLR2::Carseats
+summary(fm <- lm(Sales ~ . + Income:Advertising + Price:Age, data = carseats))
+```
+
+Next, we initialize a client to chat with a Google Gemini model and call the `explain()` method to explain the output from the statistical test. 
+
+```{r ex-carseats-context}
+context <- "
+The model uses a simulated data set containing sales of child car seats at 400 
+different stores. The data frame contains 400 observations (i.e., stores) on the 
+following 11 variables:
+
+  * Sales - Unit sales (in thousands) at each location.
+  * CompPrice - Price charged by competitor at each location.
+  * Income - Community income level (in thousands of dollars).
+  * Advertising - Local advertising budget for company at each location (in 
+    thousands of dollars).
+  * Population - Population size in region (in thousands).
+  * Price - Price company charges for car seats at each site.
+  * ShelveLoc - A factor with levels Bad, Good and Medium indicating the quality
+    of the shelving location for the car seats at each site.
+  * Age - Average age of the local population.
+  * Education - Education level at each location.
+  * Urban - A factor with levels No and Yes to indicate whether the store is in 
+    an urban or rural location.
+  * US - A factor with levels No and Yes to indicate whether the store is in the 
+    US or not.
+"
+```
+
+```{r ex-carseats-lm-explain}
+library(statlingua)
+
+client <- ellmer::chat_google_gemini(echo = "none")
+explain(fm, client = client, context = context)
+```
+
+Note that the `explain()` function is designed to return a single character string. This string is often formatted by the Large Language Model using Markdown, which includes special characters to structure the text, most notably:
+
+* Newline characters (`\n`) which are used to create line breaks, separate paragraphs, define list items, and structure headings in Markdown.
+* Other white space (like spaces for indentation) used for formatting lists or code blocks.
+
+Hence, it's more useful to pass the output of `explain()` into R's built-in `cat()` function for readability in an R console. This is also useful for displaying the output properly in Markdown (like we do in this vignette)! For convenience, you can also just set `concatenate = TRUE` in the call to `explain()`. For example, the following two calls to `explain()` are equivalent and both will produce the Markdown formatted summary/explanation that follows (the LLM output is contained between the two horizontal lines).
+
+```{r ex-carseats-lm-explain-cat, eval=FALSE}
+explain(fm, client = client, context = context) |> cat()
+explain(fm, client = client, context = context, concatenate = TRUE)
+```
+
+---
+
+```{r ex-carseats-lm-explain-cat-hide, echo=FALSE, results="asis"}
+explain(fm, client = client, context = context, concatenate = TRUE)
+```
+
+---
+
+We can also print the `client` object itself, which will display the following components:
+
+1) The system prompt (defining how the LLM should respond).
+2) The user query (constructed internally by `explain()`).
+3) The LLM's response.
+
+```{r ex-carseats-client}
+print(client)
+```
+
+Oftentimes you may have additional follow up questions about the output or explanation. In this case, it is useful to query the LLM again using the original `client` object:
+
+```{r ex-carseats-client-query, results="asis"}
+msg <- "Elaborate further on the meaning of R-squared in this example."
+client$chat(msg) |> cat()
+```
