@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Explain Statistical Output with Large Language Models • statlingua</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -13,6 +18,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Explain Statistical Output with Large Language Models">
 <meta name="description" content="An R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.">
 <meta property="og:description" content="An R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.">
+<meta property="og:image" content="/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -54,9 +60,11 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="statlingua">statlingua<a class="anchor" aria-label="anchor" href="#statlingua"></a>
-</h1></div>
-<p><strong>WARNING:</strong> This package is a work in progess! Use with caution.</p>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="statlingua-">statlingua <a class="anchor" aria-label="anchor" href="#statlingua-"></a>
+</h1>
+</div>
+<p><strong>WARNING:</strong> This package is a work in progress! Use with caution.</p>
 <!-- badges: start -->
 
 <p><strong>statlingua</strong> is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.</p>
@@ -69,9 +77,8 @@
 <li>Survival regression models from package <a href="https://cran.r-project.org/package=survival" class="external-link">survival</a>.</li>
 <li>Proportional odds regression models from package <a href="https://cran.r-project.org/package=MASS" class="external-link">MASS</a>.</li>
 <li>Decision trees from package <a href="https://cran.r-project.org/package=rpart" class="external-link">rpart</a>.</li>
-<li><del>ARIMA models from package <a href="https://cran.r-project.org/package=forecast" class="external-link">forecast</a>.</del></li>
 </ul>
-<p>For non supported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.</p>
+<p>For currently unsupported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>

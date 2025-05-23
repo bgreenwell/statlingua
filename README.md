@@ -1,6 +1,6 @@
-# statlingua
+# statlingua <img src="man/figures/logo.png" align="right" height="120" alt="" />
 
-**WARNING:** This package is a work in progess! Use with caution.
+**WARNING:** This package is a work in progress! Use with caution.
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -19,9 +19,8 @@ As of now, **statlingua** explicitly supports the following types of statistical
 * Survival regression models from package [survival](https://cran.r-project.org/package=survival).
 * Proportional odds regression models from package [MASS](https://cran.r-project.org/package=MASS).
 * Decision trees from package [rpart](https://cran.r-project.org/package=rpart).
-* ~~ARIMA models from package [forecast](https://cran.r-project.org/package=forecast).~~
 
-For non supported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.
+For currently unsupported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.
 
 ## Installation
 

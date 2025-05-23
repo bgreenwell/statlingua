@@ -22,8 +22,10 @@ Suggests:
     lmerTest,
     mgcv,
     nlme,
+    R6,
     rmarkdown,
     survival,
-    tibble
+    tibble,
+    tinytest
 VignetteBuilder: knitr
 Config/Needs/website: rmarkdown

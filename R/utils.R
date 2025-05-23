@@ -66,12 +66,6 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
   output <- summarize(object)  # create text summary of object
   usr_prompt <- .build_user_prompt(model, output = output, context = context)
   client$set_system_prompt(sys_prompt)
-  # resp <- client$chat(usr_prompt)
-  # if (isTRUE(return_client)) {
-  #   list("client" = client, "response" = resp)
-  # } else {
-  #   resp
-  # }
   ex <- client$chat(usr_prompt)
   if (isTRUE(concatenate)) {
     return(cat(ex))

@@ -21,8 +21,7 @@
 #' @param ... Additional optional arguments. (Currently ignored.)
 #'
 #' @returns Either a character string providing the LLM explanation
-#' (`return_client = FALSE`) or a list containing the LLM client and response
-#' (`return_client = TRUE`).
+#' (`concatenate = FALSE`) or nothing (i.e., invisible `NULL`).
 #'
 #' @examples
 #' \dontrun{
