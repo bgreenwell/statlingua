@@ -1,0 +1,306 @@
+---
+title: "The statlingua Package"
+subtitle: "Using LLMs to Help Explain and Interperate Statistical Output"
+from: markdown+emoji
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Unlocking Statistical Insights with statlingua}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+# Execute the code from the vignette
+# knitr::knit("vignettes/statlingua.Rmd.orig", output = "vignettes/statlingua.Rmd")
+```
+
+## Introduction
+
+Statistical models are indispensable tools for extracting insights from data, yet their outputs can often be cryptic and laden with technical jargon. Deciphering coefficients, p-values, confidence intervals, and various model fit statistics typically requires a solid statistical background. This can create a barrier when communicating findings to a wider audience or even for those still developing their statistical acumen.
+
+The **statlingua** R package is here to change that\! It masterfully leverages the power of Large Language Models (LLMs) to translate complex statistical model outputs into clear, understandable, and context-aware natural language. By simply feeding your R statistical model objects into **statlingua**, you can generate human-readable interpretations, making statistical understanding accessible to everyone, regardless of their technical expertise.
+
+It's important to note that **statlingua** itself doesn't directly call LLM APIs. Instead, it serves as a sophisticated prompt engineering toolkit. It meticulously prepares the necessary inputs (your model summary and contextual information) and then passes them to the [ellmer](https://cran.r-project.org/package=ellmer) package, which handles the actual communication with the LLM. The primary workhorse function you'll use in **statlingua** is `explain()`.
+
+This vignette will guide you through understanding and using **statlingua** effectively.
+
+## Prerequisites
+
+Before diving in, please ensure you have the following:
+
+1.  The **statlingua** package installed from GitHub (not yet available on CRAN):
+```{r statlingua_install, eval=FALSE}
+if (!requireNamespace("remotes")) {
+  install.packages("remotes")
+}
+remotes::install_github("bgreenwell/statlingua")
+```
+2.  The [ellmer](https://cran.r-project.org/package=ellmer) package installed. **statlingua** relies on it for LLM communication:
+```{r ellmer_install, eval=FALSE}
+install.packages("ellmer")
+```
+3.  Access to an LLM provider (e.g., [OpenAI](https://openai.com/api/), [Google AI Studio](https://aistudio.google.com/), or [Anthropic](https://www.anthropic.com/)) and a corresponding API key. You'll need to configure your API key according to the [ellmer](https://cran.r-project.org/package=ellmer) package's documentation. This usually involves setting environment variables like `OPENAI_API_KEY`, `GOOGLE_API_KEY`, or `ANTHROPIC_API_KEY`. Note that while While [ellmer](https://cran.r-project.org/package=ellmer) supports numerous LLM providers, **this vignette will specifically use Google Gemini models** via `ellmer::chat_google_gemini()`; I find Google Gemini to be particularly well-suited for explaining statistical output and they offer a generous free tier. You'll need to configure your API key according to the [ellmer](https://cran.r-project.org/package=ellmer) package's documentation. This typically involves setting the `GEMINI_API_KEY` environment variable in your R session or `.Renviron` file (e.g., `Sys.setenv(GEMINI_API_KEY = "YOUR_API_KEY_HERE")`).  
+4.  For the examples in this vignette, you'll also need the following packages: [ISLR2](https://cran.r-project.org/package=ISLR2), [MASS](https://cran.r-project.org/package=MASS), and [survival](https://cran.r-project.org/package=survival).
+```{r other-deps-install, eval=FALSE}
+install.packages(c("ISLR2", "MASS", "survival"))
+```
+
+## How **statlingua** Works: The `explain()` Function and [ellmer](https://cran.r-project.org/package=ellmer)
+
+The core of **statlingua** is the `explain()` function. It's an S3 generic function, meaning it can adapt its behavior based on the class of the R object you provide (e.g., an `"lm"` object from a linear model, a `"glm"` object, or an `"htest"` object from a t-test).
+
+Here's a breakdown of the magic behind `explain()`:
+
+1.  **Input**: You pass an R statistical object (e.g., a fitted model) to `explain()`.
+2.  **Model Summary Extraction**: `explain()` first uses the internal (but also exported) `summarize()` function to capture a text-based summary of your statistical object (e.g., akin to `summary(mymodel)`). This summary forms the core statistical information the LLM will interpret.
+3.  **System Prompt Assembly**:
+      * **statlingua** comes bundled with a collection of pre-defined "system prompts" located internally within the package (in the `inst/prompts` directory). These prompts are tailored for different R object classes (e.g., `"lm"`, `"glm"`, `"htest"`, `"coxph"`). You can see examples of these in the `inst/prompts/models` sub-directory of the package source.
+      * The system prompt is crucial: it instructs the LLM on its persona (e.g., "You are an expert statistician..."), the desired tone, the output format (typically Markdown), and the key elements it should address in its explanation (like model adequacy, coefficient interpretation, p-values, etc.). It also incorporates instructions based on the `audience` and `verbosity` arguments you provide.
+      * If a system prompt specific to your object's class exists (e.g., `system_prompt_lm.md` for an `"lm"` object), that's used. Otherwise, a general `system_prompt_default.md` is employed, which tries to give a sensible explanation for less common or unsupported objects.
+4.  **User Prompt Construction**:
+      * The "user prompt" is the specific query sent to the LLM. **statlingua** constructs this by combining:
+          * The captured model summary from `summarize()`.
+          * Any additional `context` you supply via the `context` argument (highly recommended for richer explanations\!).
+      * Placeholders within the chosen system prompt (like those for model output and problem description) are filled with this combined information.
+5.  **LLM Interaction via** [ellmer](https://cran.r-project.org/package=ellmer): The complete prompt (system prompt + filled user prompt) is then handed off to the `ellmer::prompt()` or `ellmer::chat()` method of the [ellmer](https://cran.r-project.org/package=ellmer) client object you provide. [ellmer](https://cran.r-project.org/package=ellmer) manages the API call to the LLM.
+6.  **Output**: The LLM processes the prompt and returns a natural language explanation, which `explain()` then gives back to you as a character string (usually Markdown-formatted).
+
+This structured process ensures the LLM gets clear, comprehensive instructions and all pertinent information, leading to high-quality, contextually relevant explanations of your statistical models.
+
+### Understanding `explain()`'s Arguments
+
+The `explain()` function is flexible, with several arguments to fine-tune its behavior:
+
+  * `object`: The primary input – your R statistical object (e.g., an `lm` model, a `glm` model, the output of `t.test()`, `coxph()`, etc.).
+  * `client`: **Essential**. This is an [ellmer](https://cran.r-project.org/package=ellmer) client object (e.g., created by `ellmer::chat_openai()`, `ellmer::chat_google_gemini()`, or `ellmer::chat_anthropic()`). **statlingua** uses this to communicate with the LLM. You must initialize and configure this client with your API key beforehand.
+  * `context` (Optional but **Highly Recommended**): A character string providing background information about your data, research questions, variable definitions, units, study design, etc. We'll elaborate on why this is so important shortly. Default is `NULL`.
+  * `audience` (Optional): Specifies the target audience for the explanation. This helps the LLM tailor the language and depth. Options include:
+      * `"novice"` (default): Assumes limited statistical background.
+      * `"student"`: For those learning statistics.
+      * `"researcher"`: Assumes a strong statistical background.
+      * `"manager"`: For high-level insights for decision-making.
+      * `"domain_expert"`: For experts in their field but not necessarily in statistics.
+  * `verbosity` (Optional): Controls the level of detail in the explanation. Options are:
+      * `"moderate"` (default): A balanced explanation.
+      * `"brief"`: A high-level summary.
+      * `"detailed"`: A comprehensive interpretation.
+  * `...` (Optional): Additional arguments passed directly to the `ellmer::prompt()` function. This allows for advanced control over LLM behavior, such as setting `temperature` (for randomness of output) or specifying a particular `model` if your [ellmer](https://cran.r-project.org/package=ellmer) client supports multiple.
+
+## The Power of `context`: Why It Matters
+
+You *could* just pass your model object to `explain()` and get a basic interpretation. However, to unlock truly insightful and actionable explanations, **providing `context` is paramount.**
+
+LLMs are incredibly powerful, but they don't inherently know the nuances of your specific research. They don't know what "VarX" *really* means in your data set, its units, the specific hypothesis you're testing, or the population you're studying unless you tell them. The `context` argument is your channel to provide this vital background.
+
+What makes for **effective `context`**?
+
+  * **Research Objective**: What question(s) are you trying to answer? (e.g., "We are investigating factors affecting Gentoo penguin bill length to understand dietary adaptations.")
+  * **Data Description**:
+      * What do your variables represent? Be specific. (e.g., "`bill_length_mm` is the length of the penguin's bill in millimeters.")
+      * What are their units? (e.g., "Flipper length is in millimeters, body mass in grams.")
+      * Are there any known data limitations or special characteristics? (e.g., "Data collected from three islands in the Palmer Archipelago.")
+  * **Study Design**: How was the data collected? (e.g., "Observational data from a field study.")
+  * **Target Audience Nuances (Implicitly)**: While the `audience` argument handles the main targeting, mentioning specific interpretation needs in the `context` can further refine the LLM's output (e.g., "Explain the practical significance of these findings for wildlife conservation efforts.").
+
+By supplying such details, you empower the LLM to:
+
+  * Interpret coefficients with their **true, domain-specific meaning**.
+  * Relate findings **directly to your research goals**.
+  * Offer more **relevant advice** on model assumptions or limitations.
+  * Generate explanations that are **less generic, more targeted, and ultimately far more useful**.
+
+Think of `context` as the difference between asking a generic statistician "What does this mean?" versus asking a statistician who deeply understands your research area, data, and objectives. The latter will always provide a more valuable interpretation.
+
+## Some Examples in Action\!
+
+Let's see **statlingua** shine with some practical examples.
+
+**Important Note on API Keys:** The following code chunks that call `explain()` are set to `eval = FALSE` by default in this vignette. This is because they require an active API key configured for [ellmer](https://cran.r-project.org/package=ellmer). To run these examples yourself:
+
+1.  Ensure your API key (e.g., `GOOGLE_API_KEY`, `OPENAI_API_KEY`, or `ANTHROPIC_API_KEY`) is set up as an environment variable that [ellmer](https://cran.r-project.org/package=ellmer) can access.
+2.  Change the R chunk option `eval = FALSE` to `eval = TRUE` for the chunks you wish to run.
+3.  You may need to adjust the [ellmer](https://cran.r-project.org/package=ellmer) client initialization (e.g., `ellmer::chat_openai()`) to match your chosen LLM provider.
+
+For this examples in this vignette
+
+### Example 1: Linear Regression (`lm`) - Sales of Child Car Seats
+
+Let's use a linear model to predict `Sales` of child car seats from various predictors using the `Carseats` data set from package [ISLR2](https://cran.r-project.org/package=ISLR2). To make this example a bit more complicated, we'll include pairwise interaction effects in the model (you can include polynomial terms, smoothing splines, or any type of transformation that makes sense). Note that the categorical variables `ShelveLoc`, `Urban`, and `US` have been dummy encoded by default).
+
+```{r carseats_lm, eval = TRUE}
+data(Carseats, package = "ISLR2")  # load the Carseats data
+
+# Fit a linear model to the Carseats data set
+fm_carseats <- lm(Sales ~ . + Price:Age + Income:Advertising, data = Carseats)
+summary(fm_carseats)  # print model summary
+```
+
+The next code chunk loads the **statlingua** package and establishes a connection to a (default) Google Gemini model. We also define some context for the LLM to use when explaining the above output:
+
+```{r carseats_lm_context}
+library(statlingua)
+
+# Establish client connection
+client <- ellmer::chat_google_gemini(echo = "none")
+
+# Additional context for the LLM to consider
+carseats_context <- "
+The model uses a data set on child car seat sales (in thousands of units) at 400 different stores.
+The goal is to identify factors associated with sales.
+The variables are:
+  * Sales: Unit sales (in thousands) at each location (the response variable).
+  * CompPrice: Price charged by competitor at each location.
+  * Income: Community income level (in thousands of dollars).
+  * Advertising: Local advertising budget for the company at each location (in thousands of dollars).
+  * Population: Population size in the region (in thousands).
+  * Price: Price the company charges for car seats at each site.
+  * ShelveLoc: A factor with levels 'Bad', 'Good', and 'Medium' indicating the quality of the shelving location for the car seats. ('Bad' is the reference level).
+  * Age: Average age of the local population.
+  * Education: Education level at each location.
+  * Urban: A factor ('No', 'Yes') indicating if the store is in an urban or rural location. ('No' is the reference level).
+  * US: A factor ('No', 'Yes') indicating if the store is in the US or not. ('No' is the reference level).
+Interaction terms `Income:Advertising` and `Price:Age` are also included.
+The data set is simulated. We want to understand key drivers of sales and how to interpret the interaction terms.
+"
+```
+
+Next, let's use the Google Gemini model to generate an explanation of the model's output, targeting a `"student"` audience with `"detailed"` verbosity.
+
+```{r carseats_lm_explain, results="asis"} 
+explain(fm_carseats, client = client, context = carseats_context, 
+        audience = "novice", verbosity = "detailed")
+```
+
+
+#### Follow-up Question: Interpreting R-squared
+
+The initial explanation is great, but let's say a student wants to understand R-squared more deeply for this particular model. We can use the `$chat()` method of `client` (an [ellmer](https://cran.r-project.org/package=ellmer) `"Chat"` object), which remembers the context of the previous interaction.
+
+```{r carseats_lm_explain_follow_up}
+query <- paste("Could you explain the R-squared values (Multiple R-squared and",
+               "Adjusted R-squared) in simpler terms for this car seat sales",
+               "model? What does it practically mean for predicting sales?")
+client$chat(query)
+```
+
+The LLM has provided a more detailed explanation of R-squared, tailored to the `fm_carseats` model and provided context, discussing how much of the variability in `Sales` is explained by the predictors in the model.
+
+
+### Example 2: Logistic GLM (`glm`) - Pima Indians Diabetes
+
+Let's use the `Pima.tr` data set from the `MASS` package to fit a logistic regression model. This data set is about the prevalence of diabetes in Pima Indian women. Our goal is to identify factors associated with the likelihood of testing positive for diabetes.
+
+```{r pima_glm}
+data(Pima.tr, package = "MASS")  # load the Pima.tr data set
+
+# Fit a logistic regression model
+fm_pima <- glm(type ~ npreg + glu + bp + skin + bmi + ped + age, 
+               data = Pima.tr, family = binomial(link = "logit"))
+summary(fm_pima)  # print model summary
+```
+
+Now, let's provide some additional context to accompany the output when requesting an explanation from the LLM:
+
+```{r pima_glm_context, eval = TRUE}
+pima_context <- "
+This logistic regression model attempts to predict the likelihood of a Pima 
+Indian woman testing positive for diabetes. The data is from a study on women of 
+Pima Indian heritage, aged 21 years or older, living near Phoenix, Arizona. The 
+response variable 'type' is binary: 'Yes' (tests positive for diabetes) or 'No'.
+
+Predictor variables include:
+  - npreg: Number of pregnancies.
+  - glu: Plasma glucose concentration in an oral glucose tolerance test.
+  - bp: Diastolic blood pressure (mm Hg).
+  - skin: Triceps skin fold thickness (mm).
+  - bmi: Body mass index (weight in kg / (height in m)^2).
+  - ped: Diabetes pedigree function (a measure of genetic predisposition).
+  - age: Age in years.
+  
+The goal is to understand which of these factors are significantly associated 
+with an increased or decreased odds of having diabetes. We are particularly 
+interested in interpreting coefficients as odds ratios.
+"
+
+# Establish fresh client connection
+client <- ellmer::chat_google_gemini(echo = "none")
+```
+
+This time, we'll ask **statlingua** for an explanation, targeting a `"researcher"` with `"moderate"` verbosity. This audience would be interested in aspects like odds ratios and model fit.
+
+```{r pima_glm_explain, results="asis"} 
+explain(fm_pima, client = client, context = pima_context,
+        audience = "researcher", verbosity = "moderate")
+```
+
+The above (rendered Markdown) explains the logistic regression coefficients (e.g., for `glu` or `bmi`) in terms of log-odds and odds ratios, discusses their statistical significance, and interprets overall model fit statistics like AIC and deviance. For a researcher, the explanation might also touch upon the implications of these findings for diabetes risk assessment.
+
+Thank you for catching that error! It's crucial to have accurate and reliable examples. The `Pima.tr` data set is a much more suitable choice for this GLM example.
+
+### Example 3: Cox Proportional Hazards Model (`coxph`) - Lung Cancer Survival
+
+Let's model patient survival in a lung cancer study using the `lung` data set from the `survival` package. This is a classic data set for Cox PH models.
+
+```{r lung_coxph, eval = TRUE}
+library(survival)
+
+# Load the lung cancer data set (from package survival)
+data(cancer)
+
+# Fit a time transform Cox PH model using current age
+fm_lung <- coxph(Surv(time, status) ~ ph.ecog + tt(age), data = lung,
+     tt = function(x, t, ...) pspline(x + t/365.25))
+summary(fm_lung)  # print model summary
+```
+
+Here's some additional context to provide for the lung cancer survival model:
+
+```{r lung_coxph_context}
+lung_context <- "
+This Cox proportional hazards model analyzes survival data for patients with 
+advanced lung cancer. The objective is to identify factors associated with 
+patient survival time (in days). The variables include:
+  - time: Survival time in days.
+  - status: Censoring status (1=censored, 2=dead).
+  - age: Age in years.
+  - sex: Patient's sex (1=male, 2=female). Note: In the model, 'sex' is treated as numeric; interpretations should consider this. It's common to factor this, but here it's numeric.
+  - ph.ecog: ECOG performance score (0=good, higher values mean worse performance).
+We want to understand how age, sex, and ECOG score relate to the hazard of death.
+Interpretations should focus on hazard ratios. For example, how does a one-unit increase in ph.ecog affect the hazard of death?
+"
+
+# Establish fresh client connection
+client <- ellmer::chat_google_gemini(echo = "none")
+```
+
+Let's get an explanation for a `"manager"` audience, looking for a `"brief"` overview.
+
+```{r lung_coxph_explain, results="asis"} 
+explain(fm_lung, client = client, context = lung_context,
+        audience = "manager", verbosity = "brief")
+```
+
+The rendered Markdown output above provides a concise, high-level summary suitable for a manager, focusing on the key predictors of survival and their implications in terms of increased or decreased risk (hazard).
+
+## Inspecting LLM Interaction
+
+If you want to see the exact system and user prompts that **statlingua** generated and sent to the LLM (via [ellmer](https://cran.r-project.org/package=ellmer)), as well as the raw response from the LLM, you can print the [ellmer](https://cran.r-project.org/package=ellmer) `"Chat"` object (defined as `client` in this example) *after* an `explain()` call. The `client` object stores the history of the interaction.
+
+```{r inspect_client}
+print(client) 
+```
+
+This transparency is invaluable for debugging, understanding the process, or even refining prompts if you were developing custom extensions for **statlingua**.
+
+## Conclusion
+
+The **statlingua** package, working hand-in-hand with [ellmer](https://cran.r-project.org/package=ellmer), provides a powerful and user-friendly bridge to the interpretive capabilities of Large Language Models for R users. By mastering the `explain()` function and its arguments—especially `context`, `audience`, and `verbosity`—you can transform standard statistical outputs into rich, understandable narratives.
+
+Remember, the quality of the LLM's explanation is heavily influenced by the clarity of the `context` you provide and the inherent capabilities of the LLM you choose. Always critically review the generated explanations.
+
+Happy explaining\!
