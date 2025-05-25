@@ -1,7 +1,5 @@
 # statlingua <img src="man/figures/logo.png" align="right" height="120" alt="" />
 
-**WARNING:** This package is a work in progress! Use with caution.
-
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
