@@ -30,14 +30,17 @@
 #' * `"brief"` - Offers a high-level summary.
 #' * `"detailed"` - Offers a comprehensive interpretation.
 #'
-#' @param concatenate Logical indicating whether to return an unformatted
-#' character string (`FALSE`) or to concatenate the results into formatted
-#' output (`TRUE`) using [cat()][base::cat]. Default is `FALSE`.
-#'
 #' @param ... Additional optional arguments. (Currently ignored.)
 #'
-#' @returns Either a character string providing the LLM explanation
-#' (`concatenate = FALSE`) or nothing (i.e., invisible `NULL`).
+#' @returns An object of class `"statlingua_explanation"`. Essentially a list
+#' with the following components:
+#' * `text` - Character string representation of the LLM's response.
+#' * `model_type` - Character string giving the model type (e.g., `"lm"` or
+#' `"coxph"`).
+#' * `audience` - Character string specifying the level or intended audience for
+#' the explanations.
+#' * `verbosity` - Character string specifying the level of verbosity or level
+#' of detail of the provided explanation.
 #'
 #' @examples
 #' \dontrun{
@@ -74,7 +77,6 @@ explain <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
   ) {
   audience <- match.arg(audience)
@@ -92,7 +94,6 @@ explain.default <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
@@ -103,12 +104,17 @@ explain.default <- function(
                                    context = context)
   client$set_system_prompt(sys_prompt)
   ex <- client$chat(usr_prompt)
-  if (isTRUE(concatenate)) {
-    cat(ex)
-    return(invisible(ex))
-  } else {
-    return(ex)
-  }
+  output <- structure(
+    list(
+      text = ex,
+      # Potentially add other metadata here if useful later
+      model_type = name, # 'name' argument from .explain_core
+      audience = audience,
+      verbosity = verbosity
+    ),
+    class = c("statlingua_explanation", "character")
+  )
+  return(output)
 }
 
 
@@ -123,7 +129,6 @@ explain.htest <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .explain_core(
@@ -133,8 +138,7 @@ explain.htest <- function(
     audience = audience,
     verbosity = verbosity,
     name = "htest",
-    model = object$method,
-    concatenate = concatenate
+    model = object$method
   )
 }
 
@@ -148,7 +152,6 @@ explain.lm <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .explain_core(
@@ -158,8 +161,7 @@ explain.lm <- function(
     audience = audience,
     verbosity = verbosity,
     name = "lm",
-    model = "linear regression model",
-    concatenate = concatenate
+    model = "linear regression model"
   )
 }
 
@@ -173,7 +175,6 @@ explain.glm <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .family <- stats::family(object)$family
@@ -185,8 +186,7 @@ explain.glm <- function(
     audience = audience,
     verbosity = verbosity,
     name = "glm",
-    model = paste(.family, "generalized linear model with", .link, "link"),
-    concatenate = concatenate
+    model = paste(.family, "generalized linear model with", .link, "link")
   )
 }
 
@@ -202,7 +202,6 @@ explain.polr <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .method <- object$method
@@ -213,8 +212,7 @@ explain.polr <- function(
     audience = audience,
     verbosity = verbosity,
     name = "polr",
-    model = paste("proportional odds", .method, "regression model"),
-    concatenate = concatenate
+    model = paste("proportional odds", .method, "regression model")
   )
 }
 
@@ -230,7 +228,6 @@ explain.lme <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .explain_core(
@@ -240,8 +237,7 @@ explain.lme <- function(
     audience = audience,
     verbosity = verbosity,
     name = "lme",
-    model = "linear mixed-effects model",
-    concatenate = concatenate
+    model = "linear mixed-effects model"
   )
 }
 
@@ -257,7 +253,6 @@ explain.lmerMod <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .explain_core(
@@ -267,8 +262,7 @@ explain.lmerMod <- function(
     audience = audience,
     verbosity = verbosity,
     name = "lmerMod",
-    model = "linear mixed-effects model",
-    concatenate = concatenate
+    model = "linear mixed-effects model"
   )
 }
 
@@ -282,7 +276,6 @@ explain.glmerMod <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .family <- stats::family(object)$family
@@ -295,8 +288,7 @@ explain.glmerMod <- function(
     verbosity = verbosity,
     name = "glmerMod",
     model = paste(.family, "generalized linear mixed-effects model with",
-                       .link, "link"),
-    concatenate = concatenate
+                  .link, "link")
   )
 }
 
@@ -312,7 +304,6 @@ explain.gam <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .family <- stats::family(object)$family
@@ -324,8 +315,7 @@ explain.gam <- function(
     audience = audience,
     verbosity = verbosity,
     name = "gam",
-    model = paste(.family, "generalized additive model with", .link, "link"),
-    concatenate = concatenate
+    model = paste(.family, "generalized additive model with", .link, "link")
   )
 }
 
@@ -341,7 +331,6 @@ explain.survreg <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .explain_core(
@@ -351,8 +340,7 @@ explain.survreg <- function(
     audience = audience,
     verbosity = verbosity,
     name = "survreg",
-    model = "parametric survival regression model",
-    concatenate = concatenate
+    model = "parametric survival regression model"
   )
 }
 
@@ -366,7 +354,6 @@ explain.coxph <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .explain_core(
@@ -376,8 +363,7 @@ explain.coxph <- function(
     audience = audience,
     verbosity = verbosity,
     name = "coxph",
-    model = "Cox proportional hazards regression model",
-    concatenate = concatenate
+    model = "Cox proportional hazards regression model"
   )
 }
 
@@ -393,7 +379,6 @@ explain.rpart <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
-    concatenate = FALSE,
     ...
 ) {
   .explain_core(
@@ -403,7 +388,6 @@ explain.rpart <- function(
     audience = audience,
     verbosity = verbosity,
     name = "rpart",
-    model = "recursive partitioning tree model",
-    concatenate = concatenate
+    model = "recursive partitioning tree model"
   )
 }

@@ -150,10 +150,15 @@
   usr_prompt <- .build_usr_prompt(model, output = output, context = context)
   client$set_system_prompt(sys_prompt)
   ex <- client$chat(usr_prompt)
-  if (isTRUE(concatenate)) {
-    cat(ex)
-    return(invisible(ex))
-  } else {
-    return(ex)
-  }
+  output <- structure(
+    list(
+      text = ex,
+      # Potentially add other metadata here if useful later
+      model_type = name, # 'name' argument from .explain_core
+      audience = audience,
+      verbosity = verbosity
+    ),
+    class = c("statlingua_explanation", "character")
+  )
+  return(output)
 }

@@ -22,7 +22,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -32,7 +31,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -42,7 +40,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -52,7 +49,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -62,7 +58,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -72,7 +67,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -82,7 +76,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -92,7 +85,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -102,7 +94,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -112,7 +103,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -122,7 +112,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -132,7 +121,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 
@@ -142,7 +130,6 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
-  concatenate = FALSE,
   ...
 )
 }
@@ -172,10 +159,6 @@ decision-making.
 not necessarily in statistics.
 }}
 
-\item{concatenate}{Logical indicating whether to return an unformatted
-character string (\code{FALSE}) or to concatenate the results into formatted
-output (\code{TRUE}) using \link[base:cat]{cat()}. Default is \code{FALSE}.}
-
 \item{...}{Additional optional arguments. (Currently ignored.)}
 
 \item{Verbosity}{Character string indicating the desired verbosity:
@@ -186,8 +169,17 @@ output (\code{TRUE}) using \link[base:cat]{cat()}. Default is \code{FALSE}.}
 }}
 }
 \value{
-Either a character string providing the LLM explanation
-(\code{concatenate = FALSE}) or nothing (i.e., invisible \code{NULL}).
+An object of class \code{"statlingua_explanation"}. Essentially a list
+with the following components:
+\itemize{
+\item \code{text} - Character string representation of the LLM's response.
+\item \code{model_type} - Character string giving the model type (e.g., \code{"lm"} or
+\code{"coxph"}).
+\item \code{audience} - Character string specifying the level or intended audience for
+the explanations.
+\item \code{verbosity} - Character string specifying the level of verbosity or level
+of detail of the provided explanation.
+}
 }
 \description{
 Use an LLM to explain the output from various statistical objects using
