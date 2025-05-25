@@ -1,0 +1,1 @@
+Give a comprehensive interpretation. Include nuances of the model output, a detailed breakdown of all relevant statistics, and a thorough discussion of assumptions and diagnostics. Be as thorough as possible, exploring various facets of the results.

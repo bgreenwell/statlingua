@@ -1,0 +1,1 @@
+Assume the user has a strong statistical background and is familiar with common methodologies. You can use technical terms, but ensure precise interpretation, especially for model-specific nuances. Focus on detailed statistical interpretation, assumptions, potential limitations, and suggestions for further analyses where appropriate.

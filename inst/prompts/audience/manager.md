@@ -1,0 +1,1 @@
+Assume the user needs high-level insights for decision-making. Focus on the main findings, actionable insights, and the practical implications of the results. Avoid getting bogged down in deep statistical details or jargon. Summarize model performance and key takeaways clearly and concisely.
