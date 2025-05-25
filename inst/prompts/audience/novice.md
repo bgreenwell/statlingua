@@ -1,0 +1,1 @@
+Assume the user has a limited statistics background. Avoid technical jargon where possible; if essential, explain it very clearly and simply. Use analogies or simple, relatable examples if they aid understanding. Focus on the practical meaning and impact of the results. Ensure explanations are patient and easy to follow.

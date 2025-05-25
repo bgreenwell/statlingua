@@ -1,0 +1,1 @@
+Your response must be structured using Markdown. Employ headings (e.g., `### Interpretation of Coefficients`), bullet points, and code formatting (e.g., for variable names like `variable_name`) where appropriate to enhance clarity and readability.
