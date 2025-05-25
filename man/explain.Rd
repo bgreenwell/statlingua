@@ -159,14 +159,14 @@ decision-making.
 not necessarily in statistics.
 }}
 
-\item{...}{Additional optional arguments. (Currently ignored.)}
-
-\item{Verbosity}{Character string indicating the desired verbosity:
+\item{verbosity}{Character string indicating the desired verbosity:
 \itemize{
 \item \code{"moderate"} - Offers a balanced explanation (default).
 \item \code{"brief"} - Offers a high-level summary.
 \item \code{"detailed"} - Offers a comprehensive interpretation.
 }}
+
+\item{...}{Additional optional arguments. (Currently ignored.)}
 }
 \value{
 An object of class \code{"statlingua_explanation"}. Essentially a list

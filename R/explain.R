@@ -25,7 +25,7 @@
 #' * `"domain_expert"` - Assumes the user is an expert in their own field but
 #' not necessarily in statistics.
 #'
-#' @param Verbosity Character string indicating the desired verbosity:
+#' @param verbosity Character string indicating the desired verbosity:
 #' * `"moderate"` - Offers a balanced explanation (default).
 #' * `"brief"` - Offers a high-level summary.
 #' * `"detailed"` - Offers a comprehensive interpretation.
@@ -108,7 +108,7 @@ explain.default <- function(
     list(
       text = ex,
       # Potentially add other metadata here if useful later
-      model_type = name, # 'name' argument from .explain_core
+      model_type = "default",
       audience = audience,
       verbosity = verbosity
     ),
