@@ -14,6 +14,22 @@
 #' @param context Optional character string providing additional context, such
 #' as background on the research question and information about the data.
 #'
+#' @param audience Character string indicating the target audience:
+#' * `"novice"` - Assumes the user has a limited statistics background
+#' (default).
+#' * `"student"` - Assumes the user is learning statistics.
+#' * `"researcher"` - Assumes the user has a strong statistical background and
+#' is familiar with common methodologies.
+#' * `"manager"` - Assumes the user needs high-level insights for
+#' decision-making.
+#' * `"domain_expert"` - Assumes the user is an expert in their own field but
+#' not necessarily in statistics.
+#'
+#' @param Verbosity Character string indicating the desired verbosity:
+#' * `"moderate"` - Offers a balanced explanation (default).
+#' * `"brief"` - Offers a high-level summary.
+#' * `"detailed"` - Offers a comprehensive interpretation.
+#'
 #' @param concatenate Logical indicating whether to return an unformatted
 #' character string (`FALSE`) or to concatenate the results into formatted
 #' output (`TRUE`) using [cat()][base::cat]. Default is `FALSE`.
@@ -26,43 +42,64 @@
 #' @examples
 #' \dontrun{
 #' # Polynomial regression
-#' cars_lm <- lm(dist ~ poly(speed, degree = 2), data = cars)
+#' fm1 <- lm(dist ~ poly(speed, degree = 2), data = cars)
 #' context <- "
 #' The data give the speed of cars (mph) and the distances taken to stop (ft).
-#' Note that the data were recorded in the 1920s.
+#' Note that the data were recorded in the 1920s!
 #' "
 #' # Use Google Gemini to explain the output; requires an API key; see
 #' # ?ellmer::chat_google_gemini for details
 #' client <- ellmer::chat_google_gemini(echo = "none")
-#' ex <- explain(cars_lm, client = client, context = context)
+#' ex <- explain(fm1, client = client, context = context)
 #'
 #' # Poisson regression example from ?stats::glm
 #' counts <- c(18,17,15,20,10,20,25,13,12)
 #' outcome <- gl(3,1,9)
 #' treatment <- gl(3,3)
 #' data.frame(treatment, outcome, counts) # showing data
-#' D93_glm <- glm(counts ~ outcome + treatment, family = poisson())
+#' fm2 <- glm(counts ~ outcome + treatment, family = poisson())
 #'
 #' # Use Google Gemini to explain the output; requires an API key; see
 #' # ?ellmer::chat_google_gemini for details
 #' client <- ellmer::chat_google_gemini()
-#' explain(D93_glm, client = client)
+#' explain(fm2, client = client, audience = "student", verbosity = "detailed")
 #' }
 #'
 #'
 #' @export
-explain <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+  ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
   UseMethod("explain")
 }
 
 
 #' @rdname explain
 #' @export
-explain.default <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.default <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
-  sys_prompt <- .assemble_system_prompt(model_name = "default", audience = audience, verbosity = verbosity)
-  output <- capture_output(object)
-  usr_prompt <- .build_user_prompt("R object", output = output,
+  sys_prompt <- .assemble_sys_prompt(model_name = "default",
+                                     audience = audience, verbosity = verbosity)
+  output <- .capture_output(object)
+  usr_prompt <- .build_usr_prompt("R object", output = output,
                                    context = context)
   client$set_system_prompt(sys_prompt)
   ex <- client$chat(usr_prompt)
@@ -79,7 +116,16 @@ explain.default <- function(object, client, context = NULL, audience = "research
 
 #' @rdname explain
 #' @export
-explain.htest <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.htest <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .explain_core(
     object = object,
     client = client,
@@ -95,7 +141,16 @@ explain.htest <- function(object, client, context = NULL, audience = "researcher
 
 #' @rdname explain
 #' @export
-explain.lm <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.lm <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .explain_core(
     object = object,
     client = client,
@@ -111,7 +166,16 @@ explain.lm <- function(object, client, context = NULL, audience = "researcher", 
 
 #' @rdname explain
 #' @export
-explain.glm <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.glm <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -131,7 +195,16 @@ explain.glm <- function(object, client, context = NULL, audience = "researcher",
 
 #' @rdname explain
 #' @export
-explain.polr <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.polr <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .method <- object$method
   .explain_core(
     object = object,
@@ -150,7 +223,16 @@ explain.polr <- function(object, client, context = NULL, audience = "researcher"
 
 #' @rdname explain
 #' @export
-explain.lme <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.lme <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .explain_core(
     object = object,
     client = client,
@@ -168,7 +250,16 @@ explain.lme <- function(object, client, context = NULL, audience = "researcher",
 
 #' @rdname explain
 #' @export
-explain.lmerMod <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.lmerMod <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .explain_core(
     object = object,
     client = client,
@@ -184,7 +275,16 @@ explain.lmerMod <- function(object, client, context = NULL, audience = "research
 
 #' @rdname explain
 #' @export
-explain.glmerMod <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.glmerMod <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -205,7 +305,16 @@ explain.glmerMod <- function(object, client, context = NULL, audience = "researc
 
 #' @rdname explain
 #' @export
-explain.gam <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.gam <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -225,7 +334,16 @@ explain.gam <- function(object, client, context = NULL, audience = "researcher",
 
 #' @rdname explain
 #' @export
-explain.survreg <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.survreg <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .explain_core(
     object = object,
     client = client,
@@ -241,7 +359,16 @@ explain.survreg <- function(object, client, context = NULL, audience = "research
 
 #' @rdname explain
 #' @export
-explain.coxph <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.coxph <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .explain_core(
     object = object,
     client = client,
@@ -259,7 +386,16 @@ explain.coxph <- function(object, client, context = NULL, audience = "researcher
 
 #' @rdname explain
 #' @export
-explain.rpart <- function(object, client, context = NULL, audience = "researcher", verbosity = "moderate", concatenate = FALSE, ...) {
+explain.rpart <- function(
+    object,
+    client,
+    context = NULL,
+    audience = c("novice", "student", "researcher", "manager",
+                 "domain_expert"),
+    verbosity = c("moderate", "brief", "detailed"),
+    concatenate = FALSE,
+    ...
+) {
   .explain_core(
     object = object,
     client = client,

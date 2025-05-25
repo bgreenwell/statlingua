@@ -16,31 +16,135 @@
 \alias{explain.rpart}
 \title{Explain statistical output}
 \usage{
-explain(object, client, context = NULL, concatenate = FALSE, ...)
+explain(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{default}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{default}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{htest}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{htest}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{lm}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{lm}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{glm}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{glm}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{polr}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{polr}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{lme}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{lme}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{lmerMod}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{lmerMod}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{glmerMod}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{glmerMod}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{gam}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{gam}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{survreg}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{survreg}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{coxph}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{coxph}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 
-\method{explain}{rpart}(object, client, context = NULL, concatenate = FALSE, ...)
+\method{explain}{rpart}(
+  object,
+  client,
+  context = NULL,
+  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+  verbosity = c("moderate", "brief", "detailed"),
+  concatenate = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{An appropriate statistical object. For example, \code{object} can be
@@ -55,11 +159,31 @@ the output from calling \link[stats:t.test]{t.test()} or \link[stats:glm]{glm()}
 \item{context}{Optional character string providing additional context, such
 as background on the research question and information about the data.}
 
+\item{audience}{Character string indicating the target audience:
+\itemize{
+\item \code{"novice"} - Assumes the user has a limited statistics background
+(default).
+\item \code{"student"} - Assumes the user is learning statistics.
+\item \code{"researcher"} - Assumes the user has a strong statistical background and
+is familiar with common methodologies.
+\item \code{"manager"} - Assumes the user needs high-level insights for
+decision-making.
+\item \code{"domain_expert"} - Assumes the user is an expert in their own field but
+not necessarily in statistics.
+}}
+
 \item{concatenate}{Logical indicating whether to return an unformatted
 character string (\code{FALSE}) or to concatenate the results into formatted
 output (\code{TRUE}) using \link[base:cat]{cat()}. Default is \code{FALSE}.}
 
 \item{...}{Additional optional arguments. (Currently ignored.)}
+
+\item{Verbosity}{Character string indicating the desired verbosity:
+\itemize{
+\item \code{"moderate"} - Offers a balanced explanation (default).
+\item \code{"brief"} - Offers a high-level summary.
+\item \code{"detailed"} - Offers a comprehensive interpretation.
+}}
 }
 \value{
 Either a character string providing the LLM explanation
@@ -73,27 +197,27 @@ descriptions.
 \examples{
 \dontrun{
 # Polynomial regression
-cars_lm <- lm(dist ~ poly(speed, degree = 2), data = cars)
+fm1 <- lm(dist ~ poly(speed, degree = 2), data = cars)
 context <- "
 The data give the speed of cars (mph) and the distances taken to stop (ft).
-Note that the data were recorded in the 1920s.
+Note that the data were recorded in the 1920s!
 "
 # Use Google Gemini to explain the output; requires an API key; see
 # ?ellmer::chat_google_gemini for details
 client <- ellmer::chat_google_gemini(echo = "none")
-ex <- explain(cars_lm, client = client, context = context)
+ex <- explain(fm1, client = client, context = context)
 
 # Poisson regression example from ?stats::glm
 counts <- c(18,17,15,20,10,20,25,13,12)
 outcome <- gl(3,1,9)
 treatment <- gl(3,3)
 data.frame(treatment, outcome, counts) # showing data
-D93_glm <- glm(counts ~ outcome + treatment, family = poisson())
+fm2 <- glm(counts ~ outcome + treatment, family = poisson())
 
 # Use Google Gemini to explain the output; requires an API key; see
 # ?ellmer::chat_google_gemini for details
 client <- ellmer::chat_google_gemini()
-explain(D93_glm, client = client)
+explain(fm2, client = client, audience = "student", verbosity = "detailed")
 }
 
 

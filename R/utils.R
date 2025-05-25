@@ -1,6 +1,6 @@
 #' @noRd
 #' @keywords internal
-capture_output <- function(..., collapse = "\n", trim = FALSE) {
+.capture_output <- function(..., collapse = "\n", trim = FALSE) {
   # Taken from https://github.com/toscm/toscutil/tree/master
   x <- utils::capture.output(...)
   if (trim) {
@@ -14,87 +14,86 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
 
 #' @noRd
 #' @keywords internal
-.read_prompt_part <- function(..., package = "statlingua") {
-  # Construct path like "prompts/common/role_base.md"
-  # The components passed in '...' are joined by file.path separator
+.read_prompt <- function(...) {
+  # Construct path like "prompts/common/role_base.md"; the components passed
+  # in '...' are joined by file.path separator.
   relative_path <- do.call(file.path, as.list(c("prompts", ...)))
-  
-  file_path <- system.file(relative_path, package = package) # No lib.loc needed usually
-  
+  file_path <- system.file(relative_path, package = "statlingua")
   if (nzchar(file_path) && file.exists(file_path)) {
     # Check if file is not empty before reading
     file_size <- file.info(file_path)$size
     if (file_size > 0) {
       return(readChar(file_path, nchars = file_size))
     } else {
-      # warning(paste0("Prompt file is empty: ", relative_path)) # Optional warning
+      warning(paste0("Prompt file is empty: ", relative_path))
       return("") # Return empty string for empty file
     }
   } else {
-    # warning(paste0("Prompt file not found: ", relative_path)) # Optional warning
+    warning(paste0("Prompt file not found: ", relative_path))
     return("") # Return an empty string if file doesn't exist
   }
 }
 
 #' @noRd
 #' @keywords internal
-.assemble_system_prompt <- function(model_name, audience = "researcher", verbosity = "moderate", package = "statlingua") {
+.assemble_sys_prompt <- function(model_name, audience, verbosity) {
+
   # Default to "default" model if specific model instructions are not found
-  model_instructions_path_test <- system.file(do.call(file.path, as.list(c("prompts", "models", model_name, "instructions.md"))), package = package)
-  actual_model_name <- if (nzchar(model_instructions_path_test) && file.exists(model_instructions_path_test)) model_name else "default"
+  args <- as.list(c("prompts", "models", model_name, "instructions.md"))
+  file_path <-
+    system.file(do.call(file.path, args = args), package = "statlingua")
+  model_name <- if (nzchar(file_path) && file.exists(file_path)) {
+    model_name
+  } else "default"
 
-  role_base_text <- .read_prompt_part("common", "role_base.md", package = package)
-  model_role_specific_text <- .read_prompt_part("models", actual_model_name, "role_specific.md", package = package)
-
+  # Construct role section for system prompt
+  role_base_text <- .read_prompt("common", "role_base.md")
+  model_role_specific_text <-
+    .read_prompt("models", model_name, "role_specific.md")
   role_section <- paste0(
-    "## Role
-
-",
+    "## Role\n\n",
     trimws(role_base_text),
-    if (nzchar(model_role_specific_text)) paste0("
-
-", trimws(model_role_specific_text)) else ""
+    if (nzchar(model_role_specific_text)) {
+      paste0("\n\n", trimws(model_role_specific_text))
+    } else ""
   )
 
-  audience_text <- .read_prompt_part("audience", paste0(audience, ".md"), package = package)
-  verbosity_text <- .read_prompt_part("verbosity", paste0(verbosity, ".md"), package = package)
-  
-  # Check if audience or verbosity files were empty/not found, and provide defaults if so.
+  audience_text <- .read_prompt("audience", paste0(audience, ".md"))
+  verbosity_text <- .read_prompt("verbosity", paste0(verbosity, ".md"))
+
+  # Check if audience or verbosity files were empty/not found, and provide
+  # defaults if so.
   if (!nzchar(audience_text)) {
-    warning(paste0("Audience file for '", audience, "' not found or empty. Using default content."))
-    audience_text <- "Assume the user has a good understanding of statistical concepts." # Default or fallback
+    warning("Audience file for '", audience, "' not found or empty. ",
+            "Using default content.")
+    audience_text <- paste("Assume the user has a good understanding",
+                           "of statistical concepts.")  # default/fallback
   }
   if (!nzchar(verbosity_text)) {
-    warning(paste0("Verbosity file for '", verbosity, "' not found or empty. Using default content."))
-    verbosity_text <- "Provide a moderate level of detail." # Default or fallback
+    warning("Verbosity file for '", verbosity, "' not found or empty. ",
+            "Using default content.")
+    verbosity_text <- "Provide a moderate level of detail."  # default/fallback
   }
 
   audience_verbosity_section <- paste0(
-    "## Intended Audience and Verbosity
-
-",
-    "### Target Audience: ", tools::toTitleCase(audience), "
-", trimws(audience_text), "
-
-",
-    "### Level of Detail (Verbosity): ", tools::toTitleCase(verbosity), "
-", trimws(verbosity_text)
+    "## Intended Audience and Verbosity\n\n",
+    "### Target Audience: ", tools::toTitleCase(audience), "\n",
+    trimws(audience_text), "\n\n",
+    "### Level of Detail (Verbosity): ", tools::toTitleCase(verbosity), "\n",
+    trimws(verbosity_text)
   )
 
-  response_format_text <- .read_prompt_part("common", "response_format.md", package = package)
-  response_format_section <- paste0("## Response Format
+  response_format_text <- .read_prompt("common", "response_format.md")
+  response_format_section <- paste0("## Response Format\n\n",
+                                    trimws(response_format_text))
 
-", trimws(response_format_text))
-  
-  instructions_text <- .read_prompt_part("models", actual_model_name, "instructions.md", package = package)
-  instructions_section <- paste0("## Instructions
+  instructions_text <- .read_prompt("models", model_name,
+                                         "instructions.md")
+  instructions_section <- paste0("## Instructions\n\n",
+                                 trimws(instructions_text))
 
-", trimws(instructions_text))
-
-  caution_text <- .read_prompt_part("common", "caution.md", package = package)
-  caution_section <- paste0("## Caution
-
-", trimws(caution_text))
+  caution_text <- .read_prompt("common", "caution.md")
+  caution_section <- paste0("## Caution\n\n", trimws(caution_text))
 
   # Assemble the full prompt, ensuring sections are separated by two newlines
   # and sections with potentially missing content are handled.
@@ -104,44 +103,25 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
     response_format_section,
     instructions_section,
     caution_section,
-    sep = "
-
-
-" # Use three newlines for better separation between major sections
+    sep = "\n\n\n"  # use three newlines for better separation between major sections
   )
-  
+
   return(trimws(full_prompt))
 }
 
 #' @noRd
 #' @keywords internal
-# .get_system_prompt <- function(name) {
-#   file_name <- paste0("system_prompt_", name, ".md")
-#   file_path <- system.file("prompts", file_name, package = "statlingua")
-#   if (!nzchar(file_path)) {
-#     stop("System prompt for '", name, "' models not found.",
-#          call. = FALSE)
-#   }
-#   return(readChar(file_path, nchars = file.info(file_path)$size))
-#   # return(paste(readLines(filepath), collapse = "\n"))
-# }
-
-
-#' @noRd
-#' @keywords internal
-.build_user_prompt <- function(model, output, context = NULL) {
-  # Could use `ellmer::interpolate()`, but doesn't seem necessary
+.build_usr_prompt <- function(model, output, context = NULL) {
   prompt <- paste0("Explain the following ", model, " output:\n", output)
   if (!is.null(context) && nzchar(context)) {
     prompt <- paste0(
-      prompt,
-      "\n\n## Additional context to consider\n\n",
+      prompt, "\n\n",
+      "## Additional context to consider\n\n",
       context
     )
   }
   return(prompt)
 }
-
 
 #' @noRd
 #' @keywords internal
@@ -157,17 +137,17 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
 #' background on the research question and information about the data.
 #'
 #' @param name Character string specifying the class name for reading in the
-#' system prompt (used as `model_name` for `.assemble_system_prompt`).
+#' system prompt (used as `model_name` for `.assemble_sys_prompt`).
 #'
 #' @param model Character string specifying the type of model to be explained (used in user prompt).
 #' @param audience Character string specifying the target audience for the explanation.
 #' @param verbosity Character string specifying the desired level of detail.
-.explain_core <- function(object, client, context, name, model, concatenate, audience = "researcher", verbosity = "moderate") {
+.explain_core <- function(object, client, context, name, model, concatenate,
+                          audience = "researcher", verbosity = "moderate") {
   stopifnot(inherits(client, what = c("Chat", "R6")))
-  # sys_prompt <- .get_system_prompt(name) # Old way
-  sys_prompt <- .assemble_system_prompt(model_name = name, audience = audience, verbosity = verbosity)
+  sys_prompt <- .assemble_sys_prompt(name, audience = audience, verbosity = verbosity)
   output <- summarize(object)  # create text summary of object
-  usr_prompt <- .build_user_prompt(model, output = output, context = context)
+  usr_prompt <- .build_usr_prompt(model, output = output, context = context)
   client$set_system_prompt(sys_prompt)
   ex <- client$chat(usr_prompt)
   if (isTRUE(concatenate)) {
@@ -177,5 +157,3 @@ capture_output <- function(..., collapse = "\n", trim = FALSE) {
     return(ex)
   }
 }
-
-

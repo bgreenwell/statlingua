@@ -27,35 +27,35 @@ summarize <- function(object, ...) {
 #' @rdname summarize
 #' @export
 summarize.default <- function(object, ...) {
-  capture_output(object)
+  .capture_output(object)
 }
 
 
 #' @rdname summarize
 #' @export
 summarize.htest <- function(object, ...) {
-  capture_output(object)
+  .capture_output(object)
 }
 
 
 #' @rdname summarize
 #' @export
 summarize.lm <- function(object, ...) {
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
 
 
 #' @rdname summarize
 #' @export
 summarize.glm <- function(object, ...) {
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
 
 
 #' @rdname summarize
 #' @export
 summarize.polr <- function(object, ...) {
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
 
 
@@ -63,7 +63,7 @@ summarize.polr <- function(object, ...) {
 #' @export
 summarize.lme <- function(object, ...) {
   # FIXME: Manually break up output?
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
 
 
@@ -71,7 +71,7 @@ summarize.lme <- function(object, ...) {
 #' @export
 summarize.lmerMod <- function(object, ...) {
   # FIXME: Manually break up output?
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
 
 
@@ -79,7 +79,7 @@ summarize.lmerMod <- function(object, ...) {
 #' @export
 summarize.glmerMod <- function(object, ...) {
   # FIXME: Manually break up output?
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
 
 
@@ -96,11 +96,11 @@ summarize.gam <- function(object, ...) {
     # "Family: ", .family, "\n",
     # "Link: ", .link, "\n\n",
     "## Full Model Summary (selected parts may follow)\n",
-    capture_output(summary(object)), "\n\n",
+    .capture_output(summary(object)), "\n\n",
     "## Parametric Coefficients (if any)\n\n",
-    capture_output(ptab), "\n\n",
+    .capture_output(ptab), "\n\n",
     "## Smooth Terms (if any)\n\n",
-    capture_output(stab), "\n\n"
+    .capture_output(stab), "\n\n"
   )
 }
 
@@ -121,7 +121,7 @@ summarize.survreg <- function(object, ...) {
     "## Response Distribution\n\n",
     "Distribution: ", .dist, "\n\n",
     "## Model Summary\n",
-    capture_output(summary(object))
+    .capture_output(summary(object))
   )
 }
 
@@ -132,7 +132,7 @@ summarize.coxph <- function(object, ...) {
   # FIXME: Check for time-dependent covariates if possible (more advanced, but
   # good to note). For example, if `cox.zph()` was run, its output could be
   # summarized. For now, we'll stick to the basic summary.
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
 
 
@@ -142,5 +142,5 @@ summarize.rpart <- function(object, ...) {
   # Calling `summary.rpart()` prints the call, the table shown by `printcp()`,
   # the variable importance (summing to 100), and details for each node (the
   # details depending on the type of tree).
-  capture_output(summary(object))
+  .capture_output(summary(object))
 }
