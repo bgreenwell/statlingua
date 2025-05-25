@@ -1,3 +1,17 @@
+# Helper function for robust line ending grepl
+grepl_robust_line_endings <- function(pattern, text) {
+  pattern_lf <- gsub("\r\n", "\n", pattern, fixed = TRUE)
+  text_lf <- gsub("\r\n", "\n", text, fixed = TRUE)
+  grepl(pattern_lf, text_lf, fixed = TRUE)
+}
+
+# Helper function to normalize line endings for direct string comparison
+normalize_line_endings <- function(s) {
+  s <- gsub("\r\n", "\n", s, fixed = TRUE) # Convert CRLF to LF
+  s <- gsub("\r", "\n", s, fixed = TRUE)    # Convert standalone CR to LF
+  return(s)
+}
+
 # A simplified R6 mock client to simulate ellmer::Chat behavior
 MockChat <- R6::R6Class(
   "MockChat", # Assign the class generator to a variable
@@ -28,7 +42,9 @@ mock_client <- MockChat$new() # Instantiate the class correctly
 # Test .capture_output()
 df_test <- data.frame(x = 1, y = "a")
 expect_true(is.character(statlingua:::.capture_output(print(df_test))))
-expect_equal(statlingua:::.capture_output(cat("hello\nworld"), collapse = "\n"), "hello\nworld")
+actual_output_cat <- statlingua:::.capture_output(cat("hello\nworld"), collapse = "\n")
+expected_output_cat <- "hello\nworld"
+expect_equal(normalize_line_endings(actual_output_cat), normalize_line_endings(expected_output_cat))
 
 # Test .read_prompt()
 expect_true(nchar(statlingua:::.read_prompt("common", "role_base.md")) > 0)
@@ -46,23 +62,23 @@ expect_true(grepl("## Intended Audience and Verbosity", prompt_lm_novice))
 expect_true(grepl("## Response Format", prompt_lm_novice))
 expect_true(grepl("## Instructions", prompt_lm_novice))
 expect_true(grepl("## Caution", prompt_lm_novice))
-expect_true(grepl(statlingua:::.read_prompt("common", "role_base.md"),
-                  prompt_lm_novice, fixed = TRUE))
-expect_true(grepl(statlingua:::.read_prompt("models", "lm", "role_specific.md"),
-                  prompt_lm_novice, fixed = TRUE))
-expect_true(grepl(statlingua:::.read_prompt("audience", "novice.md"),
-                  prompt_lm_novice, fixed = TRUE))
-expect_true(grepl(statlingua:::.read_prompt("verbosity", "brief.md"),
-                  prompt_lm_novice, fixed = TRUE))
-expect_true(grepl(statlingua:::.read_prompt("models", "lm", "instructions.md"),
-                  prompt_lm_novice, fixed = TRUE))
+expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("common", "role_base.md"),
+                  prompt_lm_novice))
+expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("models", "lm", "role_specific.md"),
+                  prompt_lm_novice))
+expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("audience", "novice.md"),
+                  prompt_lm_novice))
+expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("verbosity", "brief.md"),
+                  prompt_lm_novice))
+expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("models", "lm", "instructions.md"),
+                  prompt_lm_novice))
 
 # Model without role_specific.md (e.g., "default")
 prompt_default_assembly <-
   statlingua:::.assemble_sys_prompt(model_name = "default",
                                     audience = "researcher", verbosity = "moderate")
-expect_true(grepl(statlingua:::.read_prompt("models", "default", "instructions.md"),
-                  prompt_default_assembly, fixed = TRUE))
+expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("models", "default", "instructions.md"),
+                  prompt_default_assembly))
 # Assuming "default" model does not have a role_specific.md or it's empty.
 # The current implementation of .assemble_sys_prompt adds the "## Role" header regardless,
 # then the base role, and then potentially the model-specific role.
@@ -74,8 +90,8 @@ expect_false(grepl(lm_specific_role_phrase, prompt_default_assembly, fixed = TRU
 prompt_invalid_model <-
   statlingua:::.assemble_sys_prompt(model_name = "invalid_model_xyz",
                                     audience = "researcher", verbosity = "moderate")
-expect_true(grepl(statlingua:::.read_prompt("models", "default", "instructions.md"),
-                  prompt_invalid_model, fixed = TRUE))
+expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("models", "default", "instructions.md"),
+                  prompt_invalid_model))
 
 # Fallback for invalid audience
 expect_warning(
@@ -105,14 +121,14 @@ model_desc <- "test model"
 output_str <- "Test output"
 context_str <- "Test context"
 prompt_no_context <- statlingua:::.build_usr_prompt(model_desc, output = output_str) #
-expect_true(grepl(paste0("Explain the following ",
+expect_true(grepl_robust_line_endings(paste0("Explain the following ",
                          model_desc, " output:\n", output_str),
-                  prompt_no_context, fixed = TRUE))
+                  prompt_no_context))
 prompt_with_context <-
   statlingua:::.build_usr_prompt(model_desc,
                                   output = output_str, context = context_str) #
-expect_true(grepl(paste0("\n\n## Additional context to consider\n\n", context_str),
-                  prompt_with_context, fixed = TRUE))
+expect_true(grepl_robust_line_endings(paste0("\n\n## Additional context to consider\n\n", context_str),
+                  prompt_with_context))
 
 # --- Test R/summarize.R Methods ---
 
