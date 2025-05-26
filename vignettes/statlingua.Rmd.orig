@@ -4,7 +4,7 @@ subtitle: "Using LLMs to Help Explain and Interperate Statistical Output"
 from: markdown+emoji
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Unlocking Statistical Insights with statlingua}
+  %\VignetteIndexEntry{The statlingua Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -44,7 +44,7 @@ remotes::install_github("bgreenwell/statlingua")
 ```{r ellmer_install, eval=FALSE}
 install.packages("ellmer")
 ```
-3.  Access to an LLM provider (e.g., [OpenAI](https://openai.com/api/), [Google AI Studio](https://aistudio.google.com/), or [Anthropic](https://www.anthropic.com/)) and a corresponding API key. You'll need to configure your API key according to the [ellmer](https://cran.r-project.org/package=ellmer) package's documentation. This usually involves setting environment variables like `OPENAI_API_KEY`, `GOOGLE_API_KEY`, or `ANTHROPIC_API_KEY`. Note that while While [ellmer](https://cran.r-project.org/package=ellmer) supports numerous LLM providers, **this vignette will specifically use Google Gemini models** via `ellmer::chat_google_gemini()`; I find Google Gemini to be particularly well-suited for explaining statistical output and they offer a generous free tier. You'll need to configure your API key according to the [ellmer](https://cran.r-project.org/package=ellmer) package's documentation. This typically involves setting the `GEMINI_API_KEY` environment variable in your R session or `.Renviron` file (e.g., `Sys.setenv(GEMINI_API_KEY = "YOUR_API_KEY_HERE")`).
+3.  Access to an LLM provider (e.g., OpenAI, Google Gemini, or Anthropic) and a corresponding API key. You'll need to configure your API key according to the [ellmer](https://cran.r-project.org/package=ellmer) package's documentation. This usually involves setting environment variables like `OPENAI_API_KEY`, `GOOGLE_API_KEY`, or `ANTHROPIC_API_KEY`. Note that while While [ellmer](https://cran.r-project.org/package=ellmer) supports numerous LLM providers, **this vignette will specifically use Google Gemini models** via `ellmer::chat_google_gemini()`; I find Google Gemini to be particularly well-suited for explaining statistical output and they offer a generous free tier. You'll need to configure your API key according to the [ellmer](https://cran.r-project.org/package=ellmer) package's documentation. This typically involves setting the `GEMINI_API_KEY` environment variable in your R session or `.Renviron` file (e.g., `Sys.setenv(GEMINI_API_KEY = "YOUR_API_KEY_HERE")`).
 4.  For the examples in this vignette, you'll also need the following packages: [ISLR2](https://cran.r-project.org/package=ISLR2), [MASS](https://cran.r-project.org/package=MASS), and [survival](https://cran.r-project.org/package=survival).
 ```{r other-deps-install, eval=FALSE}
 install.packages(c("ISLR2", "jsonlite", "lme4", "MASS", "survival"))

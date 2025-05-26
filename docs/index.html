@@ -16,8 +16,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Explain Statistical Output with Large Language Models">
-<meta name="description" content="An R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.">
-<meta property="og:description" content="An R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.">
+<meta name="description" content="An R package leveraging large language models (LLMs) to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into LLMs, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.">
+<meta property="og:description" content="An R package leveraging large language models (LLMs) to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into LLMs, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.">
 <meta property="og:image" content="/logo.png">
 </head>
 <body>
@@ -39,12 +39,6 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/statlingua.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/examples.html">examples</a></li>
-  </ul>
-</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -64,94 +58,234 @@
 <img src="logo.png" class="logo" alt=""><h1 id="statlingua-">statlingua <a class="anchor" aria-label="anchor" href="#statlingua-"></a>
 </h1>
 </div>
-<p><strong>WARNING:</strong> This package is a work in progress! Use with caution.</p>
-<!-- badges: start -->
-
-<p><strong>statlingua</strong> is an R package leveraging large language models to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.</p>
-<p>As of now, <strong>statlingua</strong> explicitly supports the following types of statistical models:</p>
+<p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://github.com/bgreenwell/statlingua/issues" class="external-link"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="Contributions Welcome"></a></p>
+<p>The <strong>statlingua</strong> R package is designed to help bridge the gap between complex statistical outputs and clear, human-readable explanations. By leveraging the power of Large Language Models (LLMs), <strong>statlingua</strong> helps you effortlessly translate the dense jargon of statistical models—coefficients, p-values, model fit indices, and more—into straightforward, context-aware natural language.</p>
+<p>Whether you’re a student grappling with new statistical concepts, a researcher needing to communicate findings to a broader audience, or a data scientist looking to quickly draft reports, <strong>statlingua</strong> makes your statistical journey smoother and more accessible.</p>
+<div class="section level3">
+<h3 id="why-statlingua">Why <strong>statlingua</strong>?<a class="anchor" aria-label="anchor" href="#why-statlingua"></a>
+</h3>
+<p>Statistical models are powerful, but their outputs can be intimidating. <strong>statlingua</strong> empowers you to:</p>
 <ul>
-<li>Objects of class <code>"htest"</code> (e.g., R’s built-in <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code> and <code><a href="https://rdrr.io/r/stats/prop.test.html" class="external-link">prop.test()</a></code> functions).</li>
-<li>Linear and generalized linear models (i.e., R’s built-in <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> functions).</li>
-<li>Linear and generalized linear mixed-effects model from packages <a href="https://cran.r-project.org/package=nlme" class="external-link">nlme</a> and <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a>.</li>
-<li>Generalized additive models from package <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a>.</li>
-<li>Survival regression models from package <a href="https://cran.r-project.org/package=survival" class="external-link">survival</a>.</li>
-<li>Proportional odds regression models from package <a href="https://cran.r-project.org/package=MASS" class="external-link">MASS</a>.</li>
-<li>Decision trees from package <a href="https://cran.r-project.org/package=rpart" class="external-link">rpart</a>.</li>
+<li>
+<strong>Democratize Understanding:</strong> Make complex analyses accessible to individuals with varying levels of statistical expertise.</li>
+<li>
+<strong>Enhance Learning &amp; Education:</strong> Students can gain a deeper intuition for model outputs, connecting theory to practical application. Use it as an interactive learning aid to demystify statistical concepts.</li>
+<li>
+<strong>Foster Interdisciplinary Collaboration:</strong> Researchers from diverse fields can more easily interpret and discuss analytical results, leading to richer insights.</li>
+<li>
+<strong>Streamline Reporting &amp; Consulting:</strong> Quickly generate initial drafts of interpretations for reports and presentations, saving time and ensuring clarity for clients or stakeholders.</li>
+<li>
+<strong>Drive Data-Informed Decisions:</strong> Business professionals can better grasp statistical findings, enabling more confident data-driven decision-making without needing to become statistical experts themselves.</li>
+<li>
+<strong>Accelerate Prototyping &amp; Exploration:</strong> Rapidly understand model summaries during iterative data exploration, allowing for faster assessment and refinement of analyses.</li>
 </ul>
-<p>For currently unsupported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.</p>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<p>The <strong>statlingua</strong> package is currently not available on CRAN, but you can install the development version from GitHub.</p>
+<p>By providing clear and contextualized explanations, <strong>statlingua</strong> helps you focus on the <em>implications</em> of your findings rather than getting bogged down in technical minutiae.</p>
+</div>
+<div class="section level3">
+<h3 id="supported-models">Supported Models<a class="anchor" aria-label="anchor" href="#supported-models"></a>
+</h3>
+<p>As of now, <strong>statlingua</strong> explicitly supports a variety of common statistical models in R, including:</p>
+<ul>
+<li>Objects of class <code>"htest"</code> (e.g., from <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code>, <code><a href="https://rdrr.io/r/stats/prop.test.html" class="external-link">prop.test()</a></code>).</li>
+<li>Linear models (<code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>) and Generalized Linear Models (<code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>).</li>
+<li>Linear and Generalized Linear Mixed-Effects Models from packages <a href="https://cran.r-project.org/package=nlme" class="external-link">nlme</a> (<code>lme()</code>) and <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (<code>lmer()</code>, <code>glmer()</code>).</li>
+<li>Generalized Additive Models (<code>gam()</code> from package <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a>).</li>
+<li>Survival Regression Models (<code>survreg()</code>, <code>coxph()</code> from package <a href="https://cran.r-project.org/package=survival" class="external-link">survival</a>).</li>
+<li>Proportional Odds Logistic Regression (<code>polr()</code> from package <a href="https://cran.r-project.org/package=MASS" class="external-link">MASS</a>).</li>
+<li>Decision Trees (<code>rpart()</code> from package <a href="https://cran.r-project.org/package=rpart" class="external-link">rpart</a>).</li>
+<li>…and more, with a robust default method for other model types!</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<p><strong>statlingua</strong> is not yet on CRAN, but you can install the development version from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install the latest development version from GitHub:</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"bgreenwell/statlingua"</span><span class="op">)</span></span></code></pre></div>
+<p>You’ll also need to install the <a href="https://cran.r-project.org/package=ellmer" class="external-link">ellmer</a> package, which you can obtain from CRAN:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ellmer"</span><span class="op">)</span>  <span class="co"># &gt;= 0.2.0</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="todowishlist">TODO/wishlist<a class="anchor" aria-label="anchor" href="#todowishlist"></a>
-</h2>
-<p>Some ideas on ways to enhance the package:</p>
 <div class="section level3">
-<h3 id="granular-control-over-explanation-output">Granular Control Over Explanation Output<a class="anchor" aria-label="anchor" href="#granular-control-over-explanation-output"></a>
+<h3 id="api-key-setup--ellmer-dependency">API Key Setup &amp; <a href="https://cran.r-project.org/package=ellmer" class="external-link">ellmer</a> Dependency<a class="anchor" aria-label="anchor" href="#api-key-setup--ellmer-dependency"></a>
 </h3>
-<p>Currently, the explanations are guided by pre-defined prompts offering a standardized output. To make it more versatile:</p>
+<p><strong>statlingua</strong> doesn’t directly handle API keys or LLM communication. It acts as a sophisticated prompt engineering toolkit that prepares inputs and then passes them to <a href="https://cran.r-project.org/package=ellmer" class="external-link">ellmer</a>. The <a href="https://cran.r-project.org/package=ellmer" class="external-link">ellmer</a> package is responsible for interfacing with various LLM providers (e.g., OpenAI, Google AI Studio, Anthropic).</p>
+<p>Please refer to the <a href="https://cran.r-project.org/package=ellmer" class="external-link">ellmer</a> package documentation for detailed instructions on:</p>
 <ul>
-<li>User-Defined Detail Level: Allow users to specify the desired verbosity of the explanation, for example, through an argument like detail_level = “brief”, “moderate”, or “detailed”. This would adjust the system prompt to ask the LLM for more concise or more elaborate interpretations.</li>
-<li>Target Audience Customization: Introduce an option to tailor the explanation’s technical depth to different audiences (e.g., <code>audience = "novice"</code>, <code>"researcher"</code>, <code>"domain_expert_no_stats_bg"</code>). This would modify the prompt to use simpler language and analogies for novices, or more technical terms for experts.</li>
-<li>Selective Explanations: Enable users to request explanations for specific parts of the model output, such as focusing only on “coefficients,” “model fit statistics,” or “random effects” for mixed models.</li>
+<li>Setting up API keys (usually as environment variables like <code>OPENAI_API_KEY</code>, <code>GEMINI_API_KEY</code>, etc.).</li>
+<li>Specifying different LLM models and providers.</li>
+<li>Other configuration and model parameter options.</li>
 </ul>
-<p>This could be implemented by adding parameters to the <code><a href="reference/explain.html">explain()</a></code> function which dynamically adjust the system prompts sent to the LLM.</p>
+<p>Once <a href="https://cran.r-project.org/package=ellmer" class="external-link">ellmer</a> is installed and has access to an LLM provider, <strong>statlingua</strong> will seamlessly leverage that connection.</p>
 </div>
 <div class="section level3">
-<h3 id="interactive-explanation-mode--follow-up-questions">Interactive Explanation Mode &amp; Follow-up Questions<a class="anchor" aria-label="anchor" href="#interactive-explanation-mode--follow-up-questions"></a>
+<h3 id="quick-example-explaining-a-linear-model">Quick Example: Explaining a Linear Model<a class="anchor" aria-label="anchor" href="#quick-example-explaining-a-linear-model"></a>
 </h3>
-<p>The current explain() function provides a comprehensive, one-time explanation. Enhancing this with interactivity could significantly boost its utility as a learning and exploration tool:</p>
-<ul>
-<li>Conversational Analysis: After the initial explanation is generated, allow users to ask follow-up questions directly within the R console (e.g., “Can you explain the intercept in simpler terms?” or “What does the R-squared value imply here?”).</li>
-<li>Contextual Memory: The system would need to maintain the context of the initial model output and the LLM’s first explanation to answer follow-up questions coherently. This could leverage the chat history capabilities of the underlying ellmer package’s chat objects.</li>
-</ul>
-<p>This would transform statlingua from a static explanation generator into a more dynamic, conversational partner for statistical understanding.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Ensure you have an appropriate API key set up first!</span></span>
+<span><span class="co"># Sys.setenv(GEMINI_API_KEY = "&lt;YOUR_API_KEY_HERE&gt;") </span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/bgreenwell/statlingua" class="external-link">statlingua</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit a polynomial regression model</span></span>
+<span><span class="va">fm_cars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">dist</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html" class="external-link">poly</a></span><span class="op">(</span><span class="va">speed</span>, degree <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">cars</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fm_cars</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define some context (highly recommended!)</span></span>
+<span><span class="va">cars_context</span> <span class="op">&lt;-</span> <span class="st">"</span></span>
+<span><span class="st">This model analyzes the 'cars' dataset from the 1920s. Variables include:</span></span>
+<span><span class="st">  * 'dist' - The distance (in feet) taken to stop.</span></span>
+<span><span class="st">  * 'speed' - The speed of the car (in mph).</span></span>
+<span><span class="st">We want to understand how speed affects stopping distance in the model.</span></span>
+<span><span class="st">"</span></span>
+<span></span>
+<span><span class="co"># Establish connection to an LLM provider (in this case, Google Gemini)</span></span>
+<span><span class="va">client</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/chat_google_gemini.html" class="external-link">chat_google_gemini</a></span><span class="op">(</span>echo <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>  <span class="co"># defaults to gemini-2.0-flash</span></span>
+<span></span>
+<span><span class="co"># Get an explanation</span></span>
+<span><span class="fu"><a href="reference/explain.html">explain</a></span><span class="op">(</span></span>
+<span>  <span class="va">fm_cars</span>,                 <span class="co"># model for LLM to interpret/explain</span></span>
+<span>  client <span class="op">=</span> <span class="va">client</span>,         <span class="co"># connection to LLM provider</span></span>
+<span>  context <span class="op">=</span> <span class="va">cars_context</span>,  <span class="co"># additional context for LLM to consider</span></span>
+<span>  audience <span class="op">=</span> <span class="st">"student"</span>,    <span class="co"># target audience</span></span>
+<span>  verbosity <span class="op">=</span> <span class="st">"detailed"</span>,  <span class="co"># level of detail</span></span>
+<span>  style <span class="op">=</span> <span class="st">"markdown"</span>       <span class="co"># output style</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Ask a follow-up question</span></span>
+<span><span class="va">client</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
+<span>  <span class="st">"How can I construct confidence intervals for each coefficient in the model?"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For more examples, including output, see the <a href="https://bgreenwell.github.io/statlingua/articles/statlingua.html" class="external-link">introductory vignette</a>.</p>
 </div>
 <div class="section level3">
-<h3 id="support-for-model-comparison-explanations">Support for Model Comparison Explanations<a class="anchor" aria-label="anchor" href="#support-for-model-comparison-explanations"></a>
+<h3 id="extending-statlingua-to-support-new-models">Extending <strong>statlingua</strong> to Support New Models<a class="anchor" aria-label="anchor" href="#extending-statlingua-to-support-new-models"></a>
 </h3>
-<p>Users often fit multiple models and need to compare them. statlingua could be extended to assist with this:</p>
+<p>One of <strong>statlingua</strong>’s core strengths is its extensibility. You can add or customize support for new statistical model types by crafting specific prompt components. The system prompt sent to the LLM is dynamically assembled from several markdown files located in the <code>inst/prompts/</code> directory of the package.</p>
+<p>The main function <code><a href="reference/explain.html">explain()</a></code> uses S3 dispatch. When <code>explain(my_model_object, ...)</code> is called, R looks for a method like <code>explain.class_of_my_model_object()</code>. If not found, <code><a href="reference/explain.html">explain.default()</a></code> is used.</p>
+<div class="section level4">
+<h4 id="prompt-directory-structure">Prompt Directory Structure<a class="anchor" aria-label="anchor" href="#prompt-directory-structure"></a>
+</h4>
+<p>The prompts are organized as follows within <code>inst/prompts/</code>:</p>
 <ul>
-<li>Comparative Analysis: Develop functionality where users can input two or more model objects (e.g., lm objects from a nested model sequence, or different models fit to the same data).</li>
-<li>Guided Interpretation: The LLM would be prompted to explain the key differences between the models, interpret comparison statistics (like those from anova() calls, or differences in AIC/BIC), and discuss potential reasons for preferring one model over another, based on the provided context and statistical output.</li>
-</ul>
-<p>This would address a common and often complex task in statistical modeling.</p>
-</div>
-<div class="section level3">
-<h3 id="enhanced-integration-with-reporting-workflows--diverse-output-formats">Enhanced Integration with Reporting Workflows &amp; Diverse Output Formats<a class="anchor" aria-label="anchor" href="#enhanced-integration-with-reporting-workflows--diverse-output-formats"></a>
-</h3>
-<p>While Markdown is a good default, providing more output options and smoother integration with R’s reporting ecosystem would be beneficial:</p>
+<li>
+<code>common/</code>: Contains base prompts applicable to all models.
 <ul>
-<li>Multiple Output Formats: Beyond the current Markdown, offer options to directly output explanations in formats such as:
-<ul>
-<li>HTML: For direct inclusion in web pages or RMarkdown HTML outputs beyond standard rendering.</li>
-<li>LaTeX: For users preparing academic papers.</li>
-<li>R Objects: Convert parts of the explanation (like structured summaries or key findings) into R objects like gt tables or flextable objects for more programmatic control in reports.</li>
+<li>
+<code>role_base.md</code>: Defines the fundamental role of the LLM.</li>
+<li>
+<code>caution.md</code>: A general cautionary note appended to explanations.</li>
 </ul>
 </li>
-<li>Reporting Helpers: Include helper functions to simplify the embedding of statlingua explanations into RMarkdown or Quarto documents. This might involve custom knitr S3 methods for statlingua_explanation objects or dedicated functions that handle chunk options for verbosity, audience, etc.</li>
+<li>
+<code>audience/</code>: Markdown files for different target audiences (e.g., <code>novice.md</code>, <code>researcher.md</code>). The filename (e.g., “novice”) matches the <code>audience</code> argument in <code><a href="reference/explain.html">explain()</a></code>.</li>
+<li>
+<code>verbosity/</code>: Markdown files for different verbosity levels (e.g., <code>brief.md</code>, <code>detailed.md</code>). The filename matches the <code>verbosity</code> argument.</li>
+<li>
+<code>style/</code>: Markdown files defining the output format (e.g., <code>markdown.md</code>, <code>json.md</code>). The filename matches the <code>style</code> argument.</li>
+<li>
+<code>models/&lt;model_class_name&gt;/</code>: Directory for model-specific prompts. <code>&lt;model_class_name&gt;</code> should correspond to the R class of the statistical object (e.g., “lm”, “glm”, “htest”).
+<ul>
+<li>
+<code>instructions.md</code>: The primary instructions for explaining this specific model type. This tells the LLM what to look for in the model output, how to interpret it, and what assumptions to discuss.</li>
+<li>
+<code>role_specific.md</code> (Optional): Additional role details specific to this model type, augmenting <code>common/role_base.md</code>.</li>
 </ul>
-<p>This would make it easier for users to incorporate statlingua’s insights into their documents and presentations.</p>
+</li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="example-adding-support-for-vglm-from-the-vgam-package">Example: Adding Support for <code>vglm</code> from the <code>VGAM</code> package<a class="anchor" aria-label="anchor" href="#example-adding-support-for-vglm-from-the-vgam-package"></a>
+</h4>
+<p>Let’s imagine you want to add dedicated support for <code>vglm</code> (Vector Generalized Linear Models) objects from the <a href="https://cran.r-project.org/package=VGAM" class="external-link">VGAM</a> package.</p>
+<ol style="list-style-type: decimal">
+<li>
+<p><strong>Create New Prompt Files:</strong> You would create a new directory <code>inst/prompts/models/vglm/</code>. Inside this directory, you’d add:</p>
+<ul>
+<li>
+<p><code>inst/prompts/models/vglm/instructions.md</code>: This file will contain the detailed instructions for the LLM on how to interpret <code>vglm</code> objects. You’d detail what aspects of <code>summary(vglm_object)</code> are important, how to discuss coefficients (potentially for multiple linear predictors), link functions, model fit statistics specific to <code>vglm</code>, and relevant assumptions.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="in">    You are explaining a **Vector Generalized Linear Model (VGLM)** (from `VGAM::vglm()`).</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>**Core Concepts &amp; Purpose:**</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>VGLMs are highly flexible, extending GLMs to handle multiple linear predictors and a wider array of distributions and link functions, including multivariate responses.</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>Identify the **Family** (e.g., multinomial, cumulative) and **Link functions**.</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>**Interpretation:**</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="ss">* </span>**Coefficients:** Explain for each linear predictor. Pay attention to link functions (e.g., log odds, log relative risk). Clearly state reference categories.</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="ss">* </span>**Model Fit:** Discuss deviance, AIC, etc.</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="ss">* </span>**Assumptions:** Mention relevant assumptions.</span></code></pre></div>
+</li>
+<li>
+<p><code>inst/prompts/models/vglm/role_specific.md</code> (Optional): If <code>vglm</code> models require the LLM to adopt a slightly more specialized persona.</p>
+<p>You have particular expertise in Vector Generalized Linear Models (VGLMs), understanding their diverse applications for complex response types.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Implement the S3 Method:</strong> Add an S3 method for <code>explain.vglm</code> in an R script (e.g., <code>R/explain_vglm.R</code>):</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#' Explain a vglm object</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @inheritParams explain</span></span>
+<span><span class="co">#' @param object A \code{vglm} object.</span></span>
+<span><span class="co">#' @export</span></span>
+<span><span class="va">explain.vglm</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span></span>
+<span>    <span class="va">object</span>,</span>
+<span>    <span class="va">client</span>,</span>
+<span>    <span class="va">context</span> <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    <span class="va">audience</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"novice"</span>, <span class="st">"student"</span>, <span class="st">"researcher"</span>, <span class="st">"manager"</span>, <span class="st">"domain_expert"</span><span class="op">)</span>,</span>
+<span>    <span class="va">verbosity</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"moderate"</span>, <span class="st">"brief"</span>, <span class="st">"detailed"</span><span class="op">)</span>,</span>
+<span>    <span class="va">style</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"markdown"</span>, <span class="st">"html"</span>, <span class="st">"json"</span>, <span class="st">"text"</span>, <span class="st">"latex"</span><span class="op">)</span>,</span>
+<span>    <span class="va">...</span></span>
+<span>  <span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">audience</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">audience</span><span class="op">)</span></span>
+<span>  <span class="va">verbosity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">verbosity</span><span class="op">)</span></span>
+<span>  <span class="va">style</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">style</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Use the internal .explain_core helper if it suits,</span></span>
+<span>  <span class="co"># or implement custom logic if vglm needs special handling.</span></span>
+<span>  <span class="co"># .explain_core handles system prompt assembly, user prompt building,</span></span>
+<span>  <span class="co"># and calling the LLM via the client.</span></span>
+<span>  <span class="co"># 'name' should match the directory name in inst/prompts/models/</span></span>
+<span>  <span class="co"># 'model_description' is what's shown to the user in the prompt.</span></span>
+<span>  <span class="fu">.explain_core</span><span class="op">(</span></span>
+<span>    object <span class="op">=</span> <span class="va">object</span>,</span>
+<span>    client <span class="op">=</span> <span class="va">client</span>,</span>
+<span>    context <span class="op">=</span> <span class="va">context</span>,</span>
+<span>    audience <span class="op">=</span> <span class="va">audience</span>,</span>
+<span>    verbosity <span class="op">=</span> <span class="va">verbosity</span>,</span>
+<span>    style <span class="op">=</span> <span class="va">style</span>,</span>
+<span>    name <span class="op">=</span> <span class="st">"vglm"</span>, <span class="co"># This tells .assemble_sys_prompt to look in inst/prompts/models/vglm/</span></span>
+<span>    model_description <span class="op">=</span> <span class="st">"Vector Generalized Linear Model (VGLM) from VGAM"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>The <code>summarize.vglm</code> method might also need to be implemented in <code>R/summarize.R</code> if <code>summary(object)</code> for <code>vglm</code> needs special capture or formatting for the LLM. If <code>utils::capture.output(summary(object))</code> is sufficient, <code>summarize.default</code> might work initially.</p>
+</li>
+<li>
+<p><strong>Add to <code>NAMESPACE</code> and Document:</strong></p>
+<ul>
+<li>Ensure the new method is exported in your <code>NAMESPACE</code> file (usually handled by <code>roxygen2</code>): <code>S3method(explain, vglm)</code>
+</li>
+<li>Add <code>roxygen2</code> documentation blocks for <code>explain.vglm</code>.</li>
+</ul>
+</li>
+<li><p><strong>Testing:</strong> Thoroughly test with various <code>vglm</code> examples. You might need to iterate on your <code>instructions.md</code> and <code>role_specific.md</code> to refine the LLM’s explanations.</p></li>
+</ol>
+<p>By following this pattern, <strong>statlingua</strong> can be systematically extended to cover a vast array of statistical models in R!</p>
+</div>
 </div>
 <div class="section level3">
-<h3 id="deeper-guidance-on-model-assumption-checking">Deeper Guidance on Model Assumption Checking<a class="anchor" aria-label="anchor" href="#deeper-guidance-on-model-assumption-checking"></a>
+<h3 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
 </h3>
-<p>The current prompts already do a good job of mentioning model assumptions and suggesting checks (as seen in files like inst/prompts/system_prompt_lm.md and inst/prompts/system_prompt_coxph.md). This could be taken a step further:</p>
-<ul>
-<li>Interpreting Diagnostic Plots/Tests: Allow users to optionally pass the output of common diagnostic functions (e.g., plots generated by plot(model_object), results from car::Anova(), performance::check_model(), or survival::cox.zph()) to the explain() function.</li>
-<li>Holistic Interpretation: The LLM could then be prompted to interpret these diagnostic outputs in conjunction with the main model summary. This would provide users with a more integrated understanding of whether model assumptions are met, the potential implications of any violations, and how these might affect the interpretation of the primary model results.</li>
-<li>Contextual Caveats: The explanation could then also include more specific caveats or recommendations based on the supplied diagnostic information.</li>
-</ul>
-<p>This would empower users not just to understand their model output, but also to critically evaluate its validity.</p>
+<p>Contributions are welcome! Please see the <a href="https://www.google.com/url?sa=E&amp;source=gmail&amp;q=https://github.com/bgreenwell/statlingua/issues" class="external-link">GitHub issues</a> for areas where you can help.</p>
 </div>
+<div class="section level3">
+<h3 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h3>
+<p><strong>statlingua</strong> is available under the GNU General Public License v3.0 (GNU GPLv3). See the <code>LICENSE.md</code> file for more details.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -164,8 +298,7 @@
 <div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small>GPL (&gt;= 3)</small></li>
+<li>GPL (&gt;= 2)</li>
 </ul>
 </div>
 
@@ -184,14 +317,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://github.com/dwyl/esta/issues" class="external-link"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="contributions welcome"></a></li>
-<li><a href="https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-</ul>
-</div>
+
 
   </aside>
 </div>
