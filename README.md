@@ -1,179 +1,212 @@
-# statlingua <img src="man/figures/logo.png" align="right" height="120" alt="" />
+# statlingua <img src="man/figures/logo.png" align="right" height="120" alt="statlingua logo" />
 
-<!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 [![R-CMD-check](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingua/issues)
 
-**statlingua** is an R package leveraging large language models (LLMs) to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into this tool, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics. This capability aims to democratize statistical understanding for individuals with varying levels of technical expertise, making complex analyses more accessible to a broader audience.
+The **statlingua** R package is designed to help bridge the gap between complex statistical outputs and clear, human-readable explanations. By leveraging the power of Large Language Models (LLMs), **statlingua** helps you effortlessly translate the dense jargon of statistical models—coefficients, p-values, model fit indices, and more—into straightforward, context-aware natural language.
 
-### Usefulness Across Scenarios
+Whether you're a student grappling with new statistical concepts, a researcher needing to communicate findings to a broader audience, or a data scientist looking to quickly draft reports, **statlingua** makes your statistical journey smoother and more accessible.
 
-The ability to translate dense statistical jargon into plain language has wide-ranging applications:
+### Why **statlingua**?
 
-*   **Education and Learning:** Students new to statistics can use **statlingua** to better understand the output of models they are learning, bridging the gap between theoretical knowledge and practical application. It can serve as an interactive learning aid, helping to demystify complex concepts.
-*   **Interdisciplinary Research:** Researchers who are not statistical experts can more easily interpret the results of analyses conducted by collaborators or through software packages, fostering better communication and deeper insights within teams.
-*   **Consulting and Reporting:** Statisticians and data analysts can use **statlingua** to generate initial drafts of interpretations for reports and presentations, saving time and ensuring clarity for clients or stakeholders who may not have a strong statistical background.
-*   **Data-Driven Decision Making in Business:** Business professionals can gain a clearer understanding of statistical findings, enabling them to make more informed, data-driven decisions without needing to become experts in statistical methodology.
-*   **Rapid Prototyping and Exploration:** When exploring data and iterating through models, **statlingua** can provide quick, understandable summaries, allowing for faster assessment of model suitability and direction for further analysis.
+Statistical models are powerful, but their outputs can be intimidating. **statlingua** empowers you to:
 
-By providing clear and contextualized explanations, **statlingua** empowers users to focus on the implications of their findings rather than getting bogged down in the technical details.
+* **Democratize Understanding:** Make complex analyses accessible to individuals with varying levels of statistical expertise.
+* **Enhance Learning & Education:** Students can gain a deeper intuition for model outputs, connecting theory to practical application. Use it as an interactive learning aid to demystify statistical concepts.
+* **Foster Interdisciplinary Collaboration:** Researchers from diverse fields can more easily interpret and discuss analytical results, leading to richer insights.
+* **Streamline Reporting & Consulting:** Quickly generate initial drafts of interpretations for reports and presentations, saving time and ensuring clarity for clients or stakeholders.
+* **Drive Data-Informed Decisions:** Business professionals can better grasp statistical findings, enabling more confident data-driven decision-making without needing to become statistical experts themselves.
+* **Accelerate Prototyping & Exploration:** Rapidly understand model summaries during iterative data exploration, allowing for faster assessment and refinement of analyses.
 
-As of now, **statlingua** explicitly supports the following types of statistical models:
+By providing clear and contextualized explanations, **statlingua** helps you focus on the *implications* of your findings rather than getting bogged down in technical minutiae.
 
-* Objects of class `"htest"` (e.g., R's built-in `t.test()` and `prop.test()` functions).
-* Linear and generalized linear models (i.e., R's built-in `lm()` and `glm()` functions).
-* Linear and generalized linear mixed-effects model from packages [nlme](https://cran.r-project.org/package=nlme) and [lme4](https://cran.r-project.org/package=lme4).
-* Generalized additive models from package [mgcv](https://cran.r-project.org/package=mgcv).
-* Survival regression models from package [survival](https://cran.r-project.org/package=survival).
-* Proportional odds regression models from package [MASS](https://cran.r-project.org/package=MASS).
-* Decision trees from package [rpart](https://cran.r-project.org/package=rpart).
+### Supported Models
 
-For currently unsupported models, a useful default method is available that will attempt to provide a reasonable explanation of the provided statistical output/R object.
+As of now, **statlingua** explicitly supports a variety of common statistical models in R, including:
 
-## Installation
+* Objects of class `"htest"` (e.g., from `t.test()`, `prop.test()`).
+* Linear models (`lm()`) and Generalized Linear Models (`glm()`).
+* Linear and Generalized Linear Mixed-Effects Models from packages [nlme](https://cran.r-project.org/package=nlme) (`lme()`) and [lme4](https://cran.r-project.org/package=lme4) (`lmer()`, `glmer()`).
+* Generalized Additive Models (`gam()` from package [mgcv](https://cran.r-project.org/package=mgcv)).
+* Survival Regression Models (`survreg()`, `coxph()` from package [survival](https://cran.r-project.org/package=survival)).
+* Proportional Odds Logistic Regression (`polr()` from package [MASS](https://cran.r-project.org/package=MASS)).
+* Decision Trees (`rpart()` from package [rpart](https://cran.r-project.org/package=rpart)).
+* ...and more, with a robust default method for other model types!
 
-The **statlingua** package is currently not available on CRAN, but you can install the development version from GitHub.
+### Installation
 
-``` r
-# Install the latest development version from GitHub:
+**statlingua** is not yet on CRAN, but you can install the development version from GitHub:
+
+```r
 if (!requireNamespace("remotes")) {
   install.packages("remotes")
 }
 remotes::install_github("bgreenwell/statlingua")
 ```
 
-## API Key Setup
+You'll also need to install the [ellmer](https://cran.r-project.org/package=ellmer) package, which you can obtain from CRAN:
 
-**statlingua** relies on the [ellmer](https://github.com/bgreenwell/ellmer) package to interface with various large language models (LLMs). Consequently, **statlingua** itself does not directly handle API keys. Instead, you need to configure [ellmer](https://github.com/tidyverse/ellmer) with the appropriate API key for the LLM provider you intend to use (e.g., OpenAI, Google AI Studio, Anthropic).
+```r
+install.packages("ellmer")  # >= 0.2.0
+```
 
-Please refer to the [ellmer](https://github.com/tidyverse/ellmer) package documentation for detailed instructions on:
+### API Key Setup & [ellmer](https://cran.r-project.org/package=ellmer) Dependency
 
-*   Setting up API keys as environment variables (recommended).
-*   Specifying different models and providers.
-*   Other [ellmer](https://github.com/tidyverse/ellmer) configuration options.
+**statlingua** doesn't directly handle API keys or LLM communication. It acts as a sophisticated prompt engineering toolkit that prepares inputs and then passes them to [ellmer](https://cran.r-project.org/package=ellmer). The [ellmer](https://cran.r-project.org/package=ellmer) package is responsible for interfacing with various LLM providers (e.g., OpenAI, Google AI Studio, Anthropic). 
 
-Typically, you will set an environment variable like `OPENAI_API_KEY` for OpenAI models. Once [ellmer](https://github.com/tidyverse/ellmer) is correctly configured and able to access an LLM, **statlingua** will automatically leverage that connection.
+Please refer to the [ellmer](https://cran.r-project.org/package=ellmer) package documentation for detailed instructions on:
 
-## Extending statlingua to Support New Models
+  * Setting up API keys (usually as environment variables like `OPENAI_API_KEY`, `GEMINI_API_KEY`, etc.).
+  * Specifying different LLM models and providers.
+  * Other configuration and model parameter options.
 
-One of the key strengths of **statlingua** is its extensibility. If you want to add support for a new type of statistical model, you primarily need to create a new system prompt tailored to that model's output and characteristics. The package uses S3 methods for the main `explain()` function, dispatching to specific methods based on the class of the input model object.
+Once [ellmer](https://cran.r-project.org/package=ellmer) is installed and has access to an LLM provider, **statlingua** will seamlessly leverage that connection.
 
-### Understanding the Prompt Structure
+### Quick Example: Explaining a Linear Model
 
-The explanatory power of **statlingua** comes from carefully crafted system prompts that guide the LLM. These prompts are stored as Markdown files in the `inst/prompts/` directory of the package. For example, `inst/prompts/system_prompt_lm.md` contains the prompt for `lm` objects.
+```r
+# Ensure you have an appropriate API key set up first!
+# Sys.setenv(GEMINI_API_KEY = "<YOUR_API_KEY_HERE>") 
 
-A typical system prompt generally includes:
+library(statlingua)
 
-1.  **Role Definition:** Instructs the LLM to act as an expert statistician.
-2.  **Task Description:** Explains that the LLM needs to interpret statistical output and explain it in understandable terms.
-3.  **Output Structure Guidance:** Specifies how the explanation should be formatted (e.g., using Markdown, sections for different parts of the model).
-4.  **Key Areas to Cover:** Lists the essential components of the model output to address (e.g., coefficients, standard errors, p-values, goodness-of-fit measures, model assumptions).
-5.  **Contextualization Instructions:** Asks the LLM to relate the findings to the (optional) user-provided problem description or context.
-6.  **Tone and Audience:** Specifies the desired tone (e.g., helpful, slightly formal) and target audience (e.g., someone with basic statistical knowledge but not an expert).
-7.  **Placeholders:** Uses placeholders like `{{PROBLEM_DESCRIPTION}}` and `{{MODEL_OUTPUT}}` which **statlingua** will replace with the actual problem description (if provided) and the model's summary output before sending the prompt to the LLM.
+# Fit a polynomial regression model
+fm_cars <- lm(dist ~ poly(speed, degree = 2), data = cars)
+summary(fm_cars)
 
-### Example: Adding Support for `vglm` from the `VGAM` package
+# Define some context (highly recommended!)
+cars_context <- "
+This model analyzes the 'cars' dataset from the 1920s. Variables include:
+  * 'dist' - The distance (in feet) taken to stop.
+  * 'speed' - The speed of the car (in mph).
+We want to understand how speed affects stopping distance in the model.
+"
 
-Let's imagine you want to add support for `vglm` (Vector Generalized Linear Models) objects from the [VGAM](https://cran.r-project.org/package=VGAM) package. Here's a conceptual outline:
+# Establish connection to an LLM provider (in this case, Google Gemini)
+client <- ellmer::chat_google_gemini(echo = "none")  # defaults to gemini-2.0-flash
 
-1.  **Create a New Prompt File:**
-    You would start by creating a new file, say `inst/prompts/system_prompt_vglm.md`.
+# Get an explanation
+explain(
+  fm_cars,                 # model for LLM to interpret/explain
+  client = client,         # connection to LLM provider
+  context = cars_context,  # additional context for LLM to consider
+  audience = "student",    # target audience
+  verbosity = "detailed",  # level of detail
+  style = "markdown"       # output style
+)
 
-2.  **Draft the System Prompt for `vglm`:**
-    This prompt would be similar in structure to others but would emphasize aspects specific to `vglm` objects. For example, `vglm` models can handle multiple linear predictors and a wider variety of distributions and link functions. The prompt would need to guide the LLM to:
-    *   Identify the type of `vglm` (e.g., multinomial logistic regression, proportional odds model, etc.).
-    *   Explain the interpretation of coefficients for each linear predictor, considering the specific link functions and family.
-    *   Discuss any relevant model diagnostics or fit statistics particular to `vglm`.
-    *   Mention assumptions specific to the fitted `vglm` model.
+# Ask a follow-up question
+client$chat(
+  "How can I construct confidence intervals for each coefficient in the model?"
+)
+```
 
-    A snippet of `inst/prompts/system_prompt_vglm.md` might look like:
+For more examples, including output, see the [introductory vignette](https://bgreenwell.github.io/statlingua/articles/statlingua.html).
 
-    ```markdown
-    You are an expert statistician tasked with explaining the output of a Vector Generalized Linear Model (VGLM) from the R package VGAM. The user will provide a problem description (optional) and the summary output of a `vglm` object. Your goal is to provide a clear, concise, and context-aware explanation of the model's results in Markdown format.
+### Extending **statlingua** to Support New Models
 
-    Problem context:
-    {{PROBLEM_DESCRIPTION}}
+One of **statlingua**'s core strengths is its extensibility. You can add or customize support for new statistical model types by crafting specific prompt components. The system prompt sent to the LLM is dynamically assembled from several markdown files located in the `inst/prompts/` directory of the package.
 
-    Model output:
+The main function `explain()` uses S3 dispatch. When `explain(my_model_object, ...)` is called, R looks for a method like `explain.class_of_my_model_object()`. If not found, `explain.default()` is used.
+
+#### Prompt Directory Structure
+
+The prompts are organized as follows within `inst/prompts/`:
+
+  * `common/`: Contains base prompts applicable to all models.
+      * `role_base.md`: Defines the fundamental role of the LLM.
+      * `caution.md`: A general cautionary note appended to explanations.
+  * `audience/`: Markdown files for different target audiences (e.g., `novice.md`, `researcher.md`). The filename (e.g., "novice") matches the `audience` argument in `explain()`.
+  * `verbosity/`: Markdown files for different verbosity levels (e.g., `brief.md`, `detailed.md`). The filename matches the `verbosity` argument.
+  * `style/`: Markdown files defining the output format (e.g., `markdown.md`, `json.md`). The filename matches the `style` argument.
+  * `models/<model_class_name>/`: Directory for model-specific prompts. `<model_class_name>` should correspond to the R class of the statistical object (e.g., "lm", "glm", "htest").
+      * `instructions.md`: The primary instructions for explaining this specific model type. This tells the LLM what to look for in the model output, how to interpret it, and what assumptions to discuss.
+      * `role_specific.md` (Optional): Additional role details specific to this model type, augmenting `common/role_base.md`.
+
+#### Example: Adding Support for `vglm` from the `VGAM` package
+
+Let's imagine you want to add dedicated support for `vglm` (Vector Generalized Linear Models) objects from the [VGAM](https://cran.r-project.org/package=VGAM) package.
+
+1.  **Create New Prompt Files:**
+    You would create a new directory `inst/prompts/models/vglm/`. Inside this directory, you'd add:
+
+      * `inst/prompts/models/vglm/instructions.md`: This file will contain the detailed instructions for the LLM on how to interpret `vglm` objects. You'd detail what aspects of `summary(vglm_object)` are important, how to discuss coefficients (potentially for multiple linear predictors), link functions, model fit statistics specific to `vglm`, and relevant assumptions.
+        ```markdown
+        You are explaining a **Vector Generalized Linear Model (VGLM)** (from `VGAM::vglm()`).
+
+        **Core Concepts & Purpose:**
+        VGLMs are highly flexible, extending GLMs to handle multiple linear predictors and a wider array of distributions and link functions, including multivariate responses.
+        Identify the **Family** (e.g., multinomial, cumulative) and **Link functions**.
+
+        **Interpretation:**
+        * **Coefficients:** Explain for each linear predictor. Pay attention to link functions (e.g., log odds, log relative risk). Clearly state reference categories.
+        * **Model Fit:** Discuss deviance, AIC, etc.
+        * **Assumptions:** Mention relevant assumptions.
+        ```
     
-    {{MODEL_OUTPUT}}
-    
+      * `inst/prompts/models/vglm/role_specific.md` (Optional): If `vglm` models require the LLM to adopt a slightly more specialized persona.
+        
+        You have particular expertise in Vector Generalized Linear Models (VGLMs), understanding their diverse applications for complex response types.
+        
 
-    Please structure your explanation as follows:
-
-    ## VGLM Model Overview
-    - Briefly describe the type of VGLM fitted (e.g., multinomial regression, cumulative logit model).
-    - Mention the response variable and its nature.
-    - List the predictor variables.
-
-    ## Interpretation of Coefficients
-    - For each linear predictor/equation, explain the meaning of the coefficients.
-    - Pay attention to the link functions and how they affect interpretation (e.g., log odds, log relative risk).
-    - Clearly state the reference category for categorical predictors if applicable.
-
-    ## Model Fit and Diagnostics
-    - Discuss any provided statistics for model fit (e.g., deviance, AIC).
-    - Mention any important assumptions for this type of VGLM and if the output provides information to assess them.
-
-    ## Conclusion
-    - Summarize the main findings in simple terms.
-    - If a problem description was provided, relate the findings back to that context.
-
-    Keep the tone helpful and aim for an audience with some statistical background but not necessarily experts in VGLMs.
-    ```
-
-3.  **Implement the S3 Method:**
-    You would then add an S3 method for `explain.vglm` in an R script (e.g., `R/explain_vglm.R`):
+2.  **Implement the S3 Method:**
+    Add an S3 method for `explain.vglm` in an R script (e.g., `R/explain_vglm.R`):
 
     ```r
     #' Explain a vglm object
     #'
+    #' @inheritParams explain
+    #' @param object A \code{vglm} object.
     #' @export
-    explain.vglm <- function(x, problem_description = NULL, ...) {
-      # Capture the model summary
-      model_summary <- utils::capture.output(summary(x))
-      model_output <- paste(model_summary, collapse = "\n")
-
-      # Construct the prompt using the generic function
-      # This assumes get_prompt_text() can find "system_prompt_vglm.md"
-      # and ellmer is configured.
-      res <- ellmer::prompt(
-        prompt = get_prompt_text(
-          system_prompt_name = "system_prompt_vglm.md",  # Or whatever you named it
-          values = list(
-            "{{PROBLEM_DESCRIPTION}}" = ifelse(
-              test = is.null(problem_description),
-              yes = "The user did not provide a problem description.",
-              no = problem_description
-            ),
-            "{{MODEL_OUTPUT}}" = model_output
-          )
-        ),
-        # Pass other arguments to ellmer::prompt() as needed
-        # (e.g., model, provider, temperature)
+    explain.vglm <- function(
+        object,
+        client,
+        context = NULL,
+        audience = c("novice", "student", "researcher", "manager", "domain_expert"),
+        verbosity = c("moderate", "brief", "detailed"),
+        style = c("markdown", "html", "json", "text", "latex"),
         ...
-      )
-      
-      # Return as a statlingua_explanation object
-      structure(
-        list(
-          explanation = res,  # Assuming 'res' is the text from the LLM
-          original_object = x,
-          problem_description = problem_description
-        ),
-        class = c("statlingua_explanation", "list")
+      ) {
+      audience <- match.arg(audience)
+      verbosity <- match.arg(verbosity)
+      style <- match.arg(style)
+
+      # Use the internal .explain_core helper if it suits,
+      # or implement custom logic if vglm needs special handling.
+      # .explain_core handles system prompt assembly, user prompt building,
+      # and calling the LLM via the client.
+      # 'name' should match the directory name in inst/prompts/models/
+      # 'model_description' is what's shown to the user in the prompt.
+      .explain_core(
+        object = object,
+        client = client,
+        context = context,
+        audience = audience,
+        verbosity = verbosity,
+        style = style,
+        name = "vglm", # This tells .assemble_sys_prompt to look in inst/prompts/models/vglm/
+        model_description = "Vector Generalized Linear Model (VGLM) from VGAM"
       )
     }
     ```
-    You would also need to ensure `get_prompt_text()` (an internal helper function in **statlingua**) can locate your new prompt file, or you might read the prompt file directly in your method. The `explain.default` method provides a good template for how to structure these S3 methods.
 
-4.  **Add to `NAMESPACE` and Document:**
-    *   Export the new method: `S3method(explain, vglm)`
-    *   Add documentation (e.g., using `roxygen2` comments).
+    The `summarize.vglm` method might also need to be implemented in `R/summarize.R` if `summary(object)` for `vglm` needs special capture or formatting for the LLM. If `utils::capture.output(summary(object))` is sufficient, `summarize.default` might work initially.
 
-5.  **Testing:**
-    Thoroughly test the new method with various `vglm` examples to ensure the LLM provides sensible and accurate explanations based on your prompt. You might need to iterate on the prompt design to achieve the desired output quality.
+3.  **Add to `NAMESPACE` and Document:**
 
-By following this pattern, **statlingua** can be systematically extended to cover a wide array of statistical models in R, making it a versatile tool for statistical interpretation.
+      * Ensure the new method is exported in your `NAMESPACE` file (usually handled by `roxygen2`): `S3method(explain, vglm)`
+      * Add `roxygen2` documentation blocks for `explain.vglm`.
+
+4.  **Testing:**
+    Thoroughly test with various `vglm` examples. You might need to iterate on your `instructions.md` and `role_specific.md` to refine the LLM's explanations.
+
+By following this pattern, **statlingua** can be systematically extended to cover a vast array of statistical models in R\!
+
+### Contributing
+
+Contributions are welcome\! Please see the [GitHub issues](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/bgreenwell/statlingua/issues) for areas where you can help.
+
+### License
+
+**statlingua** is available under the GNU General Public License v3.0 (GNU GPLv3). See the `LICENSE.md` file for more details.
