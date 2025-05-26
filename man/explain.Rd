@@ -22,6 +22,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -31,6 +32,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -40,6 +42,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -49,6 +52,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -58,6 +62,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -67,6 +72,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -76,6 +82,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -85,6 +92,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -94,6 +102,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -103,6 +112,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -112,6 +122,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -121,6 +132,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 
@@ -130,6 +142,7 @@ explain(
   context = NULL,
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
+  style = c("markdown", "html", "json", "text", "latex"),
   ...
 )
 }
@@ -164,6 +177,15 @@ not necessarily in statistics.
 \item \code{"moderate"} - Offers a balanced explanation (default).
 \item \code{"brief"} - Offers a high-level summary.
 \item \code{"detailed"} - Offers a comprehensive interpretation.
+}}
+
+\item{style}{Character string indicating the desired output style:
+\itemize{
+\item \code{"markdown"} (default) - Output formatted as plain Markdown.
+\item \code{"html"} - Output formatted as an HTML fragment.
+\item \code{"json"} - Output structured as a JSON string parseable into an R list.
+\item \code{"text"} - Output as plain text.
+\item \code{"latex"} - Output as a LaTeX fragment.
 }}
 
 \item{...}{Additional optional arguments. (Currently ignored.)}

@@ -30,6 +30,13 @@
 #' * `"brief"` - Offers a high-level summary.
 #' * `"detailed"` - Offers a comprehensive interpretation.
 #'
+#' @param style Character string indicating the desired output style:
+#'   * `"markdown"` (default) - Output formatted as plain Markdown.
+#'   * `"html"` - Output formatted as an HTML fragment.
+#'   * `"json"` - Output structured as a JSON string parseable into an R list.
+#'   * `"text"` - Output as plain text.
+#'   * `"latex"` - Output as a LaTeX fragment.
+#'
 #' @param ... Additional optional arguments. (Currently ignored.)
 #'
 #' @returns An object of class `"statlingua_explanation"`. Essentially a list
@@ -77,10 +84,12 @@ explain <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
   ) {
   audience <- match.arg(audience)
   verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   UseMethod("explain")
 }
 
@@ -94,23 +103,30 @@ explain.default <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   stopifnot(inherits(client, what = c("Chat", "R6")))
   sys_prompt <- .assemble_sys_prompt(model_name = "default",
-                                     audience = audience, verbosity = verbosity)
+                                     audience = audience, verbosity = verbosity,
+                                     style = style)
   output <- .capture_output(object)
   usr_prompt <- .build_usr_prompt("R object", output = output,
                                    context = context)
   client$set_system_prompt(sys_prompt)
   ex <- client$chat(usr_prompt)
+  ex <- .remove_fences(ex)
   output <- structure(
     list(
       text = ex,
       # Potentially add other metadata here if useful later
       model_type = "default",
       audience = audience,
-      verbosity = verbosity
+      verbosity = verbosity,
+      style = style
     ),
     class = c("statlingua_explanation", "character")
   )
@@ -129,14 +145,19 @@ explain.htest <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .explain_core(
     object = object,
     client = client,
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "htest",
     model = object$method
   )
@@ -152,14 +173,19 @@ explain.lm <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .explain_core(
     object = object,
     client = client,
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "lm",
     model = "linear regression model"
   )
@@ -175,8 +201,12 @@ explain.glm <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -185,6 +215,7 @@ explain.glm <- function(
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "glm",
     model = paste(.family, "generalized linear model with", .link, "link")
   )
@@ -202,8 +233,12 @@ explain.polr <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .method <- object$method
   .explain_core(
     object = object,
@@ -211,6 +246,7 @@ explain.polr <- function(
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "polr",
     model = paste("proportional odds", .method, "regression model")
   )
@@ -228,14 +264,19 @@ explain.lme <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .explain_core(
     object = object,
     client = client,
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "lme",
     model = "linear mixed-effects model"
   )
@@ -253,14 +294,19 @@ explain.lmerMod <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .explain_core(
     object = object,
     client = client,
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "lmerMod",
     model = "linear mixed-effects model"
   )
@@ -276,8 +322,12 @@ explain.glmerMod <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -286,6 +336,7 @@ explain.glmerMod <- function(
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "glmerMod",
     model = paste(.family, "generalized linear mixed-effects model with",
                   .link, "link")
@@ -304,8 +355,12 @@ explain.gam <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -314,6 +369,7 @@ explain.gam <- function(
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "gam",
     model = paste(.family, "generalized additive model with", .link, "link")
   )
@@ -331,14 +387,19 @@ explain.survreg <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .explain_core(
     object = object,
     client = client,
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "survreg",
     model = "parametric survival regression model"
   )
@@ -354,14 +415,19 @@ explain.coxph <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .explain_core(
     object = object,
     client = client,
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "coxph",
     model = "Cox proportional hazards regression model"
   )
@@ -379,14 +445,19 @@ explain.rpart <- function(
     audience = c("novice", "student", "researcher", "manager",
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
+    style = c("markdown", "html", "json", "text", "latex"),
     ...
 ) {
+  audience <- match.arg(audience)
+  verbosity <- match.arg(verbosity)
+  style <- match.arg(style)
   .explain_core(
     object = object,
     client = client,
     context = context,
     audience = audience,
     verbosity = verbosity,
+    style = style,
     name = "rpart",
     model = "recursive partitioning tree model"
   )

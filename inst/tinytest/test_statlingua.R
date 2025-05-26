@@ -54,7 +54,7 @@ expect_warning(statlingua:::.read_prompt("nonexistent", "file.md"))
 # Test .assemble_sys_prompt()
 # Basic Assembly
 prompt_lm_novice <-
-  statlingua:::.assemble_sys_prompt(model_name = "lm",
+  statlingua:::.assemble_sys_prompt(model_name = "lm", style = "markdown",
                                     audience = "novice", verbosity = "brief")
 expect_true(is.character(prompt_lm_novice) && nchar(prompt_lm_novice) > 0)
 expect_true(grepl("## Role", prompt_lm_novice))
@@ -75,7 +75,7 @@ expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("models", "lm", 
 
 # Model without role_specific.md (e.g., "default")
 prompt_default_assembly <-
-  statlingua:::.assemble_sys_prompt(model_name = "default",
+  statlingua:::.assemble_sys_prompt(model_name = "default", style = "markdown",
                                     audience = "researcher", verbosity = "moderate")
 expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("models", "default", "instructions.md"),
                   prompt_default_assembly))
@@ -89,6 +89,7 @@ expect_false(grepl(lm_specific_role_phrase, prompt_default_assembly, fixed = TRU
 # Fallback for invalid model_name
 prompt_invalid_model <-
   statlingua:::.assemble_sys_prompt(model_name = "invalid_model_xyz",
+                                    style = "markdown",
                                     audience = "researcher", verbosity = "moderate")
 expect_true(grepl_robust_line_endings(statlingua:::.read_prompt("models", "default", "instructions.md"),
                   prompt_invalid_model))
@@ -98,7 +99,8 @@ expect_warning(
   prompt_invalid_audience <-
     statlingua:::.assemble_sys_prompt(model_name = "lm",
                                       audience = "invalid_audience_xyz",
-                                      verbosity = "moderate"),
+                                      verbosity = "moderate",
+                                      style = "markdown"),
   "Audience file for 'invalid_audience_xyz' not found or empty."
 )
 expect_true(grepl("Assume the user has a good understanding of statistical concepts.",
@@ -109,7 +111,8 @@ expect_warning(
   prompt_invalid_verbosity <-
     statlingua:::.assemble_sys_prompt(model_name = "lm",
                                       audience = "researcher",
-                                      verbosity = "invalid_verbosity_xyz"),
+                                      verbosity = "invalid_verbosity_xyz",
+                                      style = "markdown"),
   "Verbosity file for 'invalid_verbosity_xyz' not found or empty."
 )
 expect_true(grepl("Provide a moderate level of detail.",
@@ -161,14 +164,15 @@ expect_equal(explanation_default$text, mock_client$chat_response)
 expected_sys_prompt_default <-
   statlingua:::.assemble_sys_prompt(model_name = "default",
                                     audience = "student",
-                                    verbosity = "detailed")
+                                    verbosity = "detailed",
+                                    style = "markdown")
 expect_equal(mock_client$last_system_prompt, expected_sys_prompt_default)
 
 # Check that it also returns the value invisibly
 # expect_equal(explanation_lm_cat, mock_client$chat_response) # This might be tricky with expect_stdout, consider separate test if needed
 expected_sys_prompt_lm_specific <-
   statlingua:::.assemble_sys_prompt(model_name = "lm", audience = "novice",
-                                    verbosity = "brief")
+                                    verbosity = "brief", style = "markdown")
 # expect_equal(mock_client$last_system_prompt, expected_sys_prompt_lm_specific)
 # expect_true(grepl("LM test context", mock_client$last_user_prompt))
 
@@ -176,7 +180,7 @@ expected_sys_prompt_lm_specific <-
 statlingua::explain(lm_obj, client = mock_client, context = "LM test default")
 expected_sys_prompt_lm_defaults <-
   statlingua:::.assemble_sys_prompt(model_name = "lm", audience = "researcher",
-                                    verbosity = "moderate")
+                                    verbosity = "moderate", style = "markdown")
 # expect_equal(mock_client$last_system_prompt, expected_sys_prompt_lm_defaults)
 expect_true(grepl("LM test default", mock_client$last_user_prompt))
 
@@ -190,7 +194,7 @@ expect_equal(explanation_htest$text, mock_client$chat_response)
 expect_true(grepl(statlingua::summarize(t_test_obj), mock_client$last_user_prompt))
 expected_sys_prompt_htest <-
   statlingua:::.assemble_sys_prompt(model_name = "htest", audience = "manager",
-                                    verbosity = "detailed")
+                                    verbosity = "detailed", style = "markdown")
 expect_equal(mock_client$last_system_prompt, expected_sys_prompt_htest)
 
 
