@@ -2,11 +2,11 @@
 
 (This changelog follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.)
 
-## [0.1.0] - 2015-05-26
+## [0.1.0] - 2025-05-28
 
 ### Added
 
-- Initial release.
+- Initial CRAN release.
 
 ### Changed 
 
@@ -15,3 +15,14 @@
 - Revised vignette and README files.
 - Changed LICENSE to GPL (>= 2).
 - Removed troublesome OpenAI URL in vignette
+
+### Miscellaneous
+
+- Fixed redundant arg lists and calls to `match.arg()`.
+- Updated `Description` field per feedback from CRAN.
+
+## [0.1.0.9999] - 2025-XY-XY
+
+### Miscellaneous
+
+- Added CRAN badge to README.

@@ -5,7 +5,7 @@ Version: 0.1.0
 Authors@R: person(c("Brandon", "M."), family = "Greenwell", 
     email = "greenwell.brandon@gmail.com", role = c("aut", "cre"), 
     comment = c(ORCID = "0000-0002-8120-0084"))
-Description: An R package leveraging large language models (LLMs) to help convert complex statistical output into straightforward, understandable, and context-aware natural language descriptions. By feeding your statistical models and outcomes into LLMs, you can effortlessly produce human-readable interpretations of coefficients, p-values, measures of model fit, and other key metrics, thereby democratizing statistical understanding for individuals with varying levels of technical expertise.
+Description: Transform complex statistical output into straightforward, understandable, and context-aware natural language descriptions using Large Language Models (LLMs), making complex analyses more accessible to individuals with varying statistical expertise. It relies on the 'ellmer' package to interface with LLM providers including OpenAI <https://openai.com/>, Google AI Studio <https://aistudio.google.com/>, and Anthropic <https://www.anthropic.com/> (API keys are required and managed via 'ellmer').
 Depends: R (>= 4.1.0)
 License: GPL (>= 2)
 URL: https://github.com/bgreenwell/statlingua, https://bgreenwell.github.io/statlingua/

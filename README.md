@@ -1,7 +1,7 @@
 # statlingua <img src="man/figures/logo.png" align="right" height="120" alt="statlingua logo" />
-
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/ebm)](https://CRAN.R-project.org/package=ebm)
 [![R-CMD-check](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingua/issues)
 
 The **statlingua** R package is designed to help bridge the gap between complex statistical outputs and clear, human-readable explanations. By leveraging the power of Large Language Models (LLMs), **statlingua** helps you effortlessly translate the dense jargon of statistical models—coefficients, p-values, model fit indices, and more—into straightforward, context-aware natural language.

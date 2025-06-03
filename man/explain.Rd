@@ -30,9 +30,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -40,9 +40,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -50,9 +50,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -60,9 +60,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -70,9 +70,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -80,9 +80,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -90,9 +90,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -100,9 +100,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -110,9 +110,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -120,9 +120,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -130,9 +130,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 
@@ -140,9 +140,9 @@ explain(
   object,
   client,
   context = NULL,
-  audience = c("novice", "student", "researcher", "manager", "domain_expert"),
-  verbosity = c("moderate", "brief", "detailed"),
-  style = c("markdown", "html", "json", "text", "latex"),
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
   ...
 )
 }

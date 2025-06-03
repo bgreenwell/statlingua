@@ -100,15 +100,11 @@ explain.default <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
   sys_prompt <- .assemble_sys_prompt(model_name = "default",
                                      audience = audience, verbosity = verbosity,
@@ -142,15 +138,11 @@ explain.htest <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .explain_core(
     object = object,
     client = client,
@@ -170,15 +162,11 @@ explain.lm <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .explain_core(
     object = object,
     client = client,
@@ -198,15 +186,11 @@ explain.glm <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -230,15 +214,11 @@ explain.polr <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .method <- object$method
   .explain_core(
     object = object,
@@ -261,15 +241,11 @@ explain.lme <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .explain_core(
     object = object,
     client = client,
@@ -291,15 +267,11 @@ explain.lmerMod <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .explain_core(
     object = object,
     client = client,
@@ -319,15 +291,11 @@ explain.glmerMod <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -352,15 +320,11 @@ explain.gam <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .family <- stats::family(object)$family
   .link <- stats::family(object)$link
   .explain_core(
@@ -384,15 +348,11 @@ explain.survreg <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .explain_core(
     object = object,
     client = client,
@@ -412,15 +372,11 @@ explain.coxph <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .explain_core(
     object = object,
     client = client,
@@ -442,15 +398,11 @@ explain.rpart <- function(
     object,
     client,
     context = NULL,
-    audience = c("novice", "student", "researcher", "manager",
-                 "domain_expert"),
-    verbosity = c("moderate", "brief", "detailed"),
-    style = c("markdown", "html", "json", "text", "latex"),
+    audience = "novice",
+    verbosity = "moderate",
+    style = "markdown",
     ...
-) {
-  audience <- match.arg(audience)
-  verbosity <- match.arg(verbosity)
-  style <- match.arg(style)
+  ) {
   .explain_core(
     object = object,
     client = client,

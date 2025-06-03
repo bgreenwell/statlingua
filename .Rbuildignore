@@ -2,7 +2,7 @@
 ^\.Rproj\.user$
 ^\.github$
 ^_pkgdown\.yml$
-^LICENSE\.md$
+^CRAN\.txt$
 ^TODO\.md$
 ^docs$
 ^pkgdown$
