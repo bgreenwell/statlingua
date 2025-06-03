@@ -1,5 +1,5 @@
 # statlingua <img src="man/figures/logo.png" align="right" height="120" alt="statlingua logo" />
-[![CRAN status](https://www.r-pkg.org/badges/version/ebm)](https://CRAN.R-project.org/package=ebm)
+[![CRAN status](https://www.r-pkg.org/badges/version/statlingua)](https://CRAN.R-project.org/package=statlingua)
 [![R-CMD-check](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingua/issues)
