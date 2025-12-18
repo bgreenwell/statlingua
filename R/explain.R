@@ -112,8 +112,14 @@ explain.default <- function(
   output <- .capture_output(object)
   usr_prompt <- .build_usr_prompt("R object", output = output,
                                    context = context)
-  client$set_system_prompt(sys_prompt)
-  ex <- client$chat(usr_prompt)
+  
+  # Clone the client to avoid side effects on the user's object
+  client_clone <- client$clone()
+  client_clone$set_turns(list())
+  client_clone$set_system_prompt(sys_prompt)
+  
+  ex <- client_clone$chat(usr_prompt, echo = "none")
+  
   ex <- .remove_fences(ex)
   output <- structure(
     list(

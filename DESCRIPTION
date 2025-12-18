@@ -15,7 +15,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
     car,
-    ellmer (>= 0.2.0),
+    ellmer (>= 0.4.0),
     ISLR2,
     knitr,
     lme4,

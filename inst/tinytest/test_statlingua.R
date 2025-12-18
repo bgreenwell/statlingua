@@ -23,12 +23,18 @@ MockChat <- R6::R6Class(
     initialize = function(client, ...) {
       invisible(self)
     },
+    clone = function(deep = FALSE) {
+      self
+    },
+    set_turns = function(turns) {
+      invisible(self)
+    },
     set_system_prompt = function(prompt) {
       self$last_system_prompt <- prompt
       invisible(self)
     },
     # Ensure ... is handled in chat to match usage in explain.R (client$chat(usr_prompt))
-    chat = function(prompt, ...) {
+    chat = function(prompt, echo = NULL, ...) {
       self$last_user_prompt <- prompt
       return(self$chat_response)
     }
