@@ -31,16 +31,16 @@ This file provides context and instructions for AI agents working on the `statli
 The project is a standard R package.
 ```r
 # Install dev dependencies
-install.packages(c("devtools", "tinytest", "roxygen2", "ellmer"))
+Rscript -e 'install.packages(c("devtools", "tinytest", "roxygen2", "ellmer"))'
 ```
 
 ### 2. Running Tests
 The project uses `tinytest`.
 - **Run all tests:**
-  ```r
-  tinytest::build_install_test() # Robust check
+  ```bash
+  Rscript -e 'tinytest::build_install_test()' # Robust check
   # OR for quick dev cycle:
-  tinytest::run_test_dir("inst/tinytest")
+  Rscript -e 'tinytest::run_test_dir("inst/tinytest")'
   ```
 - **Test File:** `inst/tinytest/test_statlingua.R`
 - **Mocks:** The tests use a `MockChat` R6 class to simulate `ellmer` behavior without making real API calls. **Always** use mocking for new tests unless explicitly testing integration.
@@ -48,8 +48,8 @@ The project uses `tinytest`.
 ### 3. Documentation
 - Edit R scripts with `#'` roxygen comments.
 - Update documentation using:
-  ```r
-  devtools::document()
+  ```bash
+  Rscript -e 'devtools::document()'
   ```
 - This updates `NAMESPACE` and `man/*.Rd` files.
 
