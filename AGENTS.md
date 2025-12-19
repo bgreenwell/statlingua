@@ -29,29 +29,51 @@ This file provides context and instructions for AI agents working on the `statli
 
 ### 1. Setup
 The project is a standard R package.
-```r
+```bash
 # Install dev dependencies
-Rscript -e 'install.packages(c("devtools", "tinytest", "roxygen2", "ellmer"))'
+Rscript -e 'install.packages(c("devtools", "usethis", "tinytest", "roxygen2", "ellmer"))'
 ```
 
-### 2. Running Tests
-The project uses `tinytest`.
+### 2. Common Tasks (`usethis` & `devtools`)
+Use `usethis` to automate package infrastructure tasks.
+
+- **Create a new R file:**
+  ```bash
+  Rscript -e 'usethis::use_r("file_name")'
+  ```
+- **Add a package dependency:**
+  ```bash
+  Rscript -e 'usethis::use_package("dplyr")' # Adds to Imports
+  Rscript -e 'usethis::use_package("testthat", type = "Suggests")'
+  ```
+- **Load the package (Interactive Dev):**
+  Simulates installing the package, making functions available.
+  ```bash
+  Rscript -e 'devtools::load_all()'
+  ```
+- **Check the package (CRAN-readiness):**
+  Runs strict checks on documentation, tests, and dependencies.
+  ```bash
+  Rscript -e 'devtools::check()'
+  ```
+
+### 3. Running Tests
+The project uses `tinytest` (not `testthat`).
 - **Run all tests:**
   ```bash
-  Rscript -e 'tinytest::build_install_test()' # Robust check
-  # OR for quick dev cycle:
+  Rscript -e 'tinytest::build_install_test()' # Robust check (installs pkg then tests)
+  # OR for quick dev cycle (tests directly from inst/tinytest):
   Rscript -e 'tinytest::run_test_dir("inst/tinytest")'
   ```
 - **Test File:** `inst/tinytest/test_statlingua.R`
 - **Mocks:** The tests use a `MockChat` R6 class to simulate `ellmer` behavior without making real API calls. **Always** use mocking for new tests unless explicitly testing integration.
 
-### 3. Documentation
+### 4. Documentation
 - Edit R scripts with `#'` roxygen comments.
-- Update documentation using:
+- Update documentation (`man/` and `NAMESPACE`) using:
   ```bash
   Rscript -e 'devtools::document()'
   ```
-- This updates `NAMESPACE` and `man/*.Rd` files.
 
 ### 4. Adding Support for New Models
 To add support for a new statistical class (e.g., `brmsfit`):
