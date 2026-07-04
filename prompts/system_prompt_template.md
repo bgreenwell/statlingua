@@ -16,6 +16,7 @@
 
 {{style_instruction}}
 
+{{language_section}}
 ## Instructions
 
 {{model_instructions}}

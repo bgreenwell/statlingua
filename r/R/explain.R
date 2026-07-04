@@ -62,17 +62,34 @@
 #' client <- ellmer::chat_google_gemini(echo = "none")
 #' ex <- explain(fm1, client = client, context = context)
 #'
-#' # Poisson regression example from ?stats::glm
-#' counts <- c(18,17,15,20,10,20,25,13,12)
-#' outcome <- gl(3,1,9)
-#' treatment <- gl(3,3)
-#' data.frame(treatment, outcome, counts) # showing data
-#' fm2 <- glm(counts ~ outcome + treatment, family = poisson())
+#' # Poisson regression example using the bike sharing data from ISLR2
+#' Bikeshare <- ISLR2::Bikeshare
+#'
+#' # Fit a Poisson regression model to the bike sharing data set
+#' fm2 <- glm(bikers ~ mnth + hr + workingday + temp + weathersit,
+#'            data = Bikeshare, family = poisson)
+#'
+#' # Additional context for the LLM to consider when explaining the model's
+#' # output
+#' context <- "
+#' The data contain the hourly and daily count of rental bikes between years
+#' 2011 and 2012 in Capital bikeshare system, along with weather and seasonal
+#' information. The variables in the model include:
+#'
+#' * bikers - Total number of bikers.
+#' * mnth - Month of the year, coded as a factor.
+#' * hr - Hour of the day, coded as a factor from 0 to 23.
+#' * workingday - Is it a work day? Yes=1, No=0.
+#' * temp - Normalized temperature in Celsius. The values are derived via
+#'   (t-t_min)/(t_max-t_min), t_min=-8, t_max=+39.
+#' * weathersit - Weather, coded as a factor.
+#' "
 #'
 #' # Use Google Gemini to explain the output; requires an API key; see
 #' # ?ellmer::chat_google_gemini for details
-#' client <- ellmer::chat_google_gemini()
-#' explain(fm2, client = client, audience = "student", verbosity = "detailed")
+#' client <- ellmer::chat_google_gemini(echo = "none")
+#' explain(fm2, client = client, context = context, audience = "student",
+#'         verbosity = "brief", style = "text")
 #' }
 #'
 #'
