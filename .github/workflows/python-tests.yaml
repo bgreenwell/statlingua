@@ -74,7 +74,7 @@ jobs:
           source .venv-wheel/bin/activate
           uv pip install dist/*.whl chatlas pyyaml statsmodels
           python3 -c "
-          from statlingua._prompting import assemble_system_prompt
+          from statlingo._prompting import assemble_system_prompt
           prompt = assemble_system_prompt('lm', 'novice', 'brief', 'markdown')
           assert prompt.startswith('## Role'), 'system prompt assembly failed on a wheel install'
           print('wheel smoke test OK')

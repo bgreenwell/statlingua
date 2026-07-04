@@ -1,4 +1,4 @@
-# Canonical prompt configuration for statlingua (R + Python).
+# Canonical prompt configuration for statlingo (R + Python).
 # Short, single-purpose instruction strings for audience, verbosity, and
 # style are consolidated here (rather than one file per setting) to make
 # them easy to compare and bulk-edit. Longer, structured content (role
@@ -7,7 +7,7 @@
 #
 # This file is the single source of truth. Do not edit the generated
 # copies under r/inst/prompts/config.yaml or
-# python/src/statlingua/prompts/config.yaml directly -- run
+# python/src/statlingo/prompts/config.yaml directly -- run
 # scripts/sync_prompts.py after making changes here.
 
 audience:

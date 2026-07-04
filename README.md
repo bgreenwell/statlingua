@@ -1,10 +1,10 @@
-# statlingua
+# statlingo
 
-[![R-CMD-check](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/bgreenwell/statlingo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingo/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingua/issues)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingo/issues)
 
-**statlingua** translates the dense output of statistical models—coefficients,
+**statlingo** translates the dense output of statistical models—coefficients,
 p-values, model fit indices, and more—into clear, context-aware, natural
 language explanations using Large Language Models (LLMs).
 
@@ -13,8 +13,8 @@ single canonical set of LLM prompts:
 
 | Package | Language | LLM interface | Location |
 |---|---|---|---|
-| `statlingua` | R (on CRAN) | [`ellmer`](https://ellmer.tidyverse.org/) | [`r/`](r) |
-| `statlingua` | Python | [`chatlas`](https://posit-dev.github.io/chatlas/) | [`python/`](python) |
+| `statlingo` | R (formerly published on CRAN as `statlingua`) | [`ellmer`](https://ellmer.tidyverse.org/) | [`r/`](r) |
+| `statlingo` | Python | [`chatlas`](https://posit-dev.github.io/chatlas/) | [`python/`](python) |
 
 See each package's own README for installation and usage instructions:
 [`r/README.md`](r/README.md) and [`python/README.md`](python/README.md).
@@ -23,14 +23,14 @@ See each package's own README for installation and usage instructions:
 
 ```
 r/           R package (DESCRIPTION, R/, man/, tests/, vignettes/, ...)
-python/      Python package (pyproject.toml, src/statlingua/, tests/)
+python/      Python package (pyproject.toml, src/statlingo/, tests/)
 prompts/     Canonical LLM prompt source, shared by both packages
 scripts/     Dev tooling (e.g. scripts/sync_prompts.py)
 ```
 
 `prompts/` is the single source of truth for prompt content (audience,
 verbosity, output style, and per-model instructions). Both packages ship a
-generated copy of it (`r/inst/prompts/`, `python/src/statlingua/prompts/`);
+generated copy of it (`r/inst/prompts/`, `python/src/statlingo/prompts/`);
 run `python3 scripts/sync_prompts.py` after editing anything under `prompts/`
 to regenerate them.
 

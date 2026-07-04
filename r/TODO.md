@@ -13,6 +13,6 @@
     - [ ] Consider an option to return the explanation as a structured R list directly, not just a JSON string.
 
 - [ ] **Integration with Reporting Workflows:**
-    - [ ] Provide helper functions or examples for easily integrating `statlingua` explanations into R Markdown, Quarto, or other reporting tools.
+    - [ ] Provide helper functions or examples for easily integrating `statlingo` explanations into R Markdown, Quarto, or other reporting tools.
     - [ ] Ensure `style = "latex"` and `style = "html"` fragments are clean and directly usable.
     - [ ] Explore creating helper functions like `to_quarto_block()` or `to_rmd_chunk()` to wrap explanations appropriately.

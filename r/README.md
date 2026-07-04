@@ -1,16 +1,15 @@
-# statlingua <img src="man/figures/logo.png" align="right" height="120" alt="statlingua logo" />
-[![CRAN status](https://www.r-pkg.org/badges/version/statlingua)](https://CRAN.R-project.org/package=statlingua)
-[![R-CMD-check](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingua/actions/workflows/R-CMD-check.yaml)
+# statlingo <img src="man/figures/logo.png" align="right" height="120" alt="statlingo logo" />
+[![R-CMD-check](https://github.com/bgreenwell/statlingo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingo/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingua/issues)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingo/issues)
 
-The **statlingua** R package is designed to help bridge the gap between complex statistical outputs and clear, human-readable explanations. By leveraging the power of Large Language Models (LLMs), **statlingua** helps you effortlessly translate the dense jargon of statistical models—coefficients, p-values, model fit indices, and more—into straightforward, context-aware natural language.
+The **statlingo** R package is designed to help bridge the gap between complex statistical outputs and clear, human-readable explanations. By leveraging the power of Large Language Models (LLMs), **statlingo** helps you effortlessly translate the dense jargon of statistical models—coefficients, p-values, model fit indices, and more—into straightforward, context-aware natural language.
 
-Whether you're a student grappling with new statistical concepts, a researcher needing to communicate findings to a broader audience, or a data scientist looking to quickly draft reports, **statlingua** makes your statistical journey smoother and more accessible.
+Whether you're a student grappling with new statistical concepts, a researcher needing to communicate findings to a broader audience, or a data scientist looking to quickly draft reports, **statlingo** makes your statistical journey smoother and more accessible.
 
-### Why **statlingua**?
+### Why **statlingo**?
 
-Statistical models are powerful, but their outputs can be intimidating. **statlingua** empowers you to:
+Statistical models are powerful, but their outputs can be intimidating. **statlingo** empowers you to:
 
 * **Democratize Understanding:** Make complex analyses accessible to individuals with varying levels of statistical expertise.
 * **Enhance Learning & Education:** Students can gain a deeper intuition for model outputs, connecting theory to practical application. Use it as an interactive learning aid to demystify statistical concepts.
@@ -19,11 +18,11 @@ Statistical models are powerful, but their outputs can be intimidating. **statli
 * **Drive Data-Informed Decisions:** Business professionals can better grasp statistical findings, enabling more confident data-driven decision-making without needing to become statistical experts themselves.
 * **Accelerate Prototyping & Exploration:** Rapidly understand model summaries during iterative data exploration, allowing for faster assessment and refinement of analyses.
 
-By providing clear and contextualized explanations, **statlingua** helps you focus on the *implications* of your findings rather than getting bogged down in technical minutiae.
+By providing clear and contextualized explanations, **statlingo** helps you focus on the *implications* of your findings rather than getting bogged down in technical minutiae.
 
 ### Supported Models
 
-As of now, **statlingua** explicitly supports a variety of common statistical models in R, including:
+As of now, **statlingo** explicitly supports a variety of common statistical models in R, including:
 
 * Objects of class `"htest"` (e.g., from `t.test()`, `prop.test()`).
 * Linear models (`lm()`) and Generalized Linear Models (`glm()`).
@@ -36,13 +35,13 @@ As of now, **statlingua** explicitly supports a variety of common statistical mo
 
 ### Installation
 
-**statlingua** is not yet on CRAN, but you can install the development version from GitHub:
+**statlingo** is not yet on CRAN, but you can install the development version from GitHub:
 
 ```r
 if (!requireNamespace("remotes")) {
   install.packages("remotes")
 }
-remotes::install_github("bgreenwell/statlingua")
+remotes::install_github("bgreenwell/statlingo")
 ```
 
 You'll also need to install the [ellmer](https://cran.r-project.org/package=ellmer) package, which you can obtain from CRAN:
@@ -53,7 +52,7 @@ install.packages("ellmer")  # >= 0.2.0
 
 ### API Key Setup & [ellmer](https://cran.r-project.org/package=ellmer) Dependency
 
-**statlingua** doesn't directly handle API keys or LLM communication. It acts as a sophisticated prompt engineering toolkit that prepares inputs and then passes them to [ellmer](https://cran.r-project.org/package=ellmer). The [ellmer](https://cran.r-project.org/package=ellmer) package is responsible for interfacing with various LLM providers (e.g., OpenAI, Google AI Studio, Anthropic). 
+**statlingo** doesn't directly handle API keys or LLM communication. It acts as a sophisticated prompt engineering toolkit that prepares inputs and then passes them to [ellmer](https://cran.r-project.org/package=ellmer). The [ellmer](https://cran.r-project.org/package=ellmer) package is responsible for interfacing with various LLM providers (e.g., OpenAI, Google AI Studio, Anthropic). 
 
 Please refer to the [ellmer](https://cran.r-project.org/package=ellmer) package documentation for detailed instructions on:
 
@@ -61,7 +60,7 @@ Please refer to the [ellmer](https://cran.r-project.org/package=ellmer) package 
   * Specifying different LLM models and providers.
   * Other configuration and model parameter options.
 
-Once [ellmer](https://cran.r-project.org/package=ellmer) is installed and has access to an LLM provider, **statlingua** will seamlessly leverage that connection.
+Once [ellmer](https://cran.r-project.org/package=ellmer) is installed and has access to an LLM provider, **statlingo** will seamlessly leverage that connection.
 
 ### Quick Example: Explaining a Linear Model
 
@@ -69,7 +68,7 @@ Once [ellmer](https://cran.r-project.org/package=ellmer) is installed and has ac
 # Ensure you have an appropriate API key set up first!
 # Sys.setenv(GEMINI_API_KEY = "<YOUR_API_KEY_HERE>") 
 
-library(statlingua)
+library(statlingo)
 
 # Fit a polynomial regression model
 fm_cars <- lm(dist ~ poly(speed, degree = 2), data = cars)
@@ -102,11 +101,11 @@ client$chat(
 )
 ```
 
-For more examples, including output, see the [introductory vignette](https://bgreenwell.github.io/statlingua/articles/statlingua.html).
+For more examples, including output, see the [introductory vignette](https://bgreenwell.github.io/statlingo/articles/statlingo.html).
 
-### Extending **statlingua** to Support New Models
+### Extending **statlingo** to Support New Models
 
-One of **statlingua**'s core strengths is its extensibility. You can add or customize support for new statistical model types by crafting specific prompt components. The system prompt sent to the LLM is dynamically assembled from several markdown files located in the `inst/prompts/` directory of the package.
+One of **statlingo**'s core strengths is its extensibility. You can add or customize support for new statistical model types by crafting specific prompt components. The system prompt sent to the LLM is dynamically assembled from several markdown files located in the `inst/prompts/` directory of the package.
 
 The main function `explain()` uses S3 dispatch. When `explain(my_model_object, ...)` is called, R looks for a method like `explain.class_of_my_model_object()`. If not found, `explain.default()` is used.
 
@@ -201,12 +200,12 @@ Let's imagine you want to add dedicated support for `vglm` (Vector Generalized L
 4.  **Testing:**
     Thoroughly test with various `vglm` examples. You might need to iterate on your `instructions.md` and `role_specific.md` to refine the LLM's explanations.
 
-By following this pattern, **statlingua** can be systematically extended to cover a vast array of statistical models in R\!
+By following this pattern, **statlingo** can be systematically extended to cover a vast array of statistical models in R\!
 
 ### Contributing
 
-Contributions are welcome\! Please see the [GitHub issues](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/bgreenwell/statlingua/issues) for areas where you can help.
+Contributions are welcome\! Please see the [GitHub issues](https://github.com/bgreenwell/statlingo/issues) for areas where you can help.
 
 ### License
 
-**statlingua** is available under the GNU General Public License v3.0 (GNU GPLv3). See the `LICENSE.md` file for more details.
+**statlingo** is available under the GNU General Public License v3.0 (GNU GPLv3). See the `LICENSE.md` file for more details.

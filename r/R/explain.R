@@ -39,7 +39,7 @@
 #'
 #' @param ... Additional optional arguments. (Currently ignored.)
 #'
-#' @returns An object of class `"statlingua_explanation"`. Essentially a list
+#' @returns An object of class `"statlingo_explanation"`. Essentially a list
 #' with the following components:
 #' * `text` - Character string representation of the LLM's response.
 #' * `model_type` - Character string giving the model type (e.g., `"lm"` or
@@ -130,7 +130,7 @@ explain.default <- function(
       verbosity = verbosity,
       style = style
     ),
-    class = c("statlingua_explanation", "character")
+    class = c("statlingo_explanation", "character")
   )
   return(output)
 }

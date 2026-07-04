@@ -97,6 +97,6 @@ venv.bak/
 # macOS
 .DS_Store
 
-# statlingua specific
+# statlingo specific
 # Ignore generated plots
 *.png

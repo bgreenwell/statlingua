@@ -1,4 +1,4 @@
-# src/statlingua/model_handlers.py
+# src/statlingo/model_handlers.py
 
 # General workflow:
 #

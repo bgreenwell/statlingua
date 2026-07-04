@@ -5,7 +5,7 @@ import copy
 import numpy as np
 import statsmodels.api as sm
 
-from statlingua.explain import explain
+from statlingo.explain import explain
 
 
 class MockChat:
@@ -15,7 +15,7 @@ class MockChat:
 
     ``explain()`` calls ``copy.deepcopy(client)`` before use (chatlas's own
     documented pattern for forking a Chat without mutating the caller's
-    object -- see ``_chat_once()`` in ``statlingua.explain``), so any state
+    object -- see ``_chat_once()`` in ``statlingo.explain``), so any state
     recorded during ``chat()`` happens on the *deep copy*, not the original
     mock instance held by the test. To make that state observable, a
     ``recorder`` dict is deliberately kept as a *shared reference* (not

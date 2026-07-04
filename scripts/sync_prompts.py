@@ -24,7 +24,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SOURCE = REPO_ROOT / "prompts"
 TARGETS = [
     REPO_ROOT / "r" / "inst" / "prompts",
-    REPO_ROOT / "python" / "src" / "statlingua" / "prompts",
+    REPO_ROOT / "python" / "src" / "statlingo" / "prompts",
 ]
 
 

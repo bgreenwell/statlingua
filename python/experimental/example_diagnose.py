@@ -1,12 +1,12 @@
 import os
 import statsmodels.api as sm
-from statlingua import diagnose
+from statlingo import diagnose
 
 
 def run_diagnose_example():
     """
     Runs an example using a built-in statsmodels dataset (Duncan's Prestige)
-    and gets diagnostic advice from statlingua.
+    and gets diagnostic advice from statlingo.
     """
     # --- 1. Set up API Key ---
     # Ensure your OPENAI_API_KEY is set in your environment
@@ -41,7 +41,7 @@ def run_diagnose_example():
         "assumptions I should check?"
     )
 
-    print(f'\nAsking statlingua to diagnose with the prompt: "{user_question}"')
+    print(f'\nAsking statlingo to diagnose with the prompt: "{user_question}"')
 
     advice = diagnose(
         model_object=model,
@@ -50,7 +50,7 @@ def run_diagnose_example():
     )
 
     # --- 5. Print the result ---
-    print("\n--- Statlingua Diagnostic Advice ---")
+    print("\n--- Statlingo Diagnostic Advice ---")
     print(advice["text"])
     print("------------------------------------")
 

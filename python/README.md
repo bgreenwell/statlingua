@@ -1,4 +1,4 @@
-# statlingua (Python)
+# statlingo (Python)
 
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
@@ -12,7 +12,7 @@ This package translates the complex output of statistical models into clear,
 human-readable explanations. It is designed for students, researchers, and
 data scientists who want to gain a deeper intuition for their models.
 
-This is the Python counterpart to the [R package `statlingua`](../r); both
+This is the Python counterpart to the [R package `statlingo`](../r); both
 share the same underlying prompt content (see [`../prompts/`](../prompts)) and
 target parity for the `explain()` workflow.
 
@@ -35,7 +35,7 @@ target parity for the `explain()` workflow.
 ## Installation
 
 ```sh
-pip install git+https://github.com/bgreenwell/statlingua.git#subdirectory=python
+pip install git+https://github.com/bgreenwell/statlingo.git#subdirectory=python
 ```
 
 You will also need `statsmodels` (for fitting the example models below) and a
@@ -51,7 +51,7 @@ your preferred provider) as an environment variable.
 import os
 import statsmodels.api as sm
 from chatlas import ChatOpenAI
-from statlingua import explain
+from statlingo import explain
 
 # Ensure your API key is set
 # export OPENAI_API_KEY="sk-..."

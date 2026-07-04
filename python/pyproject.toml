@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "statlingua"
+name = "statlingo"
 version = "0.1.0"
 authors = [
   { name="Brandon Greenwell", email="greenwell.brandon@gmail.com" },
@@ -27,8 +27,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/bgreenwell/statlingua/tree/main/python"
-"Bug Tracker" = "https://github.com/bgreenwell/statlingua/issues"
+"Homepage" = "https://github.com/bgreenwell/statlingo/tree/main/python"
+"Bug Tracker" = "https://github.com/bgreenwell/statlingo/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -38,4 +38,4 @@ where = ["src"]
 # audience/verbosity/style instruction strings and must ship too, or
 # explain() breaks on any non-editable install (see prompts-sync-check /
 # _prompting.py's _prompt_config()).
-"statlingua" = ["prompts/**/*"]
+"statlingo" = ["prompts/**/*"]

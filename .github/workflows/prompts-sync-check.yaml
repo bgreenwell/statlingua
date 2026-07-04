@@ -4,13 +4,13 @@ on:
     paths:
       - 'prompts/**'
       - 'r/inst/prompts/**'
-      - 'python/src/statlingua/prompts/**'
+      - 'python/src/statlingo/prompts/**'
       - 'scripts/sync_prompts.py'
   pull_request:
     paths:
       - 'prompts/**'
       - 'r/inst/prompts/**'
-      - 'python/src/statlingua/prompts/**'
+      - 'python/src/statlingo/prompts/**'
       - 'scripts/sync_prompts.py'
 
 name: prompts-sync-check.yaml
@@ -23,5 +23,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify r/inst/prompts and python/src/statlingua/prompts match prompts/
+      - name: Verify r/inst/prompts and python/src/statlingo/prompts match prompts/
         run: python3 scripts/sync_prompts.py --check

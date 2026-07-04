@@ -6,7 +6,7 @@ longer, model-specific instructions live as markdown files under
 ``prompts/models/<name>/``. Both are interpolated into
 ``prompts/system_prompt_template.md``.
 
-This module intentionally lives outside the ``statlingua/prompts/`` data
+This module intentionally lives outside the ``statlingo/prompts/`` data
 directory (which is regenerated wholesale by ``scripts/sync_prompts.py`` and
 should contain only data files, not code).
 """
@@ -24,14 +24,14 @@ _PLACEHOLDER_RE = re.compile(r"\{\{\s*(\w+)\s*\}\}")
 
 
 def _read_prompt_file(*path_parts: str) -> str:
-    """Read a file from the installed ``statlingua/prompts`` data directory.
+    """Read a file from the installed ``statlingo/prompts`` data directory.
 
     Returns an empty string if the file doesn't exist, mirroring the R
     implementation's graceful-fallback behavior.
     """
     try:
         return (
-            importlib.resources.files("statlingua")
+            importlib.resources.files("statlingo")
             .joinpath("prompts", *path_parts)
             .read_text(encoding="utf-8")
         )

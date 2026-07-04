@@ -11,7 +11,7 @@
 ### Changed 
 
 - Major refactor, including new prompt layout in `inst/prompts`
-- The `explain()` generic gained a default fallback method (thanks to @Grandhe-Sundhar). Closes [#3](https://github.com/bgreenwell/statlingua/pull/3).
+- The `explain()` generic gained a default fallback method (thanks to @Grandhe-Sundhar). Closes [#3](https://github.com/bgreenwell/statlingo/pull/3).
 - Revised vignette and README files.
 - Changed LICENSE to GPL (>= 2).
 - Removed troublesome OpenAI URL in vignette
@@ -25,6 +25,7 @@
 
 ### Changed
 
+- Renamed the package to `statlingo`.
 - Repository restructured into a monorepo: the R package now lives under
   `r/`, alongside a Python counterpart under `python/`.
 - Prompt content (audience/verbosity/style/model instructions) is now

@@ -1,10 +1,10 @@
 ---
-title: "The statlingua Package"
+title: "The statlingo Package"
 subtitle: "Using LLMs to Help Explain and Interperate Statistical Output"
 from: markdown+emoji
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{The statlingua Package}
+  %\VignetteIndexEntry{The statlingo Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,31 +16,31 @@ knitr::opts_chunk$set(
 )
 
 # Execute the code from the vignette
-# knitr::knit("vignettes/statlingua.Rmd.orig", output = "vignettes/statlingua.Rmd")
+# knitr::knit("vignettes/statlingo.Rmd.orig", output = "vignettes/statlingo.Rmd")
 ```
 
 ## Introduction
 
 Statistical models are indispensable tools for extracting insights from data, yet their outputs can often be cryptic and laden with technical jargon. Deciphering coefficients, p-values, confidence intervals, and various model fit statistics typically requires a solid statistical background. This can create a barrier when communicating findings to a wider audience or even for those still developing their statistical acumen.
 
-The **statlingua** R package is here to change that\! It masterfully leverages the power of Large Language Models (LLMs) to translate complex statistical model outputs into clear, understandable, and context-aware natural language. By simply feeding your R statistical model objects into **statlingua**, you can generate human-readable interpretations, making statistical understanding accessible to everyone, regardless of their technical expertise.
+The **statlingo** R package is here to change that\! It masterfully leverages the power of Large Language Models (LLMs) to translate complex statistical model outputs into clear, understandable, and context-aware natural language. By simply feeding your R statistical model objects into **statlingo**, you can generate human-readable interpretations, making statistical understanding accessible to everyone, regardless of their technical expertise.
 
-It's important to note that **statlingua** itself doesn't directly call LLM APIs. Instead, it serves as a sophisticated prompt engineering toolkit. It meticulously prepares the necessary inputs (your model summary and contextual information) and then passes them to the [ellmer](https://cran.r-project.org/package=ellmer) package, which handles the actual communication with the LLM. The primary workhorse function you'll use in **statlingua** is `explain()`.
+It's important to note that **statlingo** itself doesn't directly call LLM APIs. Instead, it serves as a sophisticated prompt engineering toolkit. It meticulously prepares the necessary inputs (your model summary and contextual information) and then passes them to the [ellmer](https://cran.r-project.org/package=ellmer) package, which handles the actual communication with the LLM. The primary workhorse function you'll use in **statlingo** is `explain()`.
 
-This vignette will guide you through understanding and using **statlingua** effectively.
+This vignette will guide you through understanding and using **statlingo** effectively.
 
 ## Prerequisites
 
 Before diving in, please ensure you have the following:
 
-1.  The **statlingua** package installed from GitHub (not yet available on CRAN):
-```{r statlingua_install, eval=FALSE}
+1.  The **statlingo** package installed from GitHub (not yet available on CRAN):
+```{r statlingo_install, eval=FALSE}
 if (!requireNamespace("remotes")) {
   install.packages("remotes")
 }
-remotes::install_github("bgreenwell/statlingua")
+remotes::install_github("bgreenwell/statlingo")
 ```
-2.  The [ellmer](https://cran.r-project.org/package=ellmer) package installed. **statlingua** relies on it for LLM communication:
+2.  The [ellmer](https://cran.r-project.org/package=ellmer) package installed. **statlingo** relies on it for LLM communication:
 ```{r ellmer_install, eval=FALSE}
 install.packages("ellmer")
 ```
@@ -50,9 +50,9 @@ install.packages("ellmer")
 install.packages(c("ISLR2", "jsonlite", "lme4", "MASS", "survival"))
 ```
 
-## How **statlingua** Works: The `explain()` Function and [ellmer](https://cran.r-project.org/package=ellmer)
+## How **statlingo** Works: The `explain()` Function and [ellmer](https://cran.r-project.org/package=ellmer)
 
-The primary function you'll use in ****statlingua**** is `explain()`. This is an S3 generic function, meaning its behavior adapts to the class of the R statistical object you provide (e.g., an `"lm"` object, `"glm"` object, `"lmerMod"` object, etc.).
+The primary function you'll use in ****statlingo**** is `explain()`. This is an S3 generic function, meaning its behavior adapts to the class of the R statistical object you provide (e.g., an `"lm"` object, `"glm"` object, `"lmerMod"` object, etc.).
 
 The process `explain()` follows to generate an interpretation involves several key steps:
 
@@ -63,7 +63,7 @@ The process `explain()` follows to generate an interpretation involves several k
     Internally, `explain()` (typically via the `.explain_core()` helper function or directly in `explain.default()`) uses the `summarize()` function to capture a text-based summary of your statistical `object`. This captured text (e.g., similar to what `summary(object)` would produce) forms the core statistical information that the LLM will interpret.
 
 3.  **System Prompt Assembly (via `.assemble_sys_prompt()`)**:
-    This is where **statlingua** constructs the detailed instructions for the LLM. The internal `.assemble_sys_prompt()` function pieces together several components from the package's `inst/prompts/` directory (generated from the canonical `prompts/` directory at the root of the [statlingua repository](https://github.com/bgreenwell/statlingua), shared with the Python package) and interpolates them into `inst/prompts/system_prompt_template.md` via [`ellmer::interpolate_package()`](https://ellmer.tidyverse.org/reference/interpolate.html). The final system prompt typically includes the following sections, ordered to guide the LLM effectively:
+    This is where **statlingo** constructs the detailed instructions for the LLM. The internal `.assemble_sys_prompt()` function pieces together several components from the package's `inst/prompts/` directory (generated from the canonical `prompts/` directory at the root of the [statlingo repository](https://github.com/bgreenwell/statlingo), shared with the Python package) and interpolates them into `inst/prompts/system_prompt_template.md` via [`ellmer::interpolate_package()`](https://ellmer.tidyverse.org/reference/interpolate.html). The final system prompt typically includes the following sections, ordered to guide the LLM effectively:
 
     * **Role Definition**:
         * A base role description is read from `inst/prompts/common/role_base.md`.
@@ -90,19 +90,19 @@ The process `explain()` follows to generate an interpretation involves several k
     The assembled `sys_prompt` is set for the [ellmer](https://cran.r-project.org/package=ellmer) `client` object. Then, the constructed `usr_prompt` is sent to the LLM using `client$chat(usr_prompt)`. [ellmer](https://cran.r-project.org/package=ellmer) handles the actual API communication.
 
 6.  **Output Post-processing (via `.remove_fences()`)**:
-    Before returning the explanation, ****statlingua**** calls an internal utility, `.remove_fences()`, to clean the LLM's raw output. This function attempts to remove common "language fence" wrappers (like ```markdown ... ``` or ```json ... ```) that LLMs sometimes add around their responses.
+    Before returning the explanation, ****statlingo**** calls an internal utility, `.remove_fences()`, to clean the LLM's raw output. This function attempts to remove common "language fence" wrappers (like ```markdown ... ``` or ```json ... ```) that LLMs sometimes add around their responses.
 
 7.  **Output Packaging**:
-    The cleaned explanation string from the LLM is then packaged into a `statlingua_explanation` object. This object's `text` component holds the explanation string in the specified `style`. It also includes metadata like the `model_type`, `audience`, `verbosity`, and `style` used. The `statlingua_explanation` object has a default print method that uses `cat()` for easy viewing in the console.
+    The cleaned explanation string from the LLM is then packaged into a `statlingo_explanation` object. This object's `text` component holds the explanation string in the specified `style`. It also includes metadata like the `model_type`, `audience`, `verbosity`, and `style` used. The `statlingo_explanation` object has a default print method that uses `cat()` for easy viewing in the console.
 
-This comprehensive and modular approach to prompt engineering allows **statlingua** to provide tailored and well-formatted explanations for a variety of statistical models and user needs.
+This comprehensive and modular approach to prompt engineering allows **statlingo** to provide tailored and well-formatted explanations for a variety of statistical models and user needs.
 
 ### Understanding `explain()`'s Arguments
 
 The `explain()` function is flexible, with several arguments to fine-tune its behavior:
 
 * `object`: The primary input – your R statistical object (e.g., an `"lm"` model, a `"glm"` model, the output of `t.test()`, `coxph()`, etc.).
-* `client`: **Essential**. This is an [ellmer](https://cran.r-project.org/package=ellmer) client object (e.g., created by `ellmer::chat_google_gemini()`). **statlingua** uses this to communicate with the LLM. You must initialize and configure this client with your API key beforehand.
+* `client`: **Essential**. This is an [ellmer](https://cran.r-project.org/package=ellmer) client object (e.g., created by `ellmer::chat_google_gemini()`). **statlingo** uses this to communicate with the LLM. You must initialize and configure this client with your API key beforehand.
 * `context` (Optional but **Highly Recommended**): A character string providing background information about your data, research questions, variable definitions, units, study design, etc. Default is `NULL`.
 * `audience` (Optional): Specifies the target audience for the explanation. Options include: `"novice"` (default), `"student"`, `"researcher"`, `"manager"`, `"domain_expert"`.
 * `verbosity` (Optional): Controls the level of detail. Options are: `"moderate"` (default), `"brief"`, `"detailed"`.
@@ -112,7 +112,7 @@ The `explain()` function is flexible, with several arguments to fine-tune its be
     * `"json"`: Output structured as a JSON string parseable into an R list (see example for parsing).
     * `"text"`: Output as plain text.
     * `"latex"`: Output as a LaTeX fragment.
-* `...` (Optional): Additional optional arguments (currently ignored by **statlingua**'s `explain` methods).
+* `...` (Optional): Additional optional arguments (currently ignored by **statlingo**'s `explain` methods).
 
 ## The Power of `context`: Why It Matters
 
@@ -141,7 +141,7 @@ Think of `context` as the difference between asking a generic statistician "What
 
 ## Some Examples in Action\!
 
-Let's see **statlingua** shine with some practical examples.
+Let's see **statlingo** shine with some practical examples.
 
 **Important Note on API Keys:** The following code chunks that call `explain()` are set to `eval = FALSE` by default in this vignette. This is because they require an active API key configured for [ellmer](https://cran.r-project.org/package=ellmer). To run these examples yourself:
 
@@ -163,10 +163,10 @@ fm_carseats <- lm(Sales ~ . + Price:Age + Income:Advertising, data = Carseats)
 summary(fm_carseats)  # print model summary
 ```
 
-The next code chunk loads the **statlingua** package and establishes a connection to a (default) Google Gemini model. We also define some context for the LLM to use when explaining the above output:
+The next code chunk loads the **statlingo** package and establishes a connection to a (default) Google Gemini model. We also define some context for the LLM to use when explaining the above output:
 
 ```{r carseats_lm_context}
-library(statlingua)
+library(statlingo)
 
 # Establish client connection
 client <- ellmer::chat_google_gemini(echo = "none")
@@ -254,7 +254,7 @@ interested in interpreting coefficients as odds ratios.
 client <- ellmer::chat_google_gemini(echo = "none")
 ```
 
-This time, we'll ask **statlingua** for an explanation, targeting a `"researcher"` with `"moderate"` verbosity. This audience would be interested in aspects like odds ratios and model fit.
+This time, we'll ask **statlingo** for an explanation, targeting a `"researcher"` with `"moderate"` verbosity. This audience would be interested in aspects like odds ratios and model fit.
 
 ```{r pima_glm_explain, results="asis"}
 explain(fm_pima, client = client, context = pima_context,
@@ -348,7 +348,7 @@ client <- ellmer::chat_google_gemini(echo = "none")
 
 #### Requesting Plain Text Output (`style = "text"`)
 
-Let's ask **statlingua** for an explanation as plain text, targeting a `"researcher"` with `"moderate"` verbosity.
+Let's ask **statlingo** for an explanation as plain text, targeting a `"researcher"` with `"moderate"` verbosity.
 
 ```{r sleepstudy_lmer_explain_text}
 explain(fm_sleep, client = client, context = sleepstudy_context,
@@ -364,28 +364,28 @@ client <- ellmer::chat_google_gemini(echo = "none")
 ex <- explain(fm_sleep, client = client, context = sleepstudy_context,
               audience = "student", verbosity = "detailed", style = "json")
 
-# The 'text' component of the statlingua_explanation object now holds a JSON
+# The 'text' component of the statlingo_explanation object now holds a JSON
 # string which can be parsed using the jsonlite package
 jsonlite::prettify(ex$text)
 ```
 
 ## Inspecting LLM Interaction
 
-If you want to see the exact system and user prompts that **statlingua** generated and sent to the LLM (via [ellmer](https://cran.r-project.org/package=ellmer)), as well as the raw response from the LLM, you can print the [ellmer](https://cran.r-project.org/package=ellmer) `"Chat"` object (defined as `client` in this example) *after* an `explain()` call. The `client` object stores the history of the interaction.
+If you want to see the exact system and user prompts that **statlingo** generated and sent to the LLM (via [ellmer](https://cran.r-project.org/package=ellmer)), as well as the raw response from the LLM, you can print the [ellmer](https://cran.r-project.org/package=ellmer) `"Chat"` object (defined as `client` in this example) *after* an `explain()` call. The `client` object stores the history of the interaction.
 
 ```{r inspect_client}
 print(client)
 ```
 
-This transparency is invaluable for debugging, understanding the process, or even refining prompts if you were developing custom extensions for **statlingua**.
+This transparency is invaluable for debugging, understanding the process, or even refining prompts if you were developing custom extensions for **statlingo**.
 
 ## Conclusion
 
-The **statlingua** package, working hand-in-hand with **ellmer**, provides a powerful and user-friendly bridge to the interpretive capabilities of Large Language Models for R users. By mastering the `explain()` function and its arguments—especially `context`, `audience`, `verbosity`, and `style`—you can transform standard statistical outputs into rich, understandable narratives tailored to your needs.
+The **statlingo** package, working hand-in-hand with **ellmer**, provides a powerful and user-friendly bridge to the interpretive capabilities of Large Language Models for R users. By mastering the `explain()` function and its arguments—especially `context`, `audience`, `verbosity`, and `style`—you can transform standard statistical outputs into rich, understandable narratives tailored to your needs.
 
 **Important Considerations:**
 * The quality of the LLM's explanation is heavily influenced by the clarity of the `context` you provide and the inherent capabilities of the LLM you choose (in this vignette, we've focused on Google Gemini).
-* **LLM Output Variability:** While **statlingua** uses detailed prompts to guide the LLM towards the desired output `style` and content, the nature of generative AI means that responses can vary. The requested `style` is an aim, and while **statlingua** includes measures to clean the output (like removing language fences), the exact formatting and content may not always be perfectly consistent across repeated calls or different LLM versions. Always critically review the generated explanations.
+* **LLM Output Variability:** While **statlingo** uses detailed prompts to guide the LLM towards the desired output `style` and content, the nature of generative AI means that responses can vary. The requested `style` is an aim, and while **statlingo** includes measures to clean the output (like removing language fences), the exact formatting and content may not always be perfectly consistent across repeated calls or different LLM versions. Always critically review the generated explanations.
 * For the `style = "json"` option, which requests JSON output, ensure the `jsonlite` package is available if you intend to parse the JSON string into an R list within your session.
 
 Remember to critically review all explanations generated by the LLM.

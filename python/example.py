@@ -2,12 +2,12 @@ import os
 import pandas as pd
 import statsmodels.api as sm
 from chatlas import ChatOpenAI
-from statlingua import explain
+from statlingo import explain
 
 
 def run_example():
     """
-    Runs a complete example of fitting a model and explaining it with statlingua.
+    Runs a complete example of fitting a model and explaining it with statlingo.
     """
     # --- 1. Set up your API Key ---
     # IMPORTANT: chatlas reads provider credentials from the environment by
@@ -139,7 +139,7 @@ def run_example():
     print("Model fitting complete.")
     # print(model.summary()) # You can uncomment this to see the raw output
 
-    # --- 4. Get an explanation from statlingua ---
+    # --- 4. Get an explanation from statlingo ---
     # We provide context to help the LLM give a better explanation.
     model_context = (
         "This model analyzes the 'cars' dataset from the 1920s. "
@@ -147,7 +147,7 @@ def run_example():
         "stopping distance (in feet)."
     )
 
-    print("\nCalling statlingua.explain() to get an explanation...")
+    print("\nCalling statlingo.explain() to get an explanation...")
     client = ChatOpenAI(model="gpt-4o")  # Choose the chatlas provider/model
     explanation = explain(
         model_object=model,
@@ -159,7 +159,7 @@ def run_example():
     print("Explanation received.")
 
     # --- 5. Print the result ---
-    print("\n--- Statlingua Explanation ---")
+    print("\n--- Statlingo Explanation ---")
     print(explanation["text"])
     print("----------------------------")
 

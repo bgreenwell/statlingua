@@ -18,7 +18,7 @@
   # Construct path like "prompts/common/role_base.md"; the components passed
   # in '...' are joined by file.path separator.
   relative_path <- do.call(file.path, as.list(c("prompts", ...)))
-  file_path <- system.file(relative_path, package = "statlingua")
+  file_path <- system.file(relative_path, package = "statlingo")
   if (nzchar(file_path) && file.exists(file_path)) {
     file_size <- file.info(file_path)$size
     if (file_size > 0) {
@@ -40,7 +40,7 @@
   function() {
     if (is.null(cache)) {
       config_path <- system.file("prompts", "config.yaml",
-                                  package = "statlingua")
+                                  package = "statlingo")
       cache <<- yaml::read_yaml(config_path)
     }
     cache
@@ -60,7 +60,7 @@
   # Fall back to the "default" model instructions if this model has none
   has_model_instructions <- nzchar(system.file(
     "prompts", "models", model_name, "instructions.md",
-    package = "statlingua"
+    package = "statlingo"
   ))
   if (!has_model_instructions) {
     model_name <- "default"
@@ -78,7 +78,7 @@
     trimws(.read_prompt_file("models", model_name, "instructions.md"))
 
   ellmer::interpolate_package(
-    package = "statlingua",
+    package = "statlingo",
     path = "system_prompt_template.md",
     role_instruction = role_instruction,
     audience_title = tools::toTitleCase(audience),
@@ -223,7 +223,7 @@
       audience = audience,
       verbosity = verbosity
     ),
-    class = c("statlingua_explanation", "character")
+    class = c("statlingo_explanation", "character")
   )
   return(output)
 }

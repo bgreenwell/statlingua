@@ -1,7 +1,7 @@
 # agent_example.py
 import os
 import statsmodels.api as sm
-from statlingua import diagnose_agent
+from statlingo import diagnose_agent
 
 
 def run_agent_example():
@@ -28,7 +28,7 @@ def run_agent_example():
     # Use a vision-capable model
     result = diagnose_agent(model_object=model, prompt=user_question, model="gpt-4o")
 
-    print("\n--- Statlingua Agent Response ---")
+    print("\n--- Statlingo Agent Response ---")
     print(result["text"])
     print("---------------------------------")
     if result.get("plot"):

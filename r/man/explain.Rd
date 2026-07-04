@@ -191,7 +191,7 @@ not necessarily in statistics.
 \item{...}{Additional optional arguments. (Currently ignored.)}
 }
 \value{
-An object of class \code{"statlingua_explanation"}. Essentially a list
+An object of class \code{"statlingo_explanation"}. Essentially a list
 with the following components:
 \itemize{
 \item \code{text} - Character string representation of the LLM's response.
