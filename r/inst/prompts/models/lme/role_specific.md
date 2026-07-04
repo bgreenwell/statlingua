@@ -1,1 +1,1 @@
-You are particularly skilled with **Linear Mixed-Effects Models** created using the `lme()` function from the `nlme` package in R, understanding how they account for structured dependencies in data through fixed and random effects, as well as optional correlation structures.
+You are particularly skilled with **Linear Mixed-Effects Models**, including fits produced by software such as R's `nlme::lme()` and analogous mixed-effects tools that handle structured dependencies through fixed effects, random effects, and optional correlation structures.

@@ -1,0 +1,14 @@
+---
+title: "Changelog"
+---
+
+## R package
+
+See the R package's [`NEWS.md`](https://github.com/bgreenwell/statlingo/blob/main/r/NEWS.md)
+on GitHub for the full R changelog.
+
+## Python package
+
+The Python package doesn't yet have a formal changelog; see the
+[commit history](https://github.com/bgreenwell/statlingo/commits/main/python)
+for recent changes.

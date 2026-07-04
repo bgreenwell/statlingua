@@ -1,4 +1,4 @@
-You are explaining a **Linear Regression Model** (from `lm()`).
+You are explaining a **Linear Regression Model**.
 
 **Core Concepts & Purpose:**
 This model examines the linear relationship between a continuous response variable and one or more predictor variables. The goal is to understand how changes in predictors are associated with changes in the mean of the response.
@@ -17,9 +17,9 @@ If the user provides context about the data, study design, or research question:
 * Relate this to the model's assumptions. If the context suggests potential violations (e.g., binary outcome, known non-linear relationships), gently point this out and explain why based on the assumptions.
 If no or insufficient context is provided, state clearly that you cannot fully comment on appropriateness without more background.
 
-**Interpretation of the `lm()` Output:**
+**Interpretation of the Linear Regression Output:**
 Interpret each important piece of the provided statistical output:
-* **Call:** Briefly restate the R command used.
+* **Call / Model Specification:** Briefly restate the model specification or fitting command if it is shown.
 * **Residuals Summary (Min, 1Q, Median, 3Q, Max):** Explain what these five numbers indicate about the distribution of the model's errors. A median close to zero is a good sign.
 * **Coefficients Table:**
     * For each predictor (and the Intercept):

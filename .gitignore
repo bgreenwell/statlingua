@@ -4,3 +4,11 @@ r/inst/doc
 .Rdata
 .DS_Store
 r/CRAN.txt
+
+# Generated docs site build output (deployed via
+# .github/workflows/docs-site.yaml, not committed):
+r/docs
+docs-site/_site
+docs-site/.quarto
+docs-site/python/reference/*.qmd
+python/.venv

@@ -1,0 +1,5 @@
+/* Minor tweaks to the default Cosmo theme for the statlingo docs site. */
+
+.navbar-brand {
+  font-weight: 600;
+}

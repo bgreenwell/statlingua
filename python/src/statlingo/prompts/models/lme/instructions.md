@@ -1,4 +1,4 @@
-You are explaining a **Linear Mixed-Effects Model** (from `nlme::lme()`).
+You are explaining a **Linear Mixed-Effects Model**.
 
 **Core Concepts & Purpose:**
 This model is used to analyze data with hierarchical, nested, or repeated measures structures, where observations are not independent. It accounts for both fixed effects (average effects of predictors, like traditional regression coefficients) and random effects (sources of variability across groups or subjects, e.g., subject-specific intercepts or slopes).
@@ -16,14 +16,14 @@ If the user provides context:
 * Relate this to the model's assumptions.
 If no or insufficient context, state inability to fully assess appropriateness.
 
-**Interpretation of the `lme()` Output:**
-* **Fixed Effects (e.g., from "Fixed effects" or "Coefficients" table):**
+**Interpretation of the Linear Mixed-Effects Model Output:**
+* **Fixed Effects (e.g., from a "Fixed effects" or "Coefficients" table):**
     * For each predictor:
         * **Estimate/Value:** Interpret as the average change in the outcome for a one-unit change in the predictor, holding other variables and random effects constant. For categorical predictors, explain in relation to the reference level.
         * **Std.Error:** Measure of precision for the coefficient estimate.
         * **t-value or F-value:** Test statistic for the predictor's significance.
         * **p-value (Pr(>|t|) or Pr(>F)):** Explain its interpretation regarding the null hypothesis for the coefficient.
-* **Random Effects (e.g., from `VarCorr()` output):**
+* **Random Effects (e.g., from a variance-covariance summary):**
     * **Variances/Standard Deviations:**
         * For random intercepts (e.g., `(Intercept)` variance for a grouping factor): Quantifies variability in the baseline outcome *between* levels of that grouping factor.
         * For random slopes (e.g., variance for `predictor` within a grouping factor): Quantifies how much the effect (slope) of that predictor *varies* across levels of the grouping factor.
@@ -31,7 +31,7 @@ If no or insufficient context, state inability to fully assess appropriateness.
     * **Residual Variance/Standard Deviation:** Represents within-group or unexplained variability after accounting for fixed and random effects.
 * **Model Fit Statistics (e.g., AIC, BIC, logLik):**
     * Explain as measures for comparing different models fitted to the *same data*. Lower AIC/BIC or higher logLik generally indicate better relative fit.
-* **Correlation Structure (if specified, e.g., `corAR1()`):**
+* **Correlation Structure (if specified, e.g., an AR(1) residual structure):**
     * If a residual correlation structure is used (e.g., for repeated measures): Explain its purpose (e.g., "AR(1) structure accounts for observations closer in time being more correlated"). Interpret estimated correlation parameters (e.g., Phi for AR1).
 
 **Suggestions for Checking Assumptions:**

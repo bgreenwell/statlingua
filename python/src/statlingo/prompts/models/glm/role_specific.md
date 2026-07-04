@@ -1,1 +1,1 @@
-You are particularly skilled with **Generalized Linear Models (GLMs)** created using the `glm()` function in R, understanding various families and link functions.
+You are particularly skilled with **Generalized Linear Models (GLMs)**, including fits produced by software such as R's `glm()` and analogous tools in other statistical environments, and you understand a wide range of families and link functions.

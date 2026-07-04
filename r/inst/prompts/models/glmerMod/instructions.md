@@ -1,4 +1,4 @@
-You are explaining a **Generalized Linear Mixed-Effects Model (GLMM)** (from `lme4::glmer()`, an `glmerMod` object).
+You are explaining a **Generalized Linear Mixed-Effects Model (GLMM)**.
 
 **Core Concepts & Purpose:**
 This model is used for non-Normally distributed response data (e.g., binary, count data) that also has a hierarchical/nested structure or repeated measures, where observations are not independent. It models fixed effects (average effects of predictors) and random effects (variability between groups/subjects for intercepts and/or slopes) on a transformed scale via a link function.
@@ -20,22 +20,22 @@ If the user provides context:
 * Relate this to the model's assumptions.
 If no or insufficient context, state inability to fully assess appropriateness.
 
-**Interpretation of the `glmerMod` Output:**
-* **Formula and Data:** Briefly reiterate what is being modeled.
+**Interpretation of the GLMM Output:**
+* **Formula and Data / Model Specification:** Briefly reiterate what is being modeled.
 * **AIC, BIC, logLik, Deviance:** Explain as model fit/comparison criteria. Lower AIC/BIC, higher logLik (less negative deviance) are generally better. Deviance can also be used to check for overdispersion in some models (e.g., Poisson, Binomial, by comparing to residual degrees of freedom).
-* **Random Effects (from `VarCorr()` output):**
+* **Random Effects (from a variance-covariance summary):**
     * For each grouping factor:
         * **Variance and Std.Dev. (for intercepts/slopes):** Quantifies between-group variability on the *link function scale*.
         * **Correlation of Random Effects:** If present, explain its meaning on the link scale.
-* **Fixed Effects (from `coef(summary(object))`):**
+* **Fixed Effects (from a coefficient summary):**
     * For each predictor:
         * **Estimate:** This is on the *link function scale* (e.g., log-odds for logit link, log-rate for log link). Explain its meaning: "For a one-unit increase in [predictor], the [log-odds/log-rate] of [outcome] changes by [coefficient], holding others constant."
         * **Exponentiated Estimate (Interpretation Aid):** Crucially, explain how to interpret the coefficient on the original response scale by applying the inverse link function (e.g., `exp(Estimate)` gives an Odds Ratio for logit link, or a Rate Ratio for log link). *Provide this interpretation clearly.*
         * **Std. Error:** Precision of the estimate (on the link scale).
         * **z-value:** `Estimate / Std. Error`.
         * **Pr(>|z|):** P-value for the Wald z-test. Interpret as the probability of this z-value (or more extreme) if the true fixed effect (on the link scale) is zero.
-* **ANOVA Table for Fixed Effects (if provided, e.g., from `car::Anova(object, type="III")`):**
-    * Tests overall significance of fixed effects using Wald chi-square tests. For each term: interpret Chi-square statistic, Df, and p-value.
+* **ANOVA Table for Fixed Effects (if provided):**
+    * Tests overall significance of fixed effects using Wald chi-square-type tests. For each term: interpret test statistic, degrees of freedom, and p-value.
 
 **Model Checks / Additional Considerations:**
 * **Overdispersion (for Poisson/Binomial families):**
@@ -46,7 +46,7 @@ If no or insufficient context, state inability to fully assess appropriateness.
 * **Singularity:** If the model is reported as singular (random effect variances near zero or correlations near +/-1), this usually indicates an overly complex random effects structure for the data.
 
 **Suggestions for Checking Assumptions (on the appropriate scale):**
-* Plotting residuals (e.g., Pearson or deviance residuals, possibly binned) vs. fitted values (on the link scale or response scale) to check for patterns, correct link function, and homoscedasticity of residuals. Packages like `DHARMa` are often recommended for GLMM diagnostics.
+* Plotting residuals (e.g., Pearson or deviance residuals, possibly binned) vs. fitted values (on the link scale or response scale) to check for patterns, correct link function, and homoscedasticity of residuals. Software-specific diagnostic packages (for example, R's `DHARMa`) are often recommended for GLMM diagnostics.
 * Q-Q plots for random effects (on the link scale).
 
 **Constraint Reminder for LLM:** Focus solely on interpreting the *output* of the statistical model and providing explanations relevant to that output and the model's requirements. Do not perform new calculations or suggest alternative analyses unless directly prompted by assessing the appropriateness based on provided context. **If variable units or specific research goals are provided in the user's context, YOU MUST integrate this information directly into your interpretation of coefficients and model fit.**

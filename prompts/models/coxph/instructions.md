@@ -1,4 +1,4 @@
-You are explaining a **Cox Proportional Hazards Model** (from `survival::coxph()`).
+You are explaining a **Cox Proportional Hazards Model**.
 
 **Core Concepts & Purpose:**
 This is a semi-parametric model used to analyze time-to-event data. It models the relationship between covariates and the *hazard rate* – the instantaneous risk of an event occurring at a particular time, given it hasn't occurred yet. It does *not* assume a specific distribution for the baseline hazard function.
@@ -11,12 +11,12 @@ This is a semi-parametric model used to analyze time-to-event data. It models th
 **Assessing Model Appropriateness (Based on User Context):**
 If the user provides context:
 * Comment on whether a Cox model appears suitable given the research question and time-to-event data type.
-If no or insufficient context, state that assessing the crucial proportional hazards assumption usually requires specific diagnostic tests and plots (e.g., checking Schoenfeld residuals using `survival::cox.zph()`).
+If no or insufficient context, state that assessing the crucial proportional hazards assumption usually requires specific diagnostic tests and plots (e.g., checking Schoenfeld residuals).
 
-**Interpretation of the `coxph()` Output (from `summary(coxph_object)`):**
-* **Call:** Briefly reiterate the model formula.
+**Interpretation of the Cox Model Output:**
+* **Call / Model Specification:** Briefly reiterate the model formula or fitting command if shown.
 * **n, number of events:** Report the number of subjects and the number of events observed.
-* **Coefficients Table (from `summary(object)$coefficients` and `summary(object)$conf.int`):**
+* **Coefficients Table:**
     * For each predictor:
         * **coef:** The estimated coefficient for the predictor on the *log-hazard scale*.
             * Positive coef: increased hazard (poorer prognosis/shorter time to event).
@@ -28,20 +28,20 @@ If no or insufficient context, state that assessing the crucial proportional haz
         * **se(coef):** Standard error of the log-hazard coefficient.
         * **z:** Wald test statistic (`coef / se(coef)`).
         * **Pr(>|z|) or p:** P-value for the Wald test. Interpretation regarding H0: true coefficient (log-hazard) is zero.
-        * **Confidence Interval for HR (e.g., `lower .95`, `upper .95` from `summary(object)$conf.int`):** Provide and interpret. If CI for HR includes 1, effect is typically not statistically significant.
+        * **Confidence Interval for HR:** Provide and interpret. If the CI for HR includes 1, the effect is typically not statistically significant.
 * **Overall Model Significance Tests:**
     * **Likelihood ratio test:** Compares model fit to a null model. Small p-value -> model with predictors is better. Report test statistic, df, p-value.
     * **Wald test:** Similar to LR test. Report test statistic, df, p-value.
-    * **Score (logrank) test:** Another test for overall model significance. Report test statistic, df, p-value. (Note: The "Score (logrank) test" in `summary.coxph` tests H0: all regression coefficients are zero).
-* **Concordance (`summary(object)$concordance`):**
-    * Measure of predictive accuracy/discrimination. Proportion of pairs where subject with higher predicted risk experiences event before subject with lower risk.
-    * Range 0.5 (chance) to 1 (perfect). Higher is better. Report with its standard error (`se(concordance)`).
+    * **Score (logrank) test:** Another test for overall model significance. Report test statistic, df, p-value. (Note: the score/logrank test in a Cox model summary tests H0: all regression coefficients are zero.)
+* **Concordance:**
+    * Measure of predictive accuracy/discrimination. Proportion of pairs where the subject with higher predicted risk experiences the event before the subject with lower risk.
+    * Range 0.5 (chance) to 1 (perfect). Higher is better. Report with its standard error if shown.
 
 **Suggestions for Checking Assumptions and Further Analysis:**
 * **Proportional Hazards Assumption:** **Strongly recommend checking for each covariate and globally.**
-    * Methods: Plotting Schoenfeld residuals against time (using `survival::cox.zph()`). Non-random patterns or significant slopes suggest violation. Test output from `cox.zph()` gives p-values for each covariate and a global test.
-    * If violated, consider stratifying by the problematic covariate, including time-interaction terms (e.g., using `tt()` function or `predictor:log(time)`), or using alternative models.
-* **Functional Form of Continuous Covariates:** Check if assumption of linearity on log-hazard scale is appropriate (e.g., using martingale residuals, plotting against covariate values, or categorizing).
+    * Methods: Plotting Schoenfeld residuals against time. Non-random patterns or significant slopes suggest violation. Some software also provides p-values for each covariate and a global test.
+    * If violated, consider stratifying by the problematic covariate, including time-interaction terms (e.g., interactions with `log(time)` or software-specific time-transform features such as R's `tt()`), or using alternative models.
+* **Functional Form of Continuous Covariates:** Check if assumption of linearity on the log-hazard scale is appropriate (e.g., using martingale residuals, plotting against covariate values, or categorizing).
 * **Influential Observations:** Suggest checking.
 * **Goodness-of-fit:** Briefly mention plotting martingale or deviance residuals for overall fit assessment.
 

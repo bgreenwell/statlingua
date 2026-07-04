@@ -1,0 +1,43 @@
+---
+title: "Get started (Python)"
+---
+
+## Installation
+
+```sh
+pip install "git+https://github.com/bgreenwell/statlingo.git#subdirectory=python"
+```
+
+You'll also need a [chatlas](https://posit-dev.github.io/chatlas/)-supported
+provider SDK (e.g. `openai` for `ChatOpenAI`) and `statsmodels` for fitting
+the example model below.
+
+## Quick example
+
+```{.python}
+import os
+import statsmodels.api as sm
+from chatlas import ChatOpenAI
+from statlingo import explain
+
+if not os.getenv("OPENAI_API_KEY"):
+    raise EnvironmentError("Please set your OPENAI_API_KEY environment variable.")
+
+# 1. Fit a model
+duncan_data = sm.datasets.duncan.load()
+y = duncan_data.data["prestige"]
+X = sm.add_constant(duncan_data.data[["income", "education"]])
+model = sm.OLS(y, X).fit()
+
+# 2. Create a chatlas Chat client (never mutated by explain())
+client = ChatOpenAI(model="gpt-4o")
+
+# 3. Get a high-level explanation of the model results
+explanation = explain(model_object=model, client=client, audience="student")
+print(explanation["text"])
+```
+
+## Learn more
+
+* [API reference](python/reference/index.qmd)
+* [Source code](https://github.com/bgreenwell/statlingo/tree/main/python)

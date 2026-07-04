@@ -1,0 +1,57 @@
+---
+title: "Get started (R)"
+---
+
+## Installation
+
+statlingo's R package isn't yet on CRAN (it was previously published there
+under the name `statlingua`; a resubmission under the new name is
+pending). Install the development version from GitHub:
+
+```r
+# install.packages("pak")
+pak::pak("bgreenwell/statlingo/r")
+```
+
+You'll also need the [ellmer](https://cran.r-project.org/package=ellmer)
+package to create an LLM client:
+
+```r
+install.packages("ellmer")
+```
+
+## Quick example
+
+```{r}
+#| eval: false
+library(statlingo)
+
+# Fit a simple linear model
+fm <- lm(dist ~ speed, data = cars)
+
+context <- "
+The data give the speed of cars (mph) and the distances taken to stop
+(ft). Note that the data were recorded in the 1920s!
+"
+
+# Create an ellmer chat client (requires an API key -- see
+# ?ellmer::chat_openai or ?ellmer::chat_google_gemini for provider setup)
+client <- ellmer::chat_openai()
+
+# Get an explanation tailored for a student audience
+ex <- explain(
+  fm,
+  client = client,
+  context = context,
+  audience = "student",
+  verbosity = "detailed"
+)
+
+print(ex)
+```
+
+## Learn more
+
+* [Function reference](r/reference/index.html)
+* [Introductory vignette](r/articles/statlingo.html)
+* [Source code](https://github.com/bgreenwell/statlingo/tree/main/r)

@@ -3,6 +3,7 @@
 import copy
 
 import numpy as np
+import pytest
 import statsmodels.api as sm
 
 from statlingo.explain import explain
@@ -77,6 +78,46 @@ def _fit_glm():
     return sm.GLM(counts, x, family=sm.families.Poisson()).fit()
 
 
+def _fit_sklearn_linear_regression():
+    """A small, real fitted scikit-learn linear regression model."""
+    sklearn = pytest.importorskip("sklearn")
+    assert sklearn is not None  # appease linters about the importorskip result
+    from sklearn.linear_model import LinearRegression
+
+    x = np.array(
+        [
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+            [2.0, 1.0],
+            [1.0, 2.0],
+            [3.0, 1.0],
+        ]
+    )
+    y = 1.0 + 2.0 * x[:, 0] - 1.0 * x[:, 1]
+    return LinearRegression().fit(x, y)
+
+
+def _fit_sklearn_logistic_regression():
+    """A small, real fitted scikit-learn logistic regression model."""
+    sklearn = pytest.importorskip("sklearn")
+    assert sklearn is not None
+    from sklearn.linear_model import LogisticRegression
+
+    x = np.array(
+        [
+            [-2.0, -1.0],
+            [-1.0, -1.0],
+            [-1.0, 0.0],
+            [1.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 1.0],
+        ]
+    )
+    y = np.array([0, 0, 0, 1, 1, 1])
+    return LogisticRegression(random_state=0, max_iter=200).fit(x, y)
+
+
 def test_explain_calls_chat_with_correct_prompts():
     """Tests that explain() calls client.chat() with correctly assembled
     prompts, and does not mutate the caller's client object."""
@@ -129,6 +170,47 @@ def test_explain_handles_glm():
     assert result["model_type"] == "glm"
 
 
+def test_explain_handles_sklearn_linear_regression():
+    """Tests that the scikit-learn linear regression handler is used."""
+    mock_chat = MockChat()
+    model = _fit_sklearn_linear_regression()
+
+    result = explain(model_object=model, client=mock_chat)
+
+    assert mock_chat.recorder["call_count"] == 1
+    user_prompt = mock_chat.recorder["last_user_prompt"]
+
+    assert "Explain the following lm model output:" in user_prompt
+    assert "Model type: scikit-learn LinearRegression" in user_prompt
+    assert "Number of features: 2" in user_prompt
+    assert "Intercept: 1" in user_prompt
+    assert "feature_0: 2" in user_prompt
+    assert "feature_1: -1" in user_prompt
+    assert "R-squared: not available from the fitted estimator alone" in user_prompt
+    assert result["model_type"] == "lm"
+
+
+def test_explain_handles_sklearn_logistic_regression():
+    """Tests that the scikit-learn logistic regression handler is used."""
+    mock_chat = MockChat()
+    model = _fit_sklearn_logistic_regression()
+
+    result = explain(model_object=model, client=mock_chat)
+
+    assert mock_chat.recorder["call_count"] == 1
+    user_prompt = mock_chat.recorder["last_user_prompt"]
+
+    assert "Explain the following glm model output:" in user_prompt
+    assert "Model type: scikit-learn LogisticRegression" in user_prompt
+    assert "Number of classes: 2" in user_prompt
+    assert "Classes: 0, 1" in user_prompt
+    assert "Number of features: 2" in user_prompt
+    assert "Coefficients for positive class (1):" in user_prompt
+    assert "feature_0:" in user_prompt
+    assert "feature_1:" in user_prompt
+    assert result["model_type"] == "glm"
+
+
 def test_explain_validates_audience():
     mock_chat = MockChat()
     ols_model = _fit_ols()
@@ -137,4 +219,3 @@ def test_explain_validates_audience():
         assert False, "expected ValueError"
     except ValueError as e:
         assert "audience" in str(e)
-

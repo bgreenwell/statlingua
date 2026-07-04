@@ -1,0 +1,42 @@
+---
+title: "statlingo"
+subtitle: "Explain statistical model output with LLMs, in R and Python"
+---
+
+**statlingo** translates the dense output of statistical models—coefficients,
+p-values, model fit indices, and more—into clear, context-aware, natural
+language explanations using Large Language Models (LLMs).
+
+It ships as two packages, sharing a common design and a single canonical set
+of LLM prompts:
+
+| Package | Language | LLM interface | Get started |
+|---|---|---|---|
+| `statlingo` | R | [`ellmer`](https://ellmer.tidyverse.org/) | [R quickstart](get-started-r.qmd) |
+| `statlingo` | Python | [`chatlas`](https://posit-dev.github.io/chatlas/) | [Python quickstart](get-started-python.qmd) |
+
+## Why statlingo?
+
+Statistical models are powerful, but their outputs can be intimidating.
+statlingo empowers you to:
+
+* **Democratize understanding** — make complex analyses accessible to
+  people with varying levels of statistical expertise.
+* **Accelerate learning** — students can connect statistical theory to
+  practical model output, with explanations tailored to their level.
+* **Streamline reporting** — quickly draft plain-language interpretations
+  for reports and presentations.
+* **Work in either language** — the same audience/verbosity/style options
+  and prompt engineering are shared across the R and Python packages.
+
+## Supported models
+
+Both packages support a growing set of common statistical models — see the
+[R function reference](r/reference/index.html) and
+[Python API reference](python/reference/index.qmd) for the full, current
+list per language.
+
+## Source code
+
+statlingo is developed in the open on GitHub:
+[github.com/bgreenwell/statlingo](https://github.com/bgreenwell/statlingo).

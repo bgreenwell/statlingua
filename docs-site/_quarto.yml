@@ -1,0 +1,59 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "statlingo"
+  description: "Explain statistical model output with LLMs, in R and Python."
+  site-url: https://bgreenwell.github.io/statlingo/
+  repo-url: https://github.com/bgreenwell/statlingo
+  page-navigation: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: "R package"
+        menu:
+          - href: get-started-r.qmd
+            text: Get started
+          - href: r/reference/index.html
+            text: Function reference
+          - href: r/articles/statlingo.html
+            text: Vignette
+      - text: "Python package"
+        menu:
+          - href: get-started-python.qmd
+            text: Get started
+          - href: python/reference/index.qmd
+            text: API reference
+      - href: changelog.qmd
+        text: Changelog
+    right:
+      - icon: github
+        href: https://github.com/bgreenwell/statlingo
+        aria-label: GitHub
+
+  page-footer:
+    left: "statlingo is licensed under GPL (>= 2)."
+    right:
+      - icon: github
+        href: https://github.com/bgreenwell/statlingo
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+# Auto-generate the Python API reference from docstrings. Requires the
+# `statlingo` Python package (and quartodoc) to be installed in the
+# environment that renders this site -- see scripts/build_docs_site.sh.
+quartodoc:
+  package: statlingo
+  dir: python/reference
+  title: "API reference"
+  sections:
+    - title: Core
+      desc: The main entry point for explaining a fitted model with an LLM.
+      contents:
+        - explain

@@ -26,6 +26,11 @@ dependencies = [
     "statsmodels",  # For initial model object support
 ]
 
+[project.optional-dependencies]
+sklearn = [
+    "scikit-learn",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/bgreenwell/statlingo/tree/main/python"
 "Bug Tracker" = "https://github.com/bgreenwell/statlingo/issues"
