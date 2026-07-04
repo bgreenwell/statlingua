@@ -4,6 +4,14 @@ title: "Get started (Python)"
 
 ## Installation
 
+From PyPI (once published):
+
+```sh
+pip install statlingo
+```
+
+Or install the development version directly from GitHub:
+
 ```sh
 pip install "git+https://github.com/bgreenwell/statlingo.git#subdirectory=python"
 ```

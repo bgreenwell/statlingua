@@ -52,7 +52,7 @@ The primary function you'll use in ****statlingo**** is `explain()`. This is an 
 The process `explain()` follows to generate an interpretation involves several key steps:
 
 1.  **Input & Initial Argument Resolution**:
-    You call `explain()` with your statistical `object`, an [ellmer](https://cran.r-project.org/package=ellmer) `client`, and optionally `context`, `audience`, `verbosity`, and the new `style` argument. The `explain()` generic function first resolves `audience`, `verbosity`, and `style` to their specific chosen values (e.g., `audience = "novice"`, `style = "markdown"`) using `match.arg()`. These resolved values are then passed to the appropriate S3 method for the class of your `object`.
+    You call `explain()` with your statistical `object`, an [ellmer](https://cran.r-project.org/package=ellmer) `client`, and optionally `context`, `audience`, `verbosity`, `style`, and `language`. The `explain()` generic function first resolves `audience`, `verbosity`, and `style` to their specific chosen values (e.g., `audience = "novice"`, `style = "markdown"`) using `match.arg()`. These resolved values are then passed to the appropriate S3 method for the class of your `object`.
 
 2.  **Model Summary Extraction**:
     Internally, `explain()` (typically via the `.explain_core()` helper function or directly in `explain.default()`) uses the `summarize()` function to capture a text-based summary of your statistical `object`. This captured text (e.g., similar to what `summary(object)` would produce) forms the core statistical information that the LLM will interpret.
@@ -61,15 +61,19 @@ The process `explain()` follows to generate an interpretation involves several k
     This is where **statlingo** constructs the detailed instructions for the LLM. The internal `.assemble_sys_prompt()` function pieces together several components from the package's `inst/prompts/` directory (generated from the canonical `prompts/` directory at the root of the [statlingo repository](https://github.com/bgreenwell/statlingo), shared with the Python package) and interpolates them into `inst/prompts/system_prompt_template.md` via [`ellmer::interpolate_package()`](https://ellmer.tidyverse.org/reference/interpolate.html). The final system prompt typically includes the following sections, ordered to guide the LLM effectively:
 
     * **Role Definition**:
-        * A base role description is read from `inst/prompts/common/role_base.md`.
-        * If available, model-specific role details are appended from `inst/prompts/models/<model_name>/role_specific.md` (where `<model_name>` corresponds to the class of your object, like "lm" or "lmerMod"). If this file doesn't exist for a specific model, this part is omitted.
+        * A base role description is read from `inst/prompts/common/role_base.md` (this also names the specific R and Python statistical packages **statlingo** is fluent in, e.g. `lme4`, `mgcv`, `survival`, `statsmodels`, `scikit-learn`).
+        * If available, model-specific role details are appended from `inst/prompts/models/<model_name>/role_specific.md`, where `<model_name>` is an internal, language-neutral key shared with the Python package (e.g. `"linear_model"` for an `"lm"` object, `"linear_mixed_model_lme4"` for an `"lmerMod"` object) rather than the R class name itself. If this file doesn't exist for a specific model, this part is omitted.
     * **Intended Audience and Verbosity**:
         * Instructions tailored to the specified `audience` (e.g., `"novice"`, `"researcher"`) are read from the `audience` map in `inst/prompts/config.yaml`.
         * Instructions defining the `verbosity` level (e.g., `"brief"`, `"detailed"`) are read from the `verbosity` map in `inst/prompts/config.yaml`.
     * **Response Format Specification (Style)**:
         * This crucial part is determined by the `style` argument. Instructions for the desired output format (e.g., `"markdown"`, `"html"`, `"json"`, `"text"`, `"latex"`) are read from the `style` map in `inst/prompts/config.yaml`. This tells the LLM how to structure its entire response.
+    * **Response Language** (only included if `language` is specified):
+        * If you pass a `language` argument (e.g. `language = "Spanish"`), an instruction is added telling the LLM to respond only in that language. If omitted (the default), no language constraint is added.
     * **Model-Specific Instructions**:
-        * Detailed instructions on what aspects of the statistical model to explain are read from `inst/prompts/models/<model_name>/instructions.md` (e.g., for an `"lm"` object, it would read from `inst/prompts/models/lm/instructions.md`). If model-specific instructions aren't found, it defaults to `inst/prompts/models/default/instructions.md`.
+        * Detailed instructions on what aspects of the statistical model to explain are read from `inst/prompts/models/<model_name>/instructions.md` (e.g., for an `"lm"` object, this reads from `inst/prompts/models/linear_model/instructions.md`). If model-specific instructions aren't found, it defaults to `inst/prompts/models/default/instructions.md`.
+    * **Output Format Notes** (only included where available):
+        * For model types with multiple supported fitting engines across R and Python (currently linear and generalized linear models), an additional software-specific note is included describing the *exact* output format/conventions of the engine that produced the summary (e.g. R's `summary.lm()` column layout vs. Python's `statsmodels` `OLS` summary layout), read from `inst/prompts/models/<model_name>/engines/<engine>-<suffix>.md`. For the R package, this is always the `"r"` engine.
     * **Cautionary Notes**:
         * A general caution message is appended from `inst/prompts/common/caution.md`.
 
@@ -101,6 +105,7 @@ The `explain()` function is flexible, with several arguments to fine-tune its be
 * `context` (Optional but **Highly Recommended**): A character string providing background information about your data, research questions, variable definitions, units, study design, etc. Default is `NULL`.
 * `audience` (Optional): Specifies the target audience for the explanation. Options include: `"novice"` (default), `"student"`, `"researcher"`, `"manager"`, `"domain_expert"`.
 * `verbosity` (Optional): Controls the level of detail. Options are: `"moderate"` (default), `"brief"`, `"detailed"`.
+* `language` (Optional): A character string specifying the language the explanation should be written in (e.g. `"Spanish"`, `"French"`, `"Mandarin Chinese"`). Default is `NULL`, meaning no language constraint is added and the LLM will typically respond in the same language as your `context` or its own default.
 * `style` (Optional): Character string indicating the desired output style. Defaults to `"markdown"`. Options include:
     * `"markdown"`: Output formatted as Markdown.
     * `"html"`: Output formatted as an HTML fragment.

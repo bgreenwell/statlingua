@@ -19,8 +19,36 @@ single canonical set of LLM prompts:
 | `statlingo` | R (formerly published on CRAN as `statlingua`) | [`ellmer`](https://ellmer.tidyverse.org/) | [`r/`](r) |
 | `statlingo` | Python | [`chatlas`](https://posit-dev.github.io/chatlas/) | [`python/`](python) |
 
-See each package's own README for installation and usage instructions:
+See each package's own README for full usage instructions:
 [`r/README.md`](r/README.md) and [`python/README.md`](python/README.md).
+
+## Installation
+
+**R** (via [r-universe](https://bgreenwell.r-universe.dev/), once the build
+finishes syncing after registration — this can take a few minutes):
+
+```r
+install.packages("statlingo", repos = c("https://bgreenwell.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+Or install the development version directly from GitHub:
+
+```r
+# install.packages("pak")
+pak::pak("bgreenwell/statlingo/r")
+```
+
+**Python** (via PyPI, once published):
+
+```sh
+pip install statlingo
+```
+
+Or install the development version directly from GitHub:
+
+```sh
+pip install "git+https://github.com/bgreenwell/statlingo.git#subdirectory=python"
+```
 
 ## Repository layout
 

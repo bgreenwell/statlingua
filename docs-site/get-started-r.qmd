@@ -4,9 +4,14 @@ title: "Get started (R)"
 
 ## Installation
 
-statlingo's R package isn't yet on CRAN (it was previously published there
-under the name `statlingua`; a resubmission under the new name is
-pending). Install the development version from GitHub:
+Install from [r-universe](https://bgreenwell.r-universe.dev/) (once the
+build finishes syncing after registration):
+
+```r
+install.packages("statlingo", repos = c("https://bgreenwell.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+Or install the development version directly from GitHub:
 
 ```r
 # install.packages("pak")

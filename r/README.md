@@ -35,19 +35,30 @@ As of now, **statlingo** explicitly supports a variety of common statistical mod
 
 ### Installation
 
-**statlingo** is not yet on CRAN, but you can install the development version from GitHub:
+**statlingo** isn't yet on CRAN (it was previously published there under the
+name `statlingua`), but you can install it from
+[r-universe](https://bgreenwell.r-universe.dev/) (once the build finishes
+syncing after registration):
+
+```r
+install.packages("statlingo", repos = c("https://bgreenwell.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+Or install the development version directly from GitHub. Note this package
+lives in the `r/` subdirectory of a monorepo shared with a Python
+counterpart, so `subdir` must be specified:
 
 ```r
 if (!requireNamespace("remotes")) {
   install.packages("remotes")
 }
-remotes::install_github("bgreenwell/statlingo")
+remotes::install_github("bgreenwell/statlingo", subdir = "r")
 ```
 
 You'll also need to install the [ellmer](https://cran.r-project.org/package=ellmer) package, which you can obtain from CRAN:
 
 ```r
-install.packages("ellmer")  # >= 0.2.0
+install.packages("ellmer")  # >= 0.4.1
 ```
 
 ### API Key Setup & [ellmer](https://cran.r-project.org/package=ellmer) Dependency

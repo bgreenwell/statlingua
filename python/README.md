@@ -35,8 +35,16 @@ target parity for the `explain()` workflow.
 
 ## Installation
 
+From PyPI (once published):
+
 ```sh
-pip install git+https://github.com/bgreenwell/statlingo.git#subdirectory=python
+pip install statlingo
+```
+
+Or install the development version directly from GitHub:
+
+```sh
+pip install "git+https://github.com/bgreenwell/statlingo.git#subdirectory=python"
 ```
 
 You will also need `statsmodels` (for fitting the example models below) and a
