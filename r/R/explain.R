@@ -37,6 +37,12 @@
 #'   * `"text"` - Output as plain text.
 #'   * `"latex"` - Output as a LaTeX fragment.
 #'
+#' @param language Character string specifying the language the explanation
+#'   should be written in (e.g. `"Spanish"`, `"French"`,
+#'   `"Mandarin Chinese"`). If `NULL` (the default), no language
+#'   constraint is added and the LLM will typically respond in the same
+#'   language as the input/context or its default language.
+#'
 #' @param ... Additional optional arguments. (Currently ignored.)
 #'
 #' @returns An object of class `"statlingo_explanation"`. Essentially a list
@@ -61,6 +67,7 @@
 #' # ?ellmer::chat_google_gemini for details
 #' client <- ellmer::chat_google_gemini(echo = "none")
 #' ex <- explain(fm1, client = client, context = context)
+#' explain(fm1, client = client, context = context, language = "Spanish")
 #'
 #' # Poisson regression example using the bike sharing data from ISLR2
 #' Bikeshare <- ISLR2::Bikeshare
@@ -102,6 +109,7 @@ explain <- function(
                  "domain_expert"),
     verbosity = c("moderate", "brief", "detailed"),
     style = c("markdown", "html", "json", "text", "latex"),
+    language = NULL,
     ...
   ) {
   audience <- match.arg(audience)
@@ -120,12 +128,13 @@ explain.default <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
   sys_prompt <- .assemble_sys_prompt(model_name = "default",
                                      audience = audience, verbosity = verbosity,
-                                     style = style)
+                                     style = style, language = language)
   output <- .capture_output(object)
   usr_prompt <- .build_usr_prompt("R object", output = output,
                                    context = context)
@@ -164,6 +173,7 @@ explain.htest <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .explain_core(
@@ -173,6 +183,7 @@ explain.htest <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "hypothesis_test",
     model = object$method
   )
@@ -188,6 +199,7 @@ explain.lm <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .explain_core(
@@ -197,6 +209,7 @@ explain.lm <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "linear_model",
     model = "linear regression model"
   )
@@ -212,6 +225,7 @@ explain.glm <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .family <- stats::family(object)$family
@@ -223,6 +237,7 @@ explain.glm <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "generalized_linear_model",
     model = paste(.family, "generalized linear model with", .link, "link")
   )
@@ -240,6 +255,7 @@ explain.polr <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .method <- object$method
@@ -250,6 +266,7 @@ explain.polr <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "proportional_odds_logistic_regression",
     model = paste("proportional odds", .method, "regression model")
   )
@@ -267,6 +284,7 @@ explain.lme <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .explain_core(
@@ -276,6 +294,7 @@ explain.lme <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "linear_mixed_model_nlme",
     model = "linear mixed-effects model"
   )
@@ -293,6 +312,7 @@ explain.lmerMod <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .explain_core(
@@ -302,6 +322,7 @@ explain.lmerMod <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "linear_mixed_model_lme4",
     model = "linear mixed-effects model"
   )
@@ -317,6 +338,7 @@ explain.glmerMod <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .family <- stats::family(object)$family
@@ -328,6 +350,7 @@ explain.glmerMod <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "generalized_linear_mixed_model",
     model = paste(.family, "generalized linear mixed-effects model with",
                   .link, "link")
@@ -346,6 +369,7 @@ explain.gam <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .family <- stats::family(object)$family
@@ -357,6 +381,7 @@ explain.gam <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "generalized_additive_model",
     model = paste(.family, "generalized additive model with", .link, "link")
   )
@@ -374,6 +399,7 @@ explain.survreg <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .explain_core(
@@ -383,6 +409,7 @@ explain.survreg <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "survival_regression",
     model = "parametric survival regression model"
   )
@@ -398,6 +425,7 @@ explain.coxph <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .explain_core(
@@ -407,6 +435,7 @@ explain.coxph <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "cox_proportional_hazards",
     model = "Cox proportional hazards regression model"
   )
@@ -424,6 +453,7 @@ explain.rpart <- function(
     audience = "novice",
     verbosity = "moderate",
     style = "markdown",
+    language = NULL,
     ...
   ) {
   .explain_core(
@@ -433,6 +463,7 @@ explain.rpart <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
+    language = language,
     name = "recursive_partitioning_tree",
     model = "recursive partitioning tree model"
   )

@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 import statsmodels.api as sm
 
+from statlingo._prompting import assemble_system_prompt
 from statlingo.explain import explain
 
 
@@ -229,6 +230,30 @@ def test_explain_handles_sklearn_logistic_regression():
     assert "scikit-learn's `LogisticRegression` has no built-in text summary" in system_prompt
     assert "applies L2 regularization" in system_prompt
     assert result["model_type"] == "generalized_linear_model"
+
+
+def test_assemble_system_prompt_includes_language_section_when_requested():
+    prompt = assemble_system_prompt(
+        "linear_model", "novice", "brief", "markdown", language="Spanish"
+    )
+
+    assert "## Response Language" in prompt
+    assert "Respond only in Spanish" in prompt
+
+
+def test_assemble_system_prompt_omits_language_section_by_default():
+    prompt = assemble_system_prompt("linear_model", "novice", "brief", "markdown")
+
+    assert "## Response Language" not in prompt
+
+
+def test_explain_threads_language_into_system_prompt():
+    mock_chat = MockChat()
+    ols_model = _fit_ols()
+
+    explain(model_object=ols_model, client=mock_chat, language="French")
+
+    assert "Respond only in French" in mock_chat.recorder["last_system_prompt"]
 
 
 def test_explain_validates_audience():

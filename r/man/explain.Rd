@@ -23,6 +23,7 @@ explain(
   audience = c("novice", "student", "researcher", "manager", "domain_expert"),
   verbosity = c("moderate", "brief", "detailed"),
   style = c("markdown", "html", "json", "text", "latex"),
+  language = NULL,
   ...
 )
 
@@ -33,6 +34,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -43,6 +45,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -53,6 +56,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -63,6 +67,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -73,6 +78,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -83,6 +89,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -93,6 +100,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -103,6 +111,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -113,6 +122,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -123,6 +133,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -133,6 +144,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 
@@ -143,6 +155,7 @@ explain(
   audience = "novice",
   verbosity = "moderate",
   style = "markdown",
+  language = NULL,
   ...
 )
 }
@@ -188,6 +201,12 @@ not necessarily in statistics.
 \item \code{"latex"} - Output as a LaTeX fragment.
 }}
 
+\item{language}{Character string specifying the language the explanation
+should be written in (e.g. \code{"Spanish"}, \code{"French"},
+\code{"Mandarin Chinese"}). If \code{NULL} (the default), no language
+constraint is added and the LLM will typically respond in the same
+language as the input/context or its default language.}
+
 \item{...}{Additional optional arguments. (Currently ignored.)}
 }
 \value{
@@ -220,6 +239,7 @@ Note that the data were recorded in the 1920s!
 # ?ellmer::chat_google_gemini for details
 client <- ellmer::chat_google_gemini(echo = "none")
 ex <- explain(fm1, client = client, context = context)
+explain(fm1, client = client, context = context, language = "Spanish")
 
 # Poisson regression example using the bike sharing data from ISLR2
 Bikeshare <- ISLR2::Bikeshare

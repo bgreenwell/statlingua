@@ -89,6 +89,7 @@ def assemble_system_prompt(
     verbosity: str,
     style: str,
     engine: Optional[str] = None,
+    language: Optional[str] = None,
 ) -> str:
     """Assemble the full system prompt for a model type/audience/verbosity/style.
 
@@ -108,6 +109,10 @@ def assemble_system_prompt(
     engine : str, optional
         Optional engine/library identifier used to inject engine-specific
         output-format notes when available.
+    language : str, optional
+        Optional response language constraint. If provided, injects a fully
+        formatted language section instructing the model to respond only in
+        that language.
 
     Returns
     -------
@@ -121,6 +126,13 @@ def assemble_system_prompt(
     engine_notes = _read_engine_notes(model_name, engine)
     engine_section = (
         f"## Output Format Notes\n\n{engine_notes}\n" if engine_notes else ""
+    )
+    language_section = (
+        "## Response Language\n\n"
+        f"Respond only in {language}. Do not include any text in another "
+        "language, including headings or labels.\n\n"
+        if language
+        else ""
     )
 
     role_base = _read_prompt_file("common", "role_base.md").strip()
@@ -149,6 +161,7 @@ def assemble_system_prompt(
         verbosity_instruction=config["verbosity"][verbosity],
         style_title=_title_case(style),
         style_instruction=config["style"][style],
+        language_section=language_section,
         model_instructions=_read_prompt_file(
             "models", model_name, "instructions.md"
         ).strip(),

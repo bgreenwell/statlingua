@@ -83,7 +83,7 @@ prompt_lm_novice <-
 expect_true(is.character(prompt_lm_novice) && nchar(prompt_lm_novice) > 0)
 expect_true(grepl("## Role", prompt_lm_novice))
 expect_true(grepl("## Intended Audience and Verbosity", prompt_lm_novice))
-expect_true(grepl("## Response Format", prompt_lm_novice))
+expect_true(grepl("## Response Format Specification", prompt_lm_novice))
 expect_true(grepl("## Instructions", prompt_lm_novice))
 expect_true(grepl("## Caution", prompt_lm_novice))
 expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("common", "role_base.md"),
@@ -96,6 +96,16 @@ expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("models", "l
                   prompt_lm_novice))
 expect_true(grepl("## Output Format Notes", prompt_lm_novice, fixed = TRUE))
 expect_true(grepl("Multiple R-squared", prompt_lm_novice, fixed = TRUE))
+
+prompt_lm_spanish <-
+  statlingo:::.assemble_sys_prompt(model_name = "linear_model",
+                                   style = "markdown",
+                                   audience = "novice",
+                                   verbosity = "brief",
+                                   language = "Spanish")
+expect_true(grepl("## Response Language", prompt_lm_spanish, fixed = TRUE))
+expect_true(grepl("Respond only in Spanish", prompt_lm_spanish, fixed = TRUE))
+expect_false(grepl("## Response Language", prompt_lm_novice, fixed = TRUE))
 
 # Model without role_specific.md (e.g., "default")
 prompt_default_assembly <-
@@ -209,6 +219,15 @@ expected_sys_prompt_htest <-
                                    verbosity = "detailed",
                                    style = "markdown")
 expect_equal(mock_client$last_system_prompt, expected_sys_prompt_htest)
+
+explanation_language <- statlingo::explain(
+  lm_obj,
+  client = mock_client,
+  language = "French"
+)
+expect_equal(explanation_language$text, mock_client$chat_response)
+expect_true(grepl("Respond only in French",
+                  mock_client$last_system_prompt, fixed = TRUE))
 
 
 # Test input validation for client object

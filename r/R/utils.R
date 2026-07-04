@@ -87,7 +87,8 @@
 #' model-specific instructions come from `inst/prompts/models/<name>/`.
 #' The pieces are interpolated into `inst/prompts/system_prompt_template.md`
 #' via [ellmer::interpolate_package()].
-.assemble_sys_prompt <- function(model_name, audience, verbosity, style) {
+.assemble_sys_prompt <- function(model_name, audience, verbosity, style,
+                                 language = NULL) {
   # Fall back to the "default" model instructions if this model has none
   has_model_instructions <- nzchar(system.file(
     "prompts", "models", model_name, "instructions.md",
@@ -113,6 +114,15 @@
   } else {
     ""
   }
+  language_section <- if (is.null(language) || !nzchar(trimws(language))) {
+    ""
+  } else {
+    paste0(
+      "## Response Language\n\n",
+      "Respond only in ", language,
+      ". Do not include any text in another language, including headings or labels.\n\n"
+    )
+  }
 
   ellmer::interpolate_package(
     package = "statlingo",
@@ -124,6 +134,7 @@
     verbosity_instruction = config$verbosity[[verbosity]],
     style_title = tools::toTitleCase(style),
     style_instruction = config$style[[style]],
+    language_section = language_section,
     model_instructions = model_instructions,
     engine_section = engine_section,
     caution_instruction = trimws(.read_prompt_file("common", "caution.md"))
@@ -238,10 +249,11 @@
 #' @param verbosity Character string specifying the desired level of detail.
 .explain_core <- function(object, client, context, name, model,
                           audience = "novice", verbosity = "moderate",
-                          style = "markdown") {
+                          style = "markdown", language = NULL) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
   sys_prompt <- .assemble_sys_prompt(name, audience = audience,
-                                     verbosity = verbosity, style = style)
+                                     verbosity = verbosity, style = style,
+                                     language = language)
   output <- summarize(object)  # create text summary of object
   usr_prompt <- .build_usr_prompt(model, output = output, context = context)
   

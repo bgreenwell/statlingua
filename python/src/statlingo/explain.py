@@ -47,6 +47,7 @@ def explain(
     model_object: Any,
     client: Any,
     context: Optional[str] = None,
+    language: Optional[str] = None,
     audience: str = "novice",
     verbosity: str = "moderate",
     style: str = "markdown",
@@ -64,6 +65,11 @@ def explain(
     context : str, optional
         Additional context about the data or research question to provide
         to the LLM.
+    language : str, optional
+        The language the explanation should be written in (e.g. "Spanish",
+        "French", "Mandarin Chinese"). If None (the default), no language
+        constraint is added and the LLM will typically respond in the same
+        language as the input/context or its default language.
     audience : str, optional
         The target audience: one of "novice" (default), "student",
         "researcher", "manager", or "domain_expert".
@@ -88,7 +94,7 @@ def explain(
     model_name, engine, summary_text = handler(model_object)
 
     system_prompt = assemble_system_prompt(
-        model_name, audience, verbosity, style, engine=engine
+        model_name, audience, verbosity, style, engine=engine, language=language
     )
     user_prompt = build_user_prompt(
         model_description=f"{model_name} model", output=summary_text, context=context
