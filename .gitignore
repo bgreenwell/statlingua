@@ -1,6 +1,6 @@
-inst/doc
+r/inst/doc
 .Rproj.user
 .Rhistory
 .Rdata
 .DS_Store
-CRAN.txt
+r/CRAN.txt

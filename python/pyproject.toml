@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "statlingua"
+version = "0.1.0"
+authors = [
+  { name="Brandon Greenwell", email="greenwell.brandon@gmail.com" },
+]
+description = "Effortlessly translate statistical model outputs into plain-language explanations using Large Language Models (LLMs)."
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = [
+    "chatlas>=0.19.0",  # To handle all LLM chat/provider interactions
+    "pyyaml",  # To read prompts/config.yaml (audience/verbosity/style)
+    "statsmodels",  # For initial model object support
+]
+
+[project.urls]
+"Homepage" = "https://github.com/bgreenwell/statlingua-py"
+"Bug Tracker" = "https://github.com/bgreenwell/statlingua-py/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"statlingua" = ["prompts/**/*.md"]

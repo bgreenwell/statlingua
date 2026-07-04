@@ -1,1 +1,0 @@
-Offer a balanced explanation. Cover key statistics, their meanings, and touch upon basic assumptions. Provide enough detail for a solid understanding without being overwhelming. Aim for a thorough yet accessible interpretation.

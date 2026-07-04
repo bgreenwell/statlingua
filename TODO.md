@@ -1,18 +1,25 @@
-### TODO
+# TODO (monorepo-wide)
 
-- [ ] **Enhanced Model Support & Granularity:**
-    - [ ] Systematically add support for more popular statistical modeling packages (e.g., `brms`, `rstanarm`, `tidymodels` workflows, specific time series models, `glmmTMB`).
-    - [ ] Allow users to request explanations for specific *parts* of the summary output (e.g., "explain just the random effects table," "explain the ANOVA table for fixed effects," "explain these specific coefficients").
+This file tracks cross-language / cross-cutting work. See also
+[`r/TODO.md`](r/TODO.md) for R-specific enhancement ideas.
 
-- [ ] **Custom Prompt Template Management:**
-    - [ ] Allow users to supply their own complete prompt templates or modify existing ones without altering the package installation (e.g., via an argument like `prompt_template_dir` or functions to export/view/load modified default prompts).
-
-- [ ] **Output Validation & Structuring for Programmatic Use:**
-    - [ ] Implement more robust validation that the LLM's output *is* valid JSON when `style = "json"` is used.
-    - [ ] Define a more structured and predictable JSON schema for each model type to make the JSON output more reliable for programmatic extraction of information.
-    - [ ] Consider an option to return the explanation as a structured R list directly, not just a JSON string.
-
-- [ ] **Integration with Reporting Workflows:**
-    - [ ] Provide helper functions or examples for easily integrating `statlingua` explanations into R Markdown, Quarto, or other reporting tools.
-    - [ ] Ensure `style = "latex"` and `style = "html"` fragments are clean and directly usable.
-    - [ ] Explore creating helper functions like `to_quarto_block()` or `to_rmd_chunk()` to wrap explanations appropriately.
+- [ ] **Python: revive agentic diagnostics on chatlas.** The Python
+  package's previous `diagnose()`/`diagnose_agent()` (tool-calling, plot
+  generation/interpretation) were deferred to
+  `python/experimental/` during the `chatlas` migration. Re-implement using
+  `chatlas`'s `register_tool()` mechanism, and consider bringing an
+  equivalent to the R package as well.
+- [ ] **Python: expand model handler coverage to match R.** The Python
+  package currently only has handlers for `statsmodels` OLS and Poisson GLM.
+  Add handlers (mirroring the R `explain.*`/`summarize.*` methods) for
+  logistic/other GLM families, mixed models, survival models, etc., as
+  equivalent Python libraries are identified (e.g. `lifelines` for survival
+  analysis).
+- [ ] **Shared prompt content review.** Now that `prompts/` is the single
+  canonical source for both languages (synced via
+  `scripts/sync_prompts.py`), periodically review model-specific
+  instructions for language-neutral phrasing (some were originally written
+  with R-specific function names, e.g. `lm()`, `glm()`).
+- [ ] **CI: enforce prompt sync.** Ensure the `prompts-sync-check` CI job
+  (see `.github/workflows/`) stays wired up so R and Python prompt copies
+  never drift from `prompts/`.

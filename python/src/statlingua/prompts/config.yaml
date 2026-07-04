@@ -1,0 +1,103 @@
+# Canonical prompt configuration for statlingua (R + Python).
+# Short, single-purpose instruction strings for audience, verbosity, and
+# style are consolidated here (rather than one file per setting) to make
+# them easy to compare and bulk-edit. Longer, structured content (role
+# descriptions, per-model instructions) remains as separate .md files in
+# common/ and models/.
+#
+# This file is the single source of truth. Do not edit the generated
+# copies under r/inst/prompts/config.yaml or
+# python/src/statlingua/prompts/config.yaml directly -- run
+# scripts/sync_prompts.py after making changes here.
+
+audience:
+  novice: |-
+    Assume the user has a limited statistics background. Avoid technical jargon where possible; if essential, explain it very clearly and simply. Use analogies or simple, relatable examples if they aid understanding. Focus on the practical meaning and impact of the results. Ensure explanations are patient and easy to follow.
+  student: |-
+    Assume the user is learning statistics. Explain concepts thoroughly but clearly, as if teaching. Define key terms as they arise and explain *why* certain statistics are important or what they indicate in the context of the analysis. Maintain an encouraging and educational tone.
+  researcher: |-
+    Assume the user has a strong statistical background and is familiar with common methodologies. You can use technical terms, but ensure precise interpretation, especially for model-specific nuances. Focus on detailed statistical interpretation, assumptions, potential limitations, and suggestions for further analyses where appropriate.
+  manager: |-
+    Assume the user needs high-level insights for decision-making. Focus on the main findings, actionable insights, and the practical implications of the results. Avoid getting bogged down in deep statistical details or jargon. Summarize model performance and key takeaways clearly and concisely.
+  domain_expert: |-
+    Assume the user is an expert in their own field but not necessarily in statistics. Relate statistical findings back to their potential domain implications. Explain statistical concepts clearly, focusing on how they help answer questions or provide insights relevant to their domain of expertise. Bridge the gap between statistical output and practical application in their field.
+verbosity:
+  brief: |-
+    Provide a high-level summary. Be concise and to the point. Focus only on the most critical findings and their immediate implications. Avoid lengthy elaborations unless absolutely necessary for understanding the core message.
+  moderate: |-
+    Offer a balanced explanation. Cover key statistics, their meanings, and touch upon basic assumptions. Provide enough detail for a solid understanding without being overwhelming. Aim for a thorough yet accessible interpretation.
+  detailed: |-
+    Give a comprehensive interpretation. Include nuances of the model output, a detailed breakdown of all relevant statistics, and a thorough discussion of assumptions and diagnostics. Be as thorough as possible, exploring various facets of the results.
+style:
+  markdown: |-
+    Your response should be the statistical explanation directly, formatted as standard Markdown.
+    - Use headings (e.g., `## Section`, `### Subsection`) to structure the explanation.
+    - Use bullet points (`*` or `-`) for lists.
+    - Use bold (`**text**`) and italics (`*text*`) for emphasis where appropriate.
+    - Present tables using Markdown table syntax.
+    - Ensure mathematical notation is represented in a way that is easily convertible to MathJax/KaTeX if possible (e.g., using LaTeX-like syntax for inline math like `$E=mc^2$` and display math like `$$...$$`, though Markdown renderers vary in support).
+
+    DO NOT wrap your entire response in Markdown code fences (e.g., ```markdown ... ``` or ``` ... ```).
+    DO NOT include any conversational pleasantries or introductory/concluding phrases that are not part of the core statistical explanation itself, unless specifically part of the requested explanation format (e.g., a heading).
+    The output should be ready to be directly rendered as Markdown.
+    Your primary goal is to produce clean, well-structured Markdown.
+  html: |-
+    Your response should be a valid HTML fragment suitable for direct embedding into an HTML document.
+    - Use appropriate HTML tags for structure (e.g., `<h2>`, `<h3>`, `<p>`, `<ul>`, `<li>`, `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`).
+    - Use `<strong>` for bold and `<em>` for italics.
+    - Ensure all HTML is well-formed.
+    - Do not include `<html>`, `<head>`, or `<body>` tags unless specifically instructed to provide a full document. Focus on providing the content block.
+    - For tables, generate complete and valid HTML table structures.
+
+    DO NOT wrap your entire response in Markdown code fences or any other non-HTML wrappers.
+    DO NOT include any conversational pleasantries or introductory/concluding phrases that are not part of the core HTML statistical explanation itself.
+    The output should be pure HTML.
+  json: |-
+    Your response MUST be a valid JSON object that can be parsed directly into an R list.
+    The JSON object should have the following top-level keys, each containing a string with the relevant part of the explanation (formatted as plain text or simple Markdown within the string if appropriate for that section):
+    - "title": A concise title for the explanation.
+    - "model_overview": A general description of the model type and its purpose in this context.
+    - "coefficient_interpretation": Detailed interpretation of model coefficients/parameters.
+    - "significance_assessment": Discussion of p-values, confidence intervals, and statistical significance.
+    - "goodness_of_fit": Evaluation of model fit (e.g., R-squared, AIC, deviance).
+    - "assumptions_check": Comments on important model assumptions and how they might be checked.
+    - "key_findings": A bulleted list (as a single string with newlines `\n` for bullets) of the main conclusions.
+    - "warnings_limitations": Any warnings, limitations, or caveats regarding the model or its interpretation.
+
+    Example of expected JSON structure:
+    {
+      "title": "Explanation of Linear Regression Model for Car Sales",
+      "model_overview": "This is a linear regression model...",
+      "coefficient_interpretation": "The coefficient for 'Price' is -0.10, suggesting that...",
+      "significance_assessment": "The p-value for 'Price' is very small (< 0.001)...",
+      "goodness_of_fit": "The R-squared value is 0.87, indicating...",
+      "assumptions_check": "Assumptions such as linearity and homoscedasticity should be checked by examining residual plots.",
+      "key_findings": "- Price is a significant negative predictor of sales.\n- Advertising has a positive impact on sales.",
+      "warnings_limitations": "This model is based on simulated data and results should be interpreted with caution."
+    }
+
+    Ensure the entire output is ONLY the JSON object.
+    DO NOT wrap your entire response in JSON code fences (e.g., ```json ... ``` or ``` ... ```).
+    DO NOT include any conversational pleasantries or introductory/concluding phrases.
+  text: |-
+    Your response should be the statistical explanation directly, formatted as plain text.
+    - Use blank lines to separate paragraphs and sections.
+    - Use simple markers like `*` or `-` for list items if necessary, but avoid complex formatting.
+    - Headings can be simple uppercase lines or followed by a line of hyphens.
+
+    DO NOT use any Markdown syntax (like `##`, `**`, `*` for emphasis).
+    DO NOT wrap your entire response in Markdown code fences.
+    DO NOT include any conversational pleasantries or introductory/concluding phrases that are not part of the core statistical explanation itself.
+    The output should be simple, readable plain text.
+  latex: |-
+    Your response should be a LaTeX fragment suitable for direct inclusion in a `.tex` document (e.g., using `\input{}` or copy-pasting into a LaTeX document).
+    - Use standard LaTeX commands for structuring: `\section*{...}`, `\subsection*{...}`, `\paragraph{...}`.
+    - Use `\textit{...}` for italics and `\textbf{...}` for bold.
+    - Use `itemize` or `enumerate` environments for lists.
+    - For tables, use `tabular` or `array` environments within a `table` float if appropriate (though simpler inline tables might be more robust for an LLM to generate).
+    - Represent mathematical notation using LaTeX math mode (e.g., `$E=mc^2$` for inline, `\[ ... \]` or `equation*` environment for display math).
+
+    DO NOT include a preamble, `\documentclass{...}`, `\begin{document}`, or `\end{document}`.
+    DO NOT wrap your entire response in Markdown code fences or any other non-LaTeX wrappers.
+    DO NOT include any conversational pleasantries or introductory/concluding phrases that are not part of the core LaTeX statistical explanation itself.
+    The output should be pure LaTeX code for the content block.

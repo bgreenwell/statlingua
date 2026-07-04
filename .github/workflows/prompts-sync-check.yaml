@@ -1,0 +1,27 @@
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'prompts/**'
+      - 'r/inst/prompts/**'
+      - 'python/src/statlingua/prompts/**'
+      - 'scripts/sync_prompts.py'
+  pull_request:
+    paths:
+      - 'prompts/**'
+      - 'r/inst/prompts/**'
+      - 'python/src/statlingua/prompts/**'
+      - 'scripts/sync_prompts.py'
+
+name: prompts-sync-check.yaml
+
+permissions: read-all
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify r/inst/prompts and python/src/statlingua/prompts match prompts/
+        run: python3 scripts/sync_prompts.py --check
