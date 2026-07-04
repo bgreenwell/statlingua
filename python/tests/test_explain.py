@@ -140,11 +140,13 @@ def test_explain_calls_chat_with_correct_prompts():
     user_prompt = mock_chat.recorder["last_user_prompt"]
 
     assert "Target Audience: Researcher" in system_prompt
+    assert "This output was produced by Python's `statsmodels` library" in system_prompt
+    assert "Coefficients table" in system_prompt
     assert "OLS Regression Results" in user_prompt
     assert "A test context for the model." in user_prompt
 
     assert result["text"] == "This is a mock explanation."
-    assert result["model_type"] == "lm"
+    assert result["model_type"] == "linear_model"
 
     # The original client object must remain untouched (no leaked state).
     assert mock_chat.system_prompt is None
@@ -164,10 +166,17 @@ def test_explain_handles_glm():
     assert mock_chat.recorder["call_count"] == 1
     user_prompt = mock_chat.recorder["last_user_prompt"]
 
-    # Check that the user prompt identifies the model as a "glm"
-    assert "Explain the following glm model output:" in user_prompt
+    system_prompt = mock_chat.recorder["last_system_prompt"]
+
+    # Check that the user prompt identifies the model with the semantic key.
+    assert (
+        "Explain the following generalized_linear_model model output:"
+        in user_prompt
+    )
     assert "Generalized Linear Model (GLM) with Poisson family" in user_prompt
-    assert result["model_type"] == "glm"
+    assert "Link Function" in system_prompt
+    assert "confidence intervals uniquely available in this output" in system_prompt
+    assert result["model_type"] == "generalized_linear_model"
 
 
 def test_explain_handles_sklearn_linear_regression():
@@ -180,14 +189,18 @@ def test_explain_handles_sklearn_linear_regression():
     assert mock_chat.recorder["call_count"] == 1
     user_prompt = mock_chat.recorder["last_user_prompt"]
 
-    assert "Explain the following lm model output:" in user_prompt
+    system_prompt = mock_chat.recorder["last_system_prompt"]
+
+    assert "Explain the following linear_model model output:" in user_prompt
     assert "Model type: scikit-learn LinearRegression" in user_prompt
     assert "Number of features: 2" in user_prompt
     assert "Intercept: 1" in user_prompt
     assert "feature_0: 2" in user_prompt
     assert "feature_1: -1" in user_prompt
     assert "R-squared: not available from the fitted estimator alone" in user_prompt
-    assert result["model_type"] == "lm"
+    assert "scikit-learn's `LinearRegression` has no built-in text summary" in system_prompt
+    assert "Do not invent, estimate, or imply the presence" in system_prompt
+    assert result["model_type"] == "linear_model"
 
 
 def test_explain_handles_sklearn_logistic_regression():
@@ -200,7 +213,12 @@ def test_explain_handles_sklearn_logistic_regression():
     assert mock_chat.recorder["call_count"] == 1
     user_prompt = mock_chat.recorder["last_user_prompt"]
 
-    assert "Explain the following glm model output:" in user_prompt
+    system_prompt = mock_chat.recorder["last_system_prompt"]
+
+    assert (
+        "Explain the following generalized_linear_model model output:"
+        in user_prompt
+    )
     assert "Model type: scikit-learn LogisticRegression" in user_prompt
     assert "Number of classes: 2" in user_prompt
     assert "Classes: 0, 1" in user_prompt
@@ -208,7 +226,9 @@ def test_explain_handles_sklearn_logistic_regression():
     assert "Coefficients for positive class (1):" in user_prompt
     assert "feature_0:" in user_prompt
     assert "feature_1:" in user_prompt
-    assert result["model_type"] == "glm"
+    assert "scikit-learn's `LogisticRegression` has no built-in text summary" in system_prompt
+    assert "applies L2 regularization" in system_prompt
+    assert result["model_type"] == "generalized_linear_model"
 
 
 def test_explain_validates_audience():

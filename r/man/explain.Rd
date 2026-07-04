@@ -195,8 +195,8 @@ An object of class \code{"statlingo_explanation"}. Essentially a list
 with the following components:
 \itemize{
 \item \code{text} - Character string representation of the LLM's response.
-\item \code{model_type} - Character string giving the model type (e.g., \code{"lm"} or
-\code{"coxph"}).
+\item \code{model_type} - Character string giving the internal prompt model type
+(e.g., \code{"linear_model"} or \code{"cox_proportional_hazards"}).
 \item \code{audience} - Character string specifying the level or intended audience for
 the explanations.
 \item \code{verbosity} - Character string specifying the level of verbosity or level

@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Any, Callable, Optional, Tuple
 
 # The registry to hold our model handlers
-MODEL_HANDLERS: dict[type, Callable[[Any], Tuple[str, str]]] = {}
+MODEL_HANDLERS: dict[type, Callable[[Any], Tuple[str, Optional[str], str]]] = {}
 
 
 def register_handler(model_class: type):
@@ -26,7 +26,7 @@ def register_handler(model_class: type):
         The class of the model object to be handled (e.g., OLSResults).
     """
 
-    def decorator(func: Callable[[Any], Tuple[str, str]]):
+    def decorator(func: Callable[[Any], Tuple[str, Optional[str], str]]):
         """The actual decorator that registers the function."""
         MODEL_HANDLERS[model_class] = func
         return func
@@ -34,7 +34,7 @@ def register_handler(model_class: type):
     return decorator
 
 
-def get_handler(model_object: Any) -> Callable[[Any], Tuple[str, str]]:
+def get_handler(model_object: Any) -> Callable[[Any], Tuple[str, Optional[str], str]]:
     """Finds the appropriate handler for a given model object.
 
     If a specific handler for the object's class is not found, it
@@ -47,7 +47,7 @@ def get_handler(model_object: Any) -> Callable[[Any], Tuple[str, str]]:
 
     Returns
     -------
-    Callable[[Any], Tuple[str, str]]
+    Callable[[Any], Tuple[str, Optional[str], str]]
         The handler function to be used for the object.
     """
     return MODEL_HANDLERS.get(type(model_object), handle_default)
@@ -56,7 +56,7 @@ def get_handler(model_object: Any) -> Callable[[Any], Tuple[str, str]]:
 # Define Handlers --------------------------------------------------------------
 
 
-def handle_default(model_object: Any) -> Tuple[str, str]:
+def handle_default(model_object: Any) -> Tuple[str, Optional[str], str]:
     """Default handler for unsupported objects.
 
     Tries to call a `.summary()` method if it exists, otherwise
@@ -69,15 +69,16 @@ def handle_default(model_object: Any) -> Tuple[str, str]:
 
     Returns
     -------
-    tuple[str, str]
-        A tuple containing the model name ("default") and its string summary.
+    tuple[str, Optional[str], str]
+        A tuple containing the model name ("default"), no engine identifier
+        (``None``), and its string summary.
     """
     summary_text = ""
     if hasattr(model_object, "summary") and callable(model_object.summary):
         summary_text = str(model_object.summary())
     else:
         summary_text = str(model_object)
-    return ("default", summary_text)
+    return ("default", None, summary_text)
 
 
 def _format_value(value: Any) -> str:
@@ -127,7 +128,9 @@ try:
     from statsmodels.regression.linear_model import RegressionResultsWrapper
 
     @register_handler(RegressionResultsWrapper)
-    def handle_lm(model_object: RegressionResultsWrapper) -> Tuple[str, str]:
+    def handle_lm(
+        model_object: RegressionResultsWrapper,
+    ) -> Tuple[str, Optional[str], str]:
         """Handler for statsmodels OLS (linear models).
 
         Parameters
@@ -137,10 +140,11 @@ try:
 
         Returns
         -------
-        tuple[str, str]
-            A tuple containing the model name ("lm") and its summary.
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"linear_model"``), engine
+            (``"statsmodels"``), and its summary.
         """
-        return ("lm", str(model_object.summary()))
+        return ("linear_model", "statsmodels", str(model_object.summary()))
 
 except ImportError:
     # This allows the package to be imported even if statsmodels is not installed
@@ -151,7 +155,7 @@ try:
     from statsmodels.genmod.generalized_linear_model import GLMResultsWrapper
 
     @register_handler(GLMResultsWrapper)
-    def handle_glm(model_object: GLMResultsWrapper) -> Tuple[str, str]:
+    def handle_glm(model_object: GLMResultsWrapper) -> Tuple[str, Optional[str], str]:
         """Handler for statsmodels GLM.
 
         Parameters
@@ -161,13 +165,19 @@ try:
 
         Returns
         -------
-        tuple[str, str]
-            A tuple containing the model name ("glm") and its summary.
+        tuple[str, Optional[str], str]
+            A tuple containing the model name
+            (``"generalized_linear_model"``), engine (``"statsmodels"``), and
+            its summary.
         """
         # We can extract more details like the family for a better description
         family_name = model_object.model.family.__class__.__name__
         model_description = f"Generalized Linear Model (GLM) with {family_name} family"
-        return ("glm", model_description + "\n\n" + str(model_object.summary()))
+        return (
+            "generalized_linear_model",
+            "statsmodels",
+            model_description + "\n\n" + str(model_object.summary()),
+        )
 
 except ImportError:
     pass
@@ -177,8 +187,17 @@ try:
     from sklearn.linear_model import LinearRegression, LogisticRegression
 
     @register_handler(LinearRegression)
-    def handle_sklearn_lm(model_object: LinearRegression) -> Tuple[str, str]:
-        """Handler for scikit-learn ``LinearRegression`` estimators."""
+    def handle_sklearn_lm(
+        model_object: LinearRegression,
+    ) -> Tuple[str, Optional[str], str]:
+        """Handler for scikit-learn ``LinearRegression`` estimators.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"linear_model"``), engine
+            (``"sklearn"``), and a synthesized summary.
+        """
         coefficients = model_object.coef_
         n_features = getattr(
             model_object,
@@ -201,11 +220,21 @@ try:
             "R-squared: not available from the fitted estimator alone "
             "(scikit-learn does not store the training data)."
         )
-        return ("lm", "\n".join(lines))
+        return ("linear_model", "sklearn", "\n".join(lines))
 
     @register_handler(LogisticRegression)
-    def handle_sklearn_glm(model_object: LogisticRegression) -> Tuple[str, str]:
-        """Handler for scikit-learn ``LogisticRegression`` estimators."""
+    def handle_sklearn_glm(
+        model_object: LogisticRegression,
+    ) -> Tuple[str, Optional[str], str]:
+        """Handler for scikit-learn ``LogisticRegression`` estimators.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name
+            (``"generalized_linear_model"``), engine (``"sklearn"``), and a
+            synthesized summary.
+        """
         coefficients = model_object.coef_
         n_features = getattr(
             model_object,
@@ -243,7 +272,7 @@ try:
                 lines.append(f"Coefficients for class ({class_label}):")
                 lines.extend(_coefficient_lines(row, feature_names))
 
-        return ("glm", "\n".join(lines))
+        return ("generalized_linear_model", "sklearn", "\n".join(lines))
 
 except ImportError:
     pass

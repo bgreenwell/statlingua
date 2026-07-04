@@ -21,6 +21,12 @@ from typing import Optional
 import yaml
 
 _PLACEHOLDER_RE = re.compile(r"\{\{\s*(\w+)\s*\}\}")
+_ENGINE_NOTE_FILES = {
+    ("linear_model", "statsmodels"): "statsmodels-ols.md",
+    ("linear_model", "sklearn"): "sklearn-linear.md",
+    ("generalized_linear_model", "statsmodels"): "statsmodels-glm.md",
+    ("generalized_linear_model", "sklearn"): "sklearn-logistic.md",
+}
 
 
 def _read_prompt_file(*path_parts: str) -> str:
@@ -65,23 +71,43 @@ def _has_model_instructions(model_name: str) -> bool:
     return bool(_read_prompt_file("models", model_name, "instructions.md"))
 
 
+def _read_engine_notes(model_name: str, engine: Optional[str]) -> str:
+    """Read optional engine-specific notes for a model/engine pair."""
+    if engine is None:
+        return ""
+
+    filename = _ENGINE_NOTE_FILES.get((model_name, engine))
+    if not filename:
+        return ""
+
+    return _read_prompt_file("models", model_name, "engines", filename).strip()
+
+
 def assemble_system_prompt(
-    model_name: str, audience: str, verbosity: str, style: str
+    model_name: str,
+    audience: str,
+    verbosity: str,
+    style: str,
+    engine: Optional[str] = None,
 ) -> str:
     """Assemble the full system prompt for a model type/audience/verbosity/style.
 
     Parameters
     ----------
     model_name : str
-        Internal model type name (e.g. ``"lm"``, ``"glm"``), corresponding to
-        a directory in ``prompts/models/``. Falls back to ``"default"`` if no
-        such directory (or no ``instructions.md``) exists.
+        Internal model type name (e.g. ``"linear_model"``,
+        ``"generalized_linear_model"``), corresponding to a directory in
+        ``prompts/models/``. Falls back to ``"default"`` if no such directory
+        (or no ``instructions.md``) exists.
     audience : str
         One of the keys in ``config.yaml``'s ``audience`` map.
     verbosity : str
         One of the keys in ``config.yaml``'s ``verbosity`` map.
     style : str
         One of the keys in ``config.yaml``'s ``style`` map.
+    engine : str, optional
+        Optional engine/library identifier used to inject engine-specific
+        output-format notes when available.
 
     Returns
     -------
@@ -92,6 +118,10 @@ def assemble_system_prompt(
         model_name = "default"
 
     config = _prompt_config()
+    engine_notes = _read_engine_notes(model_name, engine)
+    engine_section = (
+        f"## Output Format Notes\n\n{engine_notes}\n" if engine_notes else ""
+    )
 
     role_base = _read_prompt_file("common", "role_base.md").strip()
     role_specific = _read_prompt_file(
@@ -122,6 +152,7 @@ def assemble_system_prompt(
         model_instructions=_read_prompt_file(
             "models", model_name, "instructions.md"
         ).strip(),
+        engine_section=engine_section,
         caution_instruction=_read_prompt_file("common", "caution.md").strip(),
     ).strip()
 

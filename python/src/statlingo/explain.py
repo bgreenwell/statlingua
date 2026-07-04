@@ -85,9 +85,11 @@ def explain(
     style = _validate_choice("style", style, _VALID_STYLES)
 
     handler = get_handler(model_object)
-    model_name, summary_text = handler(model_object)
+    model_name, engine, summary_text = handler(model_object)
 
-    system_prompt = assemble_system_prompt(model_name, audience, verbosity, style)
+    system_prompt = assemble_system_prompt(
+        model_name, audience, verbosity, style, engine=engine
+    )
     user_prompt = build_user_prompt(
         model_description=f"{model_name} model", output=summary_text, context=context
     )

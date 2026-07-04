@@ -42,8 +42,8 @@
 #' @returns An object of class `"statlingo_explanation"`. Essentially a list
 #' with the following components:
 #' * `text` - Character string representation of the LLM's response.
-#' * `model_type` - Character string giving the model type (e.g., `"lm"` or
-#' `"coxph"`).
+#' * `model_type` - Character string giving the internal prompt model type
+#' (e.g., `"linear_model"` or `"cox_proportional_hazards"`).
 #' * `audience` - Character string specifying the level or intended audience for
 #' the explanations.
 #' * `verbosity` - Character string specifying the level of verbosity or level
@@ -156,7 +156,7 @@ explain.htest <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "htest",
+    name = "hypothesis_test",
     model = object$method
   )
 }
@@ -180,7 +180,7 @@ explain.lm <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "lm",
+    name = "linear_model",
     model = "linear regression model"
   )
 }
@@ -206,7 +206,7 @@ explain.glm <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "glm",
+    name = "generalized_linear_model",
     model = paste(.family, "generalized linear model with", .link, "link")
   )
 }
@@ -233,7 +233,7 @@ explain.polr <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "polr",
+    name = "proportional_odds_logistic_regression",
     model = paste("proportional odds", .method, "regression model")
   )
 }
@@ -259,7 +259,7 @@ explain.lme <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "lme",
+    name = "linear_mixed_model_nlme",
     model = "linear mixed-effects model"
   )
 }
@@ -285,7 +285,7 @@ explain.lmerMod <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "lmerMod",
+    name = "linear_mixed_model_lme4",
     model = "linear mixed-effects model"
   )
 }
@@ -311,7 +311,7 @@ explain.glmerMod <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "glmerMod",
+    name = "generalized_linear_mixed_model",
     model = paste(.family, "generalized linear mixed-effects model with",
                   .link, "link")
   )
@@ -340,7 +340,7 @@ explain.gam <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "gam",
+    name = "generalized_additive_model",
     model = paste(.family, "generalized additive model with", .link, "link")
   )
 }
@@ -366,7 +366,7 @@ explain.survreg <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "survreg",
+    name = "survival_regression",
     model = "parametric survival regression model"
   )
 }
@@ -390,7 +390,7 @@ explain.coxph <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "coxph",
+    name = "cox_proportional_hazards",
     model = "Cox proportional hazards regression model"
   )
 }
@@ -416,7 +416,7 @@ explain.rpart <- function(
     audience = audience,
     verbosity = verbosity,
     style = style,
-    name = "rpart",
+    name = "recursive_partitioning_tree",
     model = "recursive partitioning tree model"
   )
 }

@@ -76,8 +76,10 @@ expect_true(nchar(config$style$markdown) > 0)
 # Test .assemble_sys_prompt()
 # Basic Assembly
 prompt_lm_novice <-
-  statlingo:::.assemble_sys_prompt(model_name = "lm", style = "markdown",
-                                    audience = "novice", verbosity = "brief")
+  statlingo:::.assemble_sys_prompt(model_name = "linear_model",
+                                   style = "markdown",
+                                   audience = "novice",
+                                   verbosity = "brief")
 expect_true(is.character(prompt_lm_novice) && nchar(prompt_lm_novice) > 0)
 expect_true(grepl("## Role", prompt_lm_novice))
 expect_true(grepl("## Intended Audience and Verbosity", prompt_lm_novice))
@@ -86,12 +88,14 @@ expect_true(grepl("## Instructions", prompt_lm_novice))
 expect_true(grepl("## Caution", prompt_lm_novice))
 expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("common", "role_base.md"),
                   prompt_lm_novice))
-expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("models", "lm", "role_specific.md"),
+expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("models", "linear_model", "role_specific.md"),
                   prompt_lm_novice))
 expect_true(grepl_robust_line_endings(config$audience$novice, prompt_lm_novice))
 expect_true(grepl_robust_line_endings(config$verbosity$brief, prompt_lm_novice))
-expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("models", "lm", "instructions.md"),
+expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("models", "linear_model", "instructions.md"),
                   prompt_lm_novice))
+expect_true(grepl("## Output Format Notes", prompt_lm_novice, fixed = TRUE))
+expect_true(grepl("Multiple R-squared", prompt_lm_novice, fixed = TRUE))
 
 # Model without role_specific.md (e.g., "default")
 prompt_default_assembly <-
@@ -111,6 +115,15 @@ prompt_invalid_model <-
                                     audience = "researcher", verbosity = "moderate")
 expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("models", "default", "instructions.md"),
                   prompt_invalid_model))
+
+# Model without engine notes should not include an engine section
+prompt_hypothesis_test <-
+  statlingo:::.assemble_sys_prompt(model_name = "hypothesis_test",
+                                   style = "markdown",
+                                   audience = "researcher",
+                                   verbosity = "moderate")
+expect_false(grepl("## Output Format Notes",
+                   prompt_hypothesis_test, fixed = TRUE))
 
 
 # Test .build_usr_prompt()
@@ -165,16 +178,20 @@ expect_equal(mock_client$last_system_prompt, expected_sys_prompt_default)
 # Check that it also returns the value invisibly
 # expect_equal(explanation_lm_cat, mock_client$chat_response) # This might be tricky with expect_stdout, consider separate test if needed
 expected_sys_prompt_lm_specific <-
-  statlingo:::.assemble_sys_prompt(model_name = "lm", audience = "novice",
-                                    verbosity = "brief", style = "markdown")
+  statlingo:::.assemble_sys_prompt(model_name = "linear_model",
+                                   audience = "novice",
+                                   verbosity = "brief",
+                                   style = "markdown")
 # expect_equal(mock_client$last_system_prompt, expected_sys_prompt_lm_specific)
 # expect_true(grepl("LM test context", mock_client$last_user_prompt))
 
 # Test explain.lm with default audience/verbosity
 statlingo::explain(lm_obj, client = mock_client, context = "LM test default")
 expected_sys_prompt_lm_defaults <-
-  statlingo:::.assemble_sys_prompt(model_name = "lm", audience = "researcher",
-                                    verbosity = "moderate", style = "markdown")
+  statlingo:::.assemble_sys_prompt(model_name = "linear_model",
+                                   audience = "researcher",
+                                   verbosity = "moderate",
+                                   style = "markdown")
 # expect_equal(mock_client$last_system_prompt, expected_sys_prompt_lm_defaults)
 expect_true(grepl("LM test default", mock_client$last_user_prompt))
 
@@ -187,8 +204,10 @@ explanation_htest <- statlingo::explain(t_test_obj, client = mock_client,
 expect_equal(explanation_htest$text, mock_client$chat_response)
 expect_true(grepl(statlingo::summarize(t_test_obj), mock_client$last_user_prompt))
 expected_sys_prompt_htest <-
-  statlingo:::.assemble_sys_prompt(model_name = "htest", audience = "manager",
-                                    verbosity = "detailed", style = "markdown")
+  statlingo:::.assemble_sys_prompt(model_name = "hypothesis_test",
+                                   audience = "manager",
+                                   verbosity = "detailed",
+                                   style = "markdown")
 expect_equal(mock_client$last_system_prompt, expected_sys_prompt_htest)
 
 

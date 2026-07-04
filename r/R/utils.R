@@ -50,6 +50,37 @@
 #' @noRd
 #' @keywords internal
 #'
+#' Read engine-specific prompt notes for a model when available.
+.read_engine_notes <- function(model_name, engine = "r") {
+  engine_file_map <- list(
+    r = c(
+      linear_model = "r-lm",
+      generalized_linear_model = "r-glm"
+    )
+  )
+
+  engine_files <- engine_file_map[[engine]]
+  if (is.null(engine_files)) {
+    return("")
+  }
+
+  if (!(model_name %in% names(engine_files))) {
+    return("")
+  }
+
+  engine_file <- unname(engine_files[[model_name]])
+  if (is.null(engine_file) || !nzchar(engine_file)) {
+    return("")
+  }
+
+  .read_prompt_file(
+    "models", model_name, "engines", paste0(engine_file, ".md")
+  )
+}
+
+#' @noRd
+#' @keywords internal
+#'
 #' Assemble the full system prompt for a given model type, audience,
 #' verbosity, and output style. Short instruction strings (audience,
 #' verbosity, style) come from `inst/prompts/config.yaml`; longer,
@@ -76,6 +107,12 @@
 
   model_instructions <-
     trimws(.read_prompt_file("models", model_name, "instructions.md"))
+  engine_notes <- trimws(.read_engine_notes(model_name, engine = "r"))
+  engine_section <- if (nzchar(engine_notes)) {
+    paste0("## Output Format Notes\n\n", engine_notes, "\n")
+  } else {
+    ""
+  }
 
   ellmer::interpolate_package(
     package = "statlingo",
@@ -88,6 +125,7 @@
     style_title = tools::toTitleCase(style),
     style_instruction = config$style[[style]],
     model_instructions = model_instructions,
+    engine_section = engine_section,
     caution_instruction = trimws(.read_prompt_file("common", "caution.md"))
   )
 }
@@ -192,8 +230,8 @@
 #' @param context Character string providing additional context, such as
 #' background on the research question and information about the data.
 #'
-#' @param name Character string specifying the class name for reading in the
-#' system prompt (used as `model_name` for `.assemble_sys_prompt`).
+#' @param name Character string specifying the internal prompt model key used
+#' as `model_name` for `.assemble_sys_prompt`.
 #'
 #' @param model Character string specifying the type of model to be explained (used in user prompt).
 #' @param audience Character string specifying the target audience for the explanation.
