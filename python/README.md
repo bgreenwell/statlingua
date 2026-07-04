@@ -1,5 +1,6 @@
 # statlingo (Python)
 
+[![Python tests](https://github.com/bgreenwell/statlingo/actions/workflows/python-tests.yaml/badge.svg)](https://github.com/bgreenwell/statlingo/actions/workflows/python-tests.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 An experimental Python package to help you understand statistical models using

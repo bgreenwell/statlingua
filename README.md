@@ -1,7 +1,10 @@
 # statlingo
 
 [![R-CMD-check](https://github.com/bgreenwell/statlingo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgreenwell/statlingo/actions/workflows/R-CMD-check.yaml)
+[![Python tests](https://github.com/bgreenwell/statlingo/actions/workflows/python-tests.yaml/badge.svg)](https://github.com/bgreenwell/statlingo/actions/workflows/python-tests.yaml)
+[![Docs site](https://github.com/bgreenwell/statlingo/actions/workflows/docs-site.yaml/badge.svg)](https://bgreenwell.github.io/statlingo/)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: GPL v2+](https://img.shields.io/badge/license-GPL%20(%3E%3D%202)-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/bgreenwell/statlingo/issues)
 
 **statlingo** translates the dense output of statistical models—coefficients,
