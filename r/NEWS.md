@@ -21,7 +21,7 @@
 - Fixed redundant arg lists and calls to `match.arg()`.
 - Updated `Description` field per feedback from CRAN.
 
-## [0.1.0.9999] - 2025-XY-XY
+## [0.1.0.9000] - 2026-07-04
 
 ### Changed
 

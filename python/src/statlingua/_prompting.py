@@ -101,14 +101,23 @@ def assemble_system_prompt(
 
     template = _read_prompt_file("system_prompt_template.md")
 
+    def _title_case(value: str) -> str:
+        """Capitalize only the first character, mirroring R's
+        ``tools::toTitleCase()`` behavior for single "word" inputs like
+        ``"domain_expert"`` (which it renders as ``"Domain_expert"``, not
+        ``"Domain Expert"``) -- kept in sync so the assembled system prompt
+        text matches exactly between the R and Python packages.
+        """
+        return value[:1].upper() + value[1:]
+
     return _interpolate(
         template,
         role_instruction=role_instruction,
-        audience_title=audience.replace("_", " ").title(),
+        audience_title=_title_case(audience),
         audience_instruction=config["audience"][audience],
-        verbosity_title=verbosity.title(),
+        verbosity_title=_title_case(verbosity),
         verbosity_instruction=config["verbosity"][verbosity],
-        style_title=style.title(),
+        style_title=_title_case(style),
         style_instruction=config["style"][style],
         model_instructions=_read_prompt_file(
             "models", model_name, "instructions.md"

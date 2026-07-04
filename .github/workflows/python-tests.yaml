@@ -42,3 +42,40 @@ jobs:
         run: |
           source .venv/bin/activate
           python3 -m pytest tests/ -v
+
+  wheel-smoke-test:
+    # Editable installs (`pip install -e .`) read package data straight from
+    # src/ and never exercise setuptools' package-data globbing, so a bug
+    # like "prompts/config.yaml missing from [tool.setuptools.package-data]"
+    # can pass the `test` job above yet break every real (non-editable)
+    # install. Build an actual wheel and smoke-test it to catch that class
+    # of regression.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+
+      - name: Build wheel
+        working-directory: python
+        run: |
+          uv venv
+          uv pip install build
+          source .venv/bin/activate
+          python3 -m build --wheel
+
+      - name: Install wheel (non-editable) and smoke-test
+        working-directory: python
+        run: |
+          uv venv .venv-wheel
+          source .venv-wheel/bin/activate
+          uv pip install dist/*.whl chatlas pyyaml statsmodels
+          python3 -c "
+          from statlingua._prompting import assemble_system_prompt
+          prompt = assemble_system_prompt('lm', 'novice', 'brief', 'markdown')
+          assert prompt.startswith('## Role'), 'system prompt assembly failed on a wheel install'
+          print('wheel smoke test OK')
+          "

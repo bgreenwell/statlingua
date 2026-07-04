@@ -27,11 +27,15 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/bgreenwell/statlingua-py"
-"Bug Tracker" = "https://github.com/bgreenwell/statlingua-py/issues"
+"Homepage" = "https://github.com/bgreenwell/statlingua/tree/main/python"
+"Bug Tracker" = "https://github.com/bgreenwell/statlingua/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-"statlingua" = ["prompts/**/*.md"]
+# Include ALL prompt data files (not just .md) -- config.yaml holds the
+# audience/verbosity/style instruction strings and must ship too, or
+# explain() breaks on any non-editable install (see prompts-sync-check /
+# _prompting.py's _prompt_config()).
+"statlingua" = ["prompts/**/*"]
