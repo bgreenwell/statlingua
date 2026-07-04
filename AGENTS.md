@@ -5,7 +5,7 @@ This file provides context and instructions for AI agents working on the `statli
 ## Project Overview
 `statlingo` interprets and explains the output of statistical models (e.g., `lm`, `glm`, `htest`, `statsmodels` OLS/GLM) using Large Language Models (LLMs). It ships as **two packages sharing one repo**:
 
-- **R package** (`r/`) — leverages [`ellmer`](https://ellmer.tidyverse.org/) (R6-based `Chat` clients). Previously published on CRAN as `statlingua`; not yet resubmitted under the new `statlingo` name.
+- **R package** (`r/`) — leverages [`ellmer`](https://ellmer.tidyverse.org/) (R6-based `Chat` clients). Distributed via [r-universe](https://bgreenwell.r-universe.dev/) and GitHub, not CRAN (previously published on CRAN as `statlingua`; not being resubmitted under the new `statlingo` name).
 - **Python package** (`python/`) — leverages [`chatlas`](https://posit-dev.github.io/chatlas/) (`Chat` clients).
 
 **Core Mission:** Bridge the gap between complex statistical model output and human-readable explanations for various audiences (novice, student, researcher, etc.), consistently across both languages.
@@ -71,7 +71,7 @@ Rscript -e 'tinytest::build_install_test()'
 # Regenerate documentation (man/, NAMESPACE) after editing roxygen comments
 Rscript -e 'devtools::document(".")'
 
-# Full CRAN-readiness check
+# Full package check (same rigor r-universe/CRAN would apply; used as a QA gate even without a CRAN submission)
 Rscript -e 'devtools::check(".")'
 ```
 

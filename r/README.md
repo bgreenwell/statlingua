@@ -35,10 +35,11 @@ As of now, **statlingo** explicitly supports a variety of common statistical mod
 
 ### Installation
 
-**statlingo** isn't yet on CRAN (it was previously published there under the
-name `statlingua`), but you can install it from
-[r-universe](https://bgreenwell.r-universe.dev/) (once the build finishes
-syncing after registration):
+**statlingo** is distributed via [r-universe](https://bgreenwell.r-universe.dev/)
+and GitHub (not CRAN — the package was previously published there under the
+name `statlingua`, but is not being resubmitted under the new name).
+Install from r-universe (once the build finishes syncing after
+registration):
 
 ```r
 install.packages("statlingo", repos = c("https://bgreenwell.r-universe.dev", "https://cloud.r-project.org"))

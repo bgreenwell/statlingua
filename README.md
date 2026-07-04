@@ -16,7 +16,7 @@ single canonical set of LLM prompts:
 
 | Package | Language | LLM interface | Location |
 |---|---|---|---|
-| `statlingo` | R (formerly published on CRAN as `statlingua`) | [`ellmer`](https://ellmer.tidyverse.org/) | [`r/`](r) |
+| `statlingo` | R (distributed via [r-universe](https://bgreenwell.r-universe.dev/) + GitHub — formerly published on CRAN as `statlingua`, not resubmitted under this name) | [`ellmer`](https://ellmer.tidyverse.org/) | [`r/`](r) |
 | `statlingo` | Python | [`chatlas`](https://posit-dev.github.io/chatlas/) | [`python/`](python) |
 
 See each package's own README for full usage instructions:
