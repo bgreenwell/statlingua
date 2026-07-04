@@ -22,23 +22,23 @@ the example model below.
 
 ## Quick example
 
-```{.python}
+```{python}
 import os
 import statsmodels.api as sm
-from chatlas import ChatOpenAI
+from chatlas import ChatGoogle
 from statlingo import explain
 
-if not os.getenv("OPENAI_API_KEY"):
-    raise EnvironmentError("Please set your OPENAI_API_KEY environment variable.")
+if not os.getenv("GEMINI_API_KEY") and not os.getenv("GOOGLE_API_KEY"):
+    raise EnvironmentError("Please set your GEMINI_API_KEY or GOOGLE_API_KEY environment variable.")
 
-# 1. Fit a model
-duncan_data = sm.datasets.duncan.load()
+# 1. Load data and fit a model (Duncan's occupational prestige data)
+duncan_data = sm.datasets.get_rdataset("Duncan", "carData")
 y = duncan_data.data["prestige"]
 X = sm.add_constant(duncan_data.data[["income", "education"]])
 model = sm.OLS(y, X).fit()
 
-# 2. Create a chatlas Chat client (never mutated by explain())
-client = ChatOpenAI(model="gpt-4o")
+# 2. Create a chatlas Chat client using Google Gemini (never mutated by explain())
+client = ChatGoogle()
 
 # 3. Get a high-level explanation of the model results
 explanation = explain(model_object=model, client=client, audience="student")

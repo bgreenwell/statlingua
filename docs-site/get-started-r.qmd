@@ -28,7 +28,6 @@ install.packages("ellmer")
 ## Quick example
 
 ```{r}
-#| eval: false
 library(statlingo)
 
 # Fit a simple linear model
@@ -39,9 +38,8 @@ The data give the speed of cars (mph) and the distances taken to stop
 (ft). Note that the data were recorded in the 1920s!
 "
 
-# Create an ellmer chat client (requires an API key -- see
-# ?ellmer::chat_openai or ?ellmer::chat_google_gemini for provider setup)
-client <- ellmer::chat_openai()
+# Create an ellmer chat client using Google Gemini
+client <- ellmer::chat_google_gemini()
 
 # Get an explanation tailored for a student audience
 ex <- explain(

@@ -1,5 +1,6 @@
 import os
 import statsmodels.api as sm
+from chatlas import ChatGoogle
 from statlingo import diagnose
 
 
@@ -9,23 +10,16 @@ def run_diagnose_example():
     and gets diagnostic advice from statlingo.
     """
     # --- 1. Set up API Key ---
-    # Ensure your OPENAI_API_KEY is set in your environment
-    if not os.getenv("OPENAI_API_KEY"):
-        print("ERROR: Please set your OPENAI_API_KEY environment variable.")
+    if not os.getenv("GEMINI_API_KEY") and not os.getenv("GOOGLE_API_KEY"):
+        print("ERROR: Please set your GEMINI_API_KEY or GOOGLE_API_KEY environment variable.")
         return
 
     # --- 2. Load a built-in dataset ---
-    # Duncan's Occupational Prestige Dataset contains data on the prestige
-    # and other characteristics of 45 U.S. occupations in 1950.
     print("Loading Duncan's Prestige dataset...")
     duncan_data = sm.datasets.get_rdataset("Duncan", "carData")
     df = duncan_data.data
 
-    # The dataset description is available and provides great context for the LLM
-    # print(duncan_data.NOTE)
-
     # --- 3. Fit a multiple regression model ---
-    # We'll try to predict 'prestige' based on 'income' and 'education'.
     y = df["prestige"]
     X = df[["income", "education"]]
     X = sm.add_constant(X)  # Add an intercept
@@ -43,10 +37,13 @@ def run_diagnose_example():
 
     print(f'\nAsking statlingo to diagnose with the prompt: "{user_question}"')
 
+    # Create a ChatGoogle client
+    client = ChatGoogle()
+
     advice = diagnose(
         model_object=model,
+        client=client,
         prompt=user_question,
-        model="gpt-4o",  # Use your preferred model
     )
 
     # --- 5. Print the result ---
@@ -57,3 +54,4 @@ def run_diagnose_example():
 
 if __name__ == "__main__":
     run_diagnose_example()
+

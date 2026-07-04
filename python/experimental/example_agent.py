@@ -1,12 +1,13 @@
 # agent_example.py
 import os
 import statsmodels.api as sm
+from chatlas import ChatGoogle
 from statlingo import diagnose_agent
 
 
 def run_agent_example():
-    if not os.getenv("OPENAI_API_KEY"):
-        print("ERROR: Please set your OPENAI_API_KEY environment variable.")
+    if not os.getenv("GEMINI_API_KEY") and not os.getenv("GOOGLE_API_KEY"):
+        print("ERROR: Please set your GEMINI_API_KEY or GOOGLE_API_KEY environment variable.")
         return
 
     print("Loading Duncan's Prestige dataset...")
@@ -25,8 +26,15 @@ def run_agent_example():
 
     print(f'\nAsking agent to diagnose with the prompt: "{user_question}"\n')
 
+    # Create a ChatGoogle client
+    client = ChatGoogle()
+
     # Use a vision-capable model
-    result = diagnose_agent(model_object=model, prompt=user_question, model="gpt-4o")
+    result = diagnose_agent(
+        model_object=model,
+        client=client,
+        prompt=user_question,
+    )
 
     print("\n--- Statlingo Agent Response ---")
     print(result["text"])
@@ -38,3 +46,4 @@ def run_agent_example():
 
 if __name__ == "__main__":
     run_agent_example()
+

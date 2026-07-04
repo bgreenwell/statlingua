@@ -57,3 +57,8 @@ quartodoc:
       desc: The main entry point for explaining a fitted model with an LLM.
       contents:
         - explain
+    - title: Diagnostics
+      desc: Agentic model diagnostics and assumption verification.
+      contents:
+        - diagnose
+        - diagnose_agent

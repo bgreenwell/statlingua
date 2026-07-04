@@ -1,128 +1,219 @@
 # AGENTS.md for statlingo
 
-This file provides context and instructions for AI agents working on the `statlingo` monorepo.
+This file provides context, architectural guidelines, and development workflows for AI agents working on the `statlingo` monorepo.
 
-## Project Overview
-`statlingo` interprets and explains the output of statistical models (e.g., `lm`, `glm`, `htest`, `statsmodels` OLS/GLM) using Large Language Models (LLMs). It ships as **two packages sharing one repo**:
+---
 
-- **R package** (`r/`) — leverages [`ellmer`](https://ellmer.tidyverse.org/) (R6-based `Chat` clients). Distributed via [r-universe](https://bgreenwell.r-universe.dev/) and GitHub, not CRAN (previously published on CRAN as `statlingua`; not being resubmitted under the new `statlingo` name).
+## 1. Project Overview & Mission
+`statlingo` translates dense statistical model output—coefficients, p-values, model fit indices, and more—into clear, context-aware, natural language explanations using Large Language Models (LLMs).
+
+It ships as **two language packages sharing one repository**:
+- **R package** (`r/`) — leverages [`ellmer`](https://ellmer.tidyverse.org/) (R6-based `Chat` clients). Distributed via [r-universe](https://bgreenwell.r-universe.dev/) and GitHub (historically published as `statlingua` on CRAN, but not resubmitted under the new name).
 - **Python package** (`python/`) — leverages [`chatlas`](https://posit-dev.github.io/chatlas/) (`Chat` clients).
 
-**Core Mission:** Bridge the gap between complex statistical model output and human-readable explanations for various audiences (novice, student, researcher, etc.), consistently across both languages.
+**Core Mission:** Bridge the gap between complex statistical model output and human-readable explanations for various audiences (novice, student, researcher, manager, domain_expert) consistently across both packages.
 
-## Repository layout
+---
+
+## 2. Repository Layout
 ```
-r/            R package (DESCRIPTION, R/, man/, tests/, vignettes/, inst/)
-python/       Python package (pyproject.toml, src/statlingo/, tests/)
-prompts/      Canonical LLM prompt source shared by both packages (edit here)
-scripts/      Dev tooling, e.g. scripts/sync_prompts.py
+statlingo/
+├── prompts/              # Canonical LLM prompt source (Single Source of Truth)
+│   ├── config.yaml       # Short audience, verbosity, and style instructions
+│   ├── common/           # Shared role/caution prompt fragments
+│   │   ├── role_base.md  # Base agent persona prompt
+│   │   └── caution.md    # Safety guidelines (do not invent information)
+│   ├── models/           # Per-model instructions & role specific prompts
+│   │   ├── arima_time_series/
+│   │   ├── linear_model/
+│   │   ├── generalized_linear_model/
+│   │   └── default/      # Fallback model instructions
+│   └── system_prompt_template.md # Master layout template
+│
+├── r/                    # R Package Root
+│   ├── DESCRIPTION       # Package metadata & dependencies
+│   ├── NAMESPACE         # Exported functions
+│   ├── R/                # R package source code (explain, summarize, utils, print)
+│   ├── inst/             # Contains inst/prompts ( wholesale-regenerated, DO NOT edit )
+│   ├── man/              # Generated Rd documentation files
+│   ├── tests/            # Test suite (uses tinytest)
+│   └── TODO.md           # R-specific tasks
+│
+├── python/               # Python Package Root
+│   ├── pyproject.toml    # Build config, dependencies, optional packages
+│   ├── src/statlingo/    # Python package source code
+│   │   ├── prompts/      # Python prompt copy ( wholesale-regenerated, DO NOT edit )
+│   │   ├── explain.py    # Public explain() function
+│   │   ├── diagnostic.py # Agentic diagnostic functions (diagnose, diagnose_agent)
+│   │   ├── model_handlers.py # Registered model summary extraction handlers
+│   │   └── _prompting.py # System/user prompt builder & interpolator
+│   ├── tests/            # Test suite (uses pytest)
+│   └── experimental/     # Visual examples & scripts for Chatlas-based agents
+│
+├── docs-site/            # Unified Quarto Documentation Website
+│   ├── _quarto.yml       # Quarto website configuration
+│   └── *.qmd             # Project landing/get-started pages
+│
+├── scripts/              # Monorepo development scripts
+│   ├── sync_prompts.py   # Synchronizes prompts/ into r/ and python/
+│   └── build_docs_site.sh# Script to build the unified website
+│
+├── README.md             # Monorepo-wide README
+├── TODO.md               # Monorepo-wide TODO list
+└── AGENTS.md             # This file (AI instructions)
 ```
 
-### The canonical `prompts/` directory
-`prompts/` at the repo root is the **single source of truth** for all LLM prompt
-content:
-- `prompts/config.yaml` — short instruction strings for `audience`, `verbosity`,
-  and `style`, keyed by name (e.g. `audience.novice`, `style.markdown`).
-- `prompts/common/{role_base.md,caution.md}` — shared role/caution text.
-- `prompts/models/<model_name>/{instructions.md,role_specific.md}` — longer,
-  per-model instructions (falls back to `models/default/` if a model has no
-  `instructions.md`).
-- `prompts/system_prompt_template.md` — the master template both languages
-  interpolate these pieces into (`{{placeholder}}` syntax).
+---
 
-**Never hand-edit** the generated copies at `r/inst/prompts/` or
-`python/src/statlingo/prompts/` — they are wholesale-regenerated by:
+## 3. The Canonical Prompts System (`prompts/`)
+The `prompts/` directory at the repo root is the **single source of truth** for all LLM prompt content:
+- `prompts/config.yaml` — Keyed configurations mapping parameters to prompts (e.g. `audience.novice`, `verbosity.brief`, `style.markdown`).
+- `prompts/common/` — Base persona (`role_base.md`) and safety/precision constraints (`caution.md`).
+- `prompts/models/<name>/` — Context specific files:
+  - `instructions.md`: Detailed guidance on interpreting specific statistical fields.
+  - `role_specific.md`: Persona adjustments for a given model.
+  - `engines/`: Optional engine-specific format overrides (e.g. `r-lm.md`, `statsmodels-ols.md`).
+- `prompts/system_prompt_template.md` — The master template that both packages interpolate variables into using `{{placeholder}}` syntax.
+
+### Prompt Synchronization
+**Never hand-edit** the generated copies at `r/inst/prompts/` or `python/src/statlingo/prompts/`. They are wholesale-regenerated from the root `prompts/` directory by running:
 ```bash
-python3 scripts/sync_prompts.py          # regenerate both copies
-python3 scripts/sync_prompts.py --check  # verify they're in sync (used in CI)
+# From the repo root:
+python3 scripts/sync_prompts.py
 ```
-Always edit `prompts/` and re-run the sync script after.
+To verify the packages are synchronized (e.g., in CI):
+```bash
+python3 scripts/sync_prompts.py --check
+```
+Always edit the canonical files under `prompts/` and run the sync script afterward.
 
-## R package (`r/`)
+---
+
+## 4. R Package (`r/`)
 
 ### Tech Stack
 - **Language:** R (>= 4.1.0)
-- **LLM Interface:** `ellmer` (>= 0.4.0), an `Imports` dependency (used directly via `ellmer::interpolate_package()` for prompt assembly)
-- **Config parsing:** `yaml` package (`yaml::read_yaml()`)
-- **Testing:** `tinytest`
-- **Documentation:** `roxygen2`
-- **OO System:** S3 (for user-facing generics like `explain()`, `summarize()`), R6 (for `ellmer::Chat` objects)
+- **LLM Interface:** `ellmer` (>= 0.4.0), imported in `DESCRIPTION` (used directly via `ellmer::interpolate_package()` for prompt assembly).
+- **Config Parsing:** `yaml` package (`yaml::read_yaml()`).
+- **Testing:** `tinytest`.
+- **Documentation:** `roxygen2`.
+- **OO System:** S3 dispatch for user-facing generics (`explain()`, `summarize()`); R6 for `ellmer::Chat` objects.
 
-### File Structure & Architecture
-- **`r/R/explain.R`**: The main `explain()` S3 generic and per-model methods (`explain.lm`, `explain.glm`, ...). Primary user interface.
-- **`r/R/summarize.R`**: The `summarize()` S3 generic — converts R model objects into text summaries for LLM consumption.
-- **`r/R/utils.R`**: Internal helpers — `.explain_core` (orchestration), `.assemble_sys_prompt` (reads `prompts/config.yaml` + model instructions, interpolates `system_prompt_template.md` via `ellmer::interpolate_package()`), `.remove_fences`.
-- **`r/inst/prompts/`**: Generated copy of `prompts/` — do not edit directly.
-- **`r/inst/tinytest/`**: Unit tests, using an R6 `MockChat` test double.
+### Architecture & Key Files
+- [explain.R](file:///Users/greenwbm/Dropbox/devel/statlingo/r/R/explain.R): S3 generic `explain()` and per-model methods (e.g., `explain.lm`, `explain.glm`, `explain.htest`).
+- [summarize.R](file:///Users/greenwbm/Dropbox/devel/statlingo/r/R/summarize.R): S3 generic `summarize()` to transform R model objects into plain text output for the LLM.
+- [utils.R](file:///Users/greenwbm/Dropbox/devel/statlingo/r/R/utils.R): Internal orchestration. Contains `.explain_core()`, `.assemble_sys_prompt()` (reads config and model templates, performs `ellmer::interpolate_package()`), and `.remove_fences()` to clean markdown code blocks from responses.
 
 ### Development Workflow
+Ensure R dev tools are installed:
+```R
+# Install dependencies
+install.packages(c("devtools", "usethis", "tinytest", "roxygen2", "ellmer", "yaml"))
+```
+Commands (run from `r/` directory):
 ```bash
-# Install dev dependencies
-Rscript -e 'install.packages(c("devtools", "usethis", "tinytest", "roxygen2", "ellmer", "yaml"))'
-
-# Load the package (from r/)
+# Load package interactively (for exploration)
 Rscript -e 'devtools::load_all(".")'
 
-# Run tests (from r/)
-Rscript -e 'tinytest::run_test_dir("inst/tinytest")'
-# OR a more robust install-then-test check:
-Rscript -e 'tinytest::build_install_test()'
+# Run unit tests correctly (devtools loads the package, then tinytest executes)
+Rscript -e 'devtools::load_all("."); tinytest::run_test_dir("inst/tinytest")'
 
-# Regenerate documentation (man/, NAMESPACE) after editing roxygen comments
+# Rebuild documentation (man/ and NAMESPACE)
 Rscript -e 'devtools::document(".")'
 
-# Full package check (same rigor r-universe/CRAN would apply; used as a QA gate even without a CRAN submission)
+# Full CRAN-style package check (CI gate)
 Rscript -e 'devtools::check(".")'
 ```
 
-**Mocks:** Tests use an R6 `MockChat` class to simulate `ellmer::Chat` behavior without real API calls. Because `explain()` calls `client$clone()` before use, and R6's default `clone()` is shallow, `MockChat` stashes recorded state (last system/user prompt) in a nested environment field so it stays observable after cloning. **Always** mock LLM calls in tests unless explicitly testing live integration.
+### Mocking LLM Responses in R Tests
+Because `explain()` clones the client to avoid mutating user objects, and R6's default `clone()` is shallow, `MockChat` stores recorded state (e.g., system/user prompts) inside a nested environment (`self$state`). This keeps recorded parameters observable on the original test instance. **Always** mock LLM calls in unit tests.
 
-### Adding Support for a New Model Type (R)
-1. Add `prompts/models/<class>/{instructions.md,role_specific.md}` (in the canonical `prompts/`, then run `scripts/sync_prompts.py`).
-2. Implement `summarize.<class>` in `r/R/summarize.R`.
-3. Implement `explain.<class>` in `r/R/explain.R`, calling `.explain_core(...)`.
+### Adding Support for a New Model (R)
+1. Add `prompts/models/<class>/{instructions.md,role_specific.md}` to the canonical directory.
+2. Run `python3 scripts/sync_prompts.py` to update generated directories.
+3. Implement `summarize.<class>` in [summarize.R](file:///Users/greenwbm/Dropbox/devel/statlingo/r/R/summarize.R).
+4. Implement `explain.<class>` in [explain.R](file:///Users/greenwbm/Dropbox/devel/statlingo/r/R/explain.R), calling `.explain_core(..., name = "<class>", model = "<description>")`.
 
-## Python package (`python/`)
+---
+
+## 5. Python Package (`python/`)
 
 ### Tech Stack
 - **Language:** Python (>= 3.8)
-- **LLM Interface:** `chatlas` (>= 0.19.0) — `Chat` clients (`ChatOpenAI`, `ChatAnthropic`, etc.)
-- **Config parsing:** `pyyaml`
-- **Testing:** `pytest`
-- **Model support:** `statsmodels` (initial), handler registry pattern for extensibility
+- **LLM Interface:** `chatlas` (>= 0.19.0).
+- **Config Parsing:** `pyyaml`.
+- **Testing:** `pytest`.
+- **Model Support:** `statsmodels` (default), `scikit-learn` (optional extra). Extensible via a decorator-based handler registry pattern.
 
-### File Structure & Architecture
-- **`python/src/statlingo/explain.py`**: The main `explain()` function.
-- **`python/src/statlingo/model_handlers.py`**: A registry mapping model object types to `(model_name, summary_text)` extractor functions. **Important:** `statsmodels.OLS(...).fit()`/`GLM(...).fit()` return `*ResultsWrapper` classes (e.g. `RegressionResultsWrapper`), which do **not** subclass or `isinstance()`-match the underlying `OLSResults`/`GLMResults` classes — handlers must register against the wrapper classes actually returned to callers.
-- **`python/src/statlingo/_prompting.py`**: Prompt assembly (mirrors `r/R/utils.R`) — reads `prompts/config.yaml` + model instructions, interpolates `system_prompt_template.md`, strips code fences.
-- **`python/src/statlingo/prompts/`**: Generated copy of `prompts/` — do not edit directly.
-- **`python/experimental/`**: Deferred agentic tool-calling features (`diagnose()`/`diagnose_agent()`), not part of the public API. See its README before reviving.
+### Architecture & Key Files
+- [explain.py](file:///Users/greenwbm/Dropbox/devel/statlingo/python/src/statlingo/explain.py): Public `explain()` function.
+- [diagnostic.py](file:///Users/greenwbm/Dropbox/devel/statlingo/python/src/statlingo/diagnostic.py): Public `diagnose()` and `diagnose_agent()` functions for model diagnostics.
+- [model_handlers.py](file:///Users/greenwbm/Dropbox/devel/statlingo/python/src/statlingo/model_handlers.py): Handler registry mapping model classes to custom extractor functions returning `(model_name, engine, summary_text)`.
+  > [!IMPORTANT]
+  > `statsmodels.OLS(...).fit()` and `.GLM(...).fit()` return `RegressionResultsWrapper` and `GLMResultsWrapper` objects. These wrappers do **not** subclass or `isinstance()`-match the raw results classes (`OLSResults` / `GLMResults`). Handlers must be registered against the wrapper classes returned to the caller.
+- [_prompting.py](file:///Users/greenwbm/Dropbox/devel/statlingo/python/src/statlingo/_prompting.py): Prompt construction (mirrors R package prompt assembly). Loads `config.yaml`, interpolates placeholders, and strips code fences.
 
-### Development Workflow (uses `uv`)
+### Development Workflow
+Uses `uv` for environment management. From the `python/` directory:
 ```bash
-# Set up a virtualenv and install in editable mode
+# Create local virtualenv
 uv venv
 source .venv/bin/activate
-uv pip install -e ".[dev]"   # or: uv pip install -e . chatlas pyyaml pytest statsmodels
 
-# Run tests (from python/)
+# Install package in editable mode with test dependencies
+uv pip install -e . pytest scikit-learn
+
+# Run unit tests
 python3 -m pytest tests/
 ```
 
-**No-mutation client pattern:** `chatlas.Chat` has no `clone()` method. `explain()` uses `copy.deepcopy(client)` — this is chatlas's own documented/tested pattern (see `Chat.to_solver()` and `tests/test_chat.py::test_deepcopy_chat` in the chatlas source) for forking a `Chat` without mutating the caller's object.
+### Mocking LLM Responses in Python Tests
+Because Python's functions deep-copy the client (`copy.deepcopy(client)`) to prevent side effects, unit tests utilize `MockChat`. `MockChat` implements a custom `__deepcopy__` method that keeps the `recorder` dictionary and `registered_tools` list as shared references, ensuring recorded calls and tools remain observable on the original test instance.
 
-**Mocks:** Tests use a `MockChat` class implementing chatlas's `Chat` public surface (`set_turns()`, settable `system_prompt`, `chat()`). Because `explain()` deep-copies the client, `MockChat` keeps a `recorder` dict as a shared reference via a custom `__deepcopy__` so recorded calls remain observable on the original test instance.
+### Adding Support for a New Model (Python)
+1. Add `prompts/models/<name>/{instructions.md,role_specific.md}` to the canonical prompts directory and run the sync script.
+2. Register a handler function in [model_handlers.py](file:///Users/greenwbm/Dropbox/devel/statlingo/python/src/statlingo/model_handlers.py) using `@register_handler(FittedClassWrapper)`. Be sure to inspect the exact class type returned by the estimator's fit call.
+3. Import the fitted wrapper class conditionally in a `try...except ImportError:` block to keep dependencies optional.
 
-### Adding Support for a New Model Type (Python)
-1. Add `prompts/models/<name>/{instructions.md,role_specific.md}` (in the canonical `prompts/`, then run `scripts/sync_prompts.py`).
-2. Register a handler in `python/src/statlingo/model_handlers.py` using `@register_handler(<ActualReturnedClass>)`, verifying the exact class returned by the library's fit/estimation call (not just its documented "Results" class name).
+---
 
-## Coding Conventions (both languages)
-- **Side Effects:** `explain()` must **never** mutate the caller-supplied client object. R: `client$clone()`. Python: `copy.deepcopy(client)`.
-- **R style:** Tidyverse style (snake_case for functions/variables).
-- **Python style:** PEP 8, type hints on public functions.
-- **Shared prompts:** Never diverge prompt content between languages by hand-editing `r/inst/prompts/` or `python/src/statlingo/prompts/` directly — always edit `prompts/` and re-run `scripts/sync_prompts.py`.
+## 6. Unified Documentation Website (`docs-site/`)
 
-## Git Practices
-- **Commits:** Use conventional commit messages (e.g., `feat: add support for glm`, `fix: update prompt loading logic`).
-- **Granularity:** Keep commits atomic and focused.
+The documentation is a unified [Quarto](https://quarto.org) website deployed to GitHub Pages. It integrates:
+1. Handwritten landing and get-started pages (`.qmd` files in `docs-site/`).
+2. Python API documentation generated dynamically from python docstrings using [`quartodoc`](https://machow.github.io/quartodoc/).
+3. R package documentation generated via [`pkgdown`](https://pkgdown.r-lib.org/) from the R source.
+
+### Crucial Build Ordering
+Quarto's renderer clears the output directory (`docs-site/_site/`) before building. Therefore, the R reference site must be generated *after* Quarto renders. The correct build workflow is:
+```bash
+# Execute from the repo root
+./scripts/build_docs_site.sh
+```
+
+### Dependency Pinning
+`quartodoc` is incompatible with `griffe >= 1.0` due to API changes in numpy docstring parsing. The environment **must** pin `griffe<1.0` to prevent build failures.
+
+---
+
+## 7. Experimental Features & Examples (`python/experimental/`)
+The `python/experimental/` directory contains scripts showcasing the revived agentic model diagnostics:
+- [example_diagnose.py](file:///Users/greenwbm/Dropbox/devel/statlingo/python/experimental/example_diagnose.py) demonstrates OLS diagnostics using `diagnose()`.
+- [example_agent.py](file:///Users/greenwbm/Dropbox/devel/statlingo/python/experimental/example_agent.py) demonstrates fully automated visual residual plot generation and interpretation using `diagnose_agent()` with `ChatGoogle` and native `chatlas` tool calling.
+
+---
+
+## 8. Coding Conventions & Best Practices
+
+### Side-Effect Mitigation
+`explain()` functions must **never** mutate the user's chat client.
+- In R: Invoke `client$clone()` and reset the turns list.
+- In Python: Invoke `copy.deepcopy(client)` and reset turns.
+
+### Style Guides
+- **R Style:** Tidyverse style guide (snake_case for functions and variables).
+- **Python Style:** PEP 8 compliance, with type hints included on all public functions.
+
+### Git Conventions
+- **Commit Messages:** Follow Conventional Commits format (e.g. `feat: add support for arima models`, `fix: correct markdown fence parsing`).
+- **Granularity:** Keep commits atomic, cohesive, and focused.

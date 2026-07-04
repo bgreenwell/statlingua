@@ -68,8 +68,8 @@ from statlingo import explain
 if not os.getenv("OPENAI_API_KEY"):
     raise EnvironmentError("Please set your OPENAI_API_KEY environment variable.")
 
-# 1. Load data and fit a model
-duncan_data = sm.datasets.duncan.load()
+# 1. Load data and fit a model (Duncan's occupational prestige data)
+duncan_data = sm.datasets.get_rdataset("Duncan", "carData")
 y = duncan_data.data['prestige']
 X = duncan_data.data[['income', 'education']]
 X = sm.add_constant(X)
