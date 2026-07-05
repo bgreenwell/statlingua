@@ -191,6 +191,12 @@ def remove_fences(text: Optional[str]) -> Optional[str]:
     """
     if not text:
         return text
+
+    # Replace any line containing ONLY 3 or more hyphens (and optional whitespace) with stars (***)
+    # to prevent pandoc/markdown converters from misinterpreting it as YAML block boundaries:
+    import re
+    text = re.sub(r"(^|\n)-{3,}\s*($|\n)", r"\1***\2", text)
+
     match = _FENCE_RE.match(text.strip())
     if match:
         return match.group(2).strip()

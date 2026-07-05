@@ -174,6 +174,11 @@
     return(text_string)
   }
 
+  # Replace any line containing ONLY 3 or more hyphens (and optional whitespace) with stars (***)
+  # to prevent pandoc from interpreting it as a YAML metadata block start/end:
+  text_string <- gsub("(^|\\n)-{3,}\\s*($|\\n)", "\\1***\\2", text_string, perl = TRUE)
+
+
   # Regex to detect and capture content within fences:
   # - Starts with 3 or more backticks (```)
   # - Optionally followed by a language identifier (e.g., html, json, markdown, r, R, etc.)
