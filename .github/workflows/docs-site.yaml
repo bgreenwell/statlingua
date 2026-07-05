@@ -59,7 +59,7 @@ jobs:
         working-directory: python
         run: |
           uv venv
-          uv pip install -e . chatlas pyyaml jupyter ipykernel statsmodels matplotlib seaborn
+          uv pip install -e . chatlas pyyaml jupyter ipykernel statsmodels matplotlib seaborn google-genai
           # quartodoc's declared `griffe>=0.33` dependency resolves to a
           # too-new, API-incompatible griffe release by default; pin to the
           # last known-compatible major version (see docs-site/README.md).
