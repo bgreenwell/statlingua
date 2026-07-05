@@ -11,7 +11,7 @@ on:
       - 'prompts/**'
       - '.github/workflows/python-tests.yaml'
 
-name: python-tests.yaml
+name: Python Tests
 
 permissions: read-all
 

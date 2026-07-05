@@ -9,7 +9,7 @@ on:
       - '.github/workflows/docs-site.yaml'
   workflow_dispatch: {}
 
-name: docs-site.yaml
+name: Docs Site
 
 permissions:
   contents: read

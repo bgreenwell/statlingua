@@ -1,4 +1,4 @@
-name: evals.yaml
+name: Evals
 
 on:
   push:
