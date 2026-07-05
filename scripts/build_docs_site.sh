@@ -19,12 +19,15 @@ echo "==> Setting up Python env for quartodoc ..."
 cd python
 uv venv --quiet
 source .venv/bin/activate
-uv pip install --quiet -e . chatlas pyyaml
+uv pip install --quiet -e . chatlas pyyaml jupyter ipykernel google-genai matplotlib seaborn
 # quartodoc's declared `griffe>=0.33` dependency resolves to a too-new,
 # API-incompatible griffe release by default (as of quartodoc 0.11.x /
 # griffe 2.x) -- pin to the last known-compatible major version.
 uv pip install --quiet quartodoc "griffe<1.0"
 cd ..
+
+echo "==> Installing statlingo R package locally ..."
+Rscript -e 'devtools::install("r", upgrade = FALSE)'
 
 echo "==> Building Python API reference (quartodoc) ..."
 cd docs-site
