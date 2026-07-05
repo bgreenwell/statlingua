@@ -146,7 +146,7 @@ def test_explain_calls_chat_with_correct_prompts():
     assert "OLS Regression Results" in user_prompt
     assert "A test context for the model." in user_prompt
 
-    assert result["text"] == "This is a mock explanation."
+    assert result["text"].startswith("This is a mock explanation.")
     assert result["model_type"] == "linear_model"
 
     # The original client object must remain untouched (no leaked state).

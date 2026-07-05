@@ -205,6 +205,7 @@ ex_carseats <- explain(fm_carseats, client = client, context = carseats_context,
 ex_carseats
 ```
 
+The returned object contains the formatted explanation, which is displayed below:
 
 #### Follow-up Question: Interpreting R-squared
 
@@ -361,6 +362,8 @@ explain(fm_sleep, client = client, context = sleepstudy_context,
         audience = "researcher", verbosity = "moderate", style = "text")
 ```
 
+This returns the explanation as unformatted plain text.
+
 #### Requesting JSON Output (`style = "json"`)
 
 Now, let's request the explanation in a structured JSON format (using `style = "json"`). We'll target a `"student"` with `"detailed"` verbosity.
@@ -375,6 +378,8 @@ ex <- explain(fm_sleep, client = client, context = sleepstudy_context,
 jsonlite::prettify(ex$text)
 ```
 
+This returns a JSON string, allowing you to easily parse individual sections of the response programmatically.
+
 ## Suggesting Next Coding Steps
 
 After receiving an explanation, students and researchers often wonder: *what diagnostics code should I run next?*
@@ -385,6 +390,8 @@ After receiving an explanation, students and researchers often wonder: *what dia
 # Get suggested diagnostics code for the child car seats OLS model
 suggest_code(ex_carseats)
 ```
+
+This outputs a set of suggested diagnostic checks, checking residuals, collinearity, autocorrelation, and heteroscedasticity.
 
 ## Inspecting LLM Interaction
 

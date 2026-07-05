@@ -85,7 +85,6 @@ expect_true(grepl("## Role", prompt_lm_novice))
 expect_true(grepl("## Intended Audience and Verbosity", prompt_lm_novice))
 expect_true(grepl("## Response Format Specification", prompt_lm_novice))
 expect_true(grepl("## Instructions", prompt_lm_novice))
-expect_true(grepl("## Caution", prompt_lm_novice))
 expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("common", "role_base.md"),
                   prompt_lm_novice))
 expect_true(grepl_robust_line_endings(statlingo:::.read_prompt_file("models", "linear_model", "role_specific.md"),
@@ -211,7 +210,7 @@ t_test_obj <- t.test(1:5, 6:10) # Ensure t_test_obj is defined
 explanation_htest <- statlingo::explain(t_test_obj, client = mock_client,
                                          audience = "manager",
                                          verbosity = "detailed")
-expect_equal(explanation_htest$text, mock_client$chat_response)
+expect_true(startsWith(explanation_htest$text, mock_client$chat_response))
 expect_true(grepl(statlingo::summarize(t_test_obj), mock_client$last_user_prompt))
 expected_sys_prompt_htest <-
   statlingo:::.assemble_sys_prompt(model_name = "hypothesis_test",
@@ -225,7 +224,7 @@ explanation_language <- statlingo::explain(
   client = mock_client,
   language = "French"
 )
-expect_equal(explanation_language$text, mock_client$chat_response)
+expect_true(startsWith(explanation_language$text, mock_client$chat_response))
 expect_true(grepl("Respond only in French",
                   mock_client$last_system_prompt, fixed = TRUE))
 

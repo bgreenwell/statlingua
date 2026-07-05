@@ -22,6 +22,3 @@
 {{model_instructions}}
 
 {{engine_section}}
-## Caution
-
-{{caution_instruction}}
