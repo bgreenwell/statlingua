@@ -19,6 +19,7 @@ Imports:
     yaml
 Suggests: 
     car,
+    gargle,
     ISLR2,
     knitr,
     lme4,
