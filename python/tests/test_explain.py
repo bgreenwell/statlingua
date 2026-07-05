@@ -264,3 +264,18 @@ def test_explain_validates_audience():
         assert False, "expected ValueError"
     except ValueError as e:
         assert "audience" in str(e)
+
+
+def test_suggest_code():
+    from statlingo import suggest_code
+
+    explanation = {
+        "text": "Explanation text",
+        "model_type": "linear_model",
+        "audience": "student",
+    }
+    suggestions = suggest_code(explanation)
+    assert "Suggested Python Coding Diagnostics" in suggestions
+    assert "sns.residplot" in suggestions
+    assert "durbin_watson" in suggestions
+

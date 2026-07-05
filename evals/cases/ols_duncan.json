@@ -1,0 +1,55 @@
+{
+  "model_type": "linear_model",
+  "engine": "statsmodels",
+  "summary": "                            OLS Regression Results                            \n==============================================================================\nDep. Variable:               prestige   R-squared:                       0.828\nModel:                            OLS   Adj. R-squared:                  0.820\nMethod:                 Least Squares   F-statistic:                     101.2\nDate:                Sun, 05 Jul 2026   Prob (F-statistic):           8.65e-17\nTime:                        10:27:10   Log-Likelihood:                -178.98\nNo. Observations:                  45   AIC:                             364.0\nDf Residuals:                      42   BIC:                             369.4\nDf Model:                           2                                         \nCovariance Type:            nonrobust                                         \n==============================================================================\n                 coef    std err          t      P>|t|      [0.025      0.975]\n------------------------------------------------------------------------------\nconst         -6.0647      4.272     -1.420      0.163     -14.686       2.556\nincome         0.5987      0.120      5.003      0.000       0.357       0.840\neducation      0.5458      0.098      5.555      0.000       0.348       0.744\n==============================================================================\nOmnibus:                        1.279   Durbin-Watson:                   1.458\nProb(Omnibus):                  0.528   Jarque-Bera (JB):                0.520\nSkew:                           0.155   Prob(JB):                        0.771\nKurtosis:                       3.426   Cond. No.                         163.\n==============================================================================\n\nNotes:\n[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.",
+  "ground_truth": {
+    "dependent_variable": "prestige",
+    "predictors": ["income", "education"],
+    "r_squared": 0.828,
+    "adjusted_r_squared": 0.820,
+    "f_statistic": 101.2,
+    "f_statistic_p_value": "8.65e-17",
+    "log_likelihood": -178.98,
+    "aic": 364.0,
+    "bic": 369.4,
+    "observations": 45,
+    "residual_degrees_of_freedom": 42,
+    "model_degrees_of_freedom": 2,
+    "coefficients": {
+      "const": {
+        "coef": -6.0647,
+        "std_err": 4.272,
+        "t_stat": -1.420,
+        "p_value": 0.163,
+        "conf_int_95": [-14.686, 2.556],
+        "significant": false
+      },
+      "income": {
+        "coef": 0.5987,
+        "std_err": 0.120,
+        "t_stat": 5.003,
+        "p_value": 0.000,
+        "conf_int_95": [0.357, 0.840],
+        "significant": true
+      },
+      "education": {
+        "coef": 0.5458,
+        "std_err": 0.098,
+        "t_stat": 5.555,
+        "p_value": 0.000,
+        "conf_int_95": [0.348, 0.744],
+        "significant": true
+      }
+    },
+    "diagnostics": {
+      "omnibus": 1.279,
+      "omnibus_p_value": 0.528,
+      "durbin_watson": 1.458,
+      "jarque_bera": 0.520,
+      "jarque_bera_p_value": 0.771,
+      "skew": 0.155,
+      "kurtosis": 3.426,
+      "condition_number": 163.0
+    }
+  }
+}

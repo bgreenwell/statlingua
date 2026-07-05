@@ -109,3 +109,81 @@ def explain(
         "verbosity": verbosity,
         "style": style,
     }
+
+
+def suggest_code(explanation: dict) -> str:
+    """Suggest code snippets to run next based on a model explanation.
+
+    Parameters
+    ----------
+    explanation : dict
+        The dictionary returned by `explain()`.
+
+    Returns
+    -------
+    str
+        A formatted string of suggested Python diagnostics code.
+    """
+    model_type = explanation.get("model_type")
+
+    if model_type == "linear_model":
+        return (
+            "# Next Steps: Suggested Python Coding Diagnostics\n\n"
+            "# 1. Plot Residuals vs Fitted values\n"
+            "import matplotlib.pyplot as plt\n"
+            "import seaborn as sns\n"
+            "import statsmodels.api as sm\n\n"
+            "# Assuming 'model' is your fitted OLSResults object\n"
+            "fig, ax = plt.subplots(figsize=(8, 5))\n"
+            "sns.residplot(x=model.fittedvalues, y=model.resid, lowess=True,\n"
+            "              scatter_kws={'alpha': 0.5},\n"
+            "              line_kws={'color': 'red', 'lw': 1, 'alpha': 0.8}, ax=ax)\n"
+            "ax.set_title('Residuals vs Fitted')\n"
+            "ax.set_xlabel('Fitted values')\n"
+            "ax.set_ylabel('Residuals')\n"
+            "plt.show()\n\n"
+            "# 2. Test for Homoscedasticity (Breusch-Pagan)\n"
+            "from statsmodels.stats.diagnostic import het_breuschpagan\n"
+            "bp_test = het_breuschpagan(model.resid, model.model.exog)\n"
+            "labels = ['Lagrange multiplier statistic', 'p-value', 'f-value', 'f p-value']\n"
+            "print(dict(zip(labels, bp_test)))\n\n"
+            "# 3. Test for Autocorrelation (Durbin-Watson)\n"
+            "from statsmodels.stats.stattools import durbin_watson\n"
+            "dw = durbin_watson(model.resid)\n"
+            "print(f'Durbin-Watson statistic: {dw}')\n\n"
+            "# 4. Check Multicollinearity (VIF)\n"
+            "from statsmodels.stats.outliers_influence import variance_inflation_factor\n"
+            "for i in range(1, model.model.exog.shape[1]):\n"
+            "    vif = variance_inflation_factor(model.model.exog, i)\n"
+            "    print(f'VIF for predictor {i}: {vif}')"
+        )
+    elif model_type == "generalized_linear_model":
+        return (
+            "# Next Steps: Suggested Python Coding Diagnostics\n\n"
+            "# 1. Plot Pearson Residuals vs Fitted values\n"
+            "import matplotlib.pyplot as plt\n"
+            "import seaborn as sns\n\n"
+            "# Assuming 'model' is your fitted GLMResults object\n"
+            "fig, ax = plt.subplots(figsize=(8, 5))\n"
+            "sns.residplot(x=model.fittedvalues, y=model.resid_pearson, lowess=True,\n"
+            "              scatter_kws={'alpha': 0.5},\n"
+            "              line_kws={'color': 'red', 'lw': 1, 'alpha': 0.8}, ax=ax)\n"
+            "ax.set_title('Pearson Residuals vs Fitted')\n"
+            "ax.set_xlabel('Fitted values')\n"
+            "ax.set_ylabel('Pearson Residuals')\n"
+            "plt.show()\n\n"
+            "# 2. Check for Overdispersion\n"
+            "pearson_chi2 = model.pearson_chi2\n"
+            "df_resid = model.df_resid\n"
+            "dispersion = pearson_chi2 / df_resid\n"
+            "print(f'Dispersion parameter: {dispersion}')"
+        )
+    else:
+        return (
+            "# Next Steps: Suggested Python Coding Diagnostics\n\n"
+            "# 1. Print model summary\n"
+            "print(model.summary())\n\n"
+            "# 2. Plot diagnostics if supported\n"
+            "# (Check library documentation for specific diagnostic plots)"
+        )
+

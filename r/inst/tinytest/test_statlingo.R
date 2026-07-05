@@ -236,3 +236,18 @@ expect_error(
   "inherits(client, what = c(\"Chat\", \"R6\")) is not TRUE", # Error from stopifnot
   fixed = TRUE
 )
+
+# Test suggest_code
+explanation_mock <- structure(
+  list(
+    text = "Mock explanation",
+    model_type = "linear_model",
+    audience = "student"
+  ),
+  class = "statlingo_explanation"
+)
+
+suggestions <- statlingo::suggest_code(explanation_mock)
+expect_true(inherits(suggestions, "statlingo_code_suggestions"))
+expect_true(any(grepl("plot(model, which = 1)", suggestions$suggestions, fixed = TRUE)))
+

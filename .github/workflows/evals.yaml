@@ -1,0 +1,41 @@
+name: evals.yaml
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'prompts/**'
+      - 'evals/**'
+      - 'scripts/run_evals.py'
+      - '.github/workflows/evals.yaml'
+  pull_request:
+    paths:
+      - 'prompts/**'
+      - 'evals/**'
+      - 'scripts/run_evals.py'
+      - '.github/workflows/evals.yaml'
+
+jobs:
+  run-evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          source .venv/bin/activate
+          # Install statlingo in editable mode plus chatlas and google-genai
+          uv pip install -e python/ chatlas pyyaml google-genai
+
+      - name: Run Evals Suite
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          source .venv/bin/activate
+          python3 scripts/run_evals.py
