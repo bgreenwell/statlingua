@@ -27,6 +27,8 @@ install.packages("ellmer")
 
 ## Quick example
 
+First, load the package, fit a linear model, and define the context of your data:
+
 ```{r}
 library(statlingo)
 
@@ -37,10 +39,22 @@ context <- "
 The data give the speed of cars (mph) and the distances taken to stop
 (ft). Note that the data were recorded in the 1920s!
 "
+```
 
+This fits a basic linear regression of stopping distance on speed using the built-in `cars` dataset and captures the research context.
+
+Next, initialize the `ellmer` chat client using Google Gemini:
+
+```{r}
 # Create an ellmer chat client using Google Gemini
 client <- ellmer::chat_google_gemini()
+```
 
+This creates a chat client instance configured to use Gemini models. The client is passed to `explain()` without mutating the original client state.
+
+Generate the natural language explanation using `explain()`, targeting a student audience:
+
+```{r}
 # Get an explanation tailored for a student audience
 ex <- explain(
   fm,
@@ -51,10 +65,18 @@ ex <- explain(
 )
 
 print(ex)
+```
 
+The returned explanation object prints out a structured, student-oriented summary of the regression model, detailing coefficients, overall fit, and checkable assumptions.
+
+Finally, request diagnostic code recommendations based on the generated explanation using `suggest_code()`:
+
+```{r}
 # Suggest next diagnostic code steps based on the explanation
 suggest_code(ex)
 ```
+
+This prints recommended R code snippets to check residual diagnostics, multicollinearity, autocorrelation, and constant variance.
 
 ## Learn more
 

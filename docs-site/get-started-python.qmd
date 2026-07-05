@@ -22,11 +22,11 @@ the example model below.
 
 ## Quick example
 
+First, import the required packages, check environment variables, load data, and fit an OLS model:
+
 ```{python}
 import os
 import statsmodels.api as sm
-from chatlas import ChatGoogle
-from statlingo import explain
 
 if not os.getenv("GEMINI_API_KEY") and not os.getenv("GOOGLE_API_KEY"):
     raise EnvironmentError("Please set your GEMINI_API_KEY or GOOGLE_API_KEY environment variable.")
@@ -36,18 +36,43 @@ duncan_data = sm.datasets.get_rdataset("Duncan", "carData")
 y = duncan_data.data["prestige"]
 X = sm.add_constant(duncan_data.data[["income", "education"]])
 model = sm.OLS(y, X).fit()
+```
+
+This checks for local API credentials and fits an ordinary least squares regression model of occupational prestige on income and education using `statsmodels`.
+
+Next, initialize the `chatlas` chat client using Google Gemini:
+
+```{python}
+from chatlas import ChatGoogle
 
 # 2. Create a chatlas Chat client using Google Gemini (never mutated by explain())
 client = ChatGoogle()
+```
+
+This initializes a Google Gemini chat client from `chatlas`. This client is deep-copied internally within `explain()` to prevent mutating your active chat session.
+
+Generate the natural language explanation using `explain()`, targeting a student audience:
+
+```{python}
+from statlingo import explain
 
 # 3. Get a high-level explanation of the model results
 explanation = explain(model_object=model, client=client, audience="student")
 print(explanation["text"])
+```
+
+This generates a dictionary output whose `text` key contains the formatted student-oriented OLS explanation.
+
+Finally, request diagnostic code recommendations based on the generated explanation using `suggest_code()`:
+
+```{python}
+from statlingo import suggest_code
 
 # 4. Suggest next diagnostic code steps based on the explanation
-from statlingo import suggest_code
 print(suggest_code(explanation))
 ```
+
+This prints recommended Python code using `matplotlib`, `seaborn`, and `statsmodels.stats` to check homoscedasticity, autocorrelation, and multicollinearity.
 
 ## Learn more
 
