@@ -35,7 +35,7 @@ jobs:
         working-directory: python
         run: |
           uv venv
-          uv pip install -e . chatlas pyyaml pytest statsmodels
+          uv pip install -e . chatlas pyyaml pytest statsmodels matplotlib seaborn
 
       - name: Run tests
         working-directory: python

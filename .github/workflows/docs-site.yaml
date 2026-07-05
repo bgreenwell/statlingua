@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -58,7 +59,7 @@ jobs:
         working-directory: python
         run: |
           uv venv
-          uv pip install -e . chatlas pyyaml
+          uv pip install -e . chatlas pyyaml jupyter ipykernel statsmodels matplotlib seaborn
           # quartodoc's declared `griffe>=0.33` dependency resolves to a
           # too-new, API-incompatible griffe release by default; pin to the
           # last known-compatible major version (see docs-site/README.md).
