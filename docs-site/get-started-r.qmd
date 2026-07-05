@@ -51,10 +51,12 @@ ex <- explain(
 )
 
 print(ex)
+
+# Suggest next diagnostic code steps based on the explanation
+suggest_code(ex)
 ```
 
 ## Learn more
 
 * [Function reference](r/reference/index.html)
-* [Introductory vignette](r/articles/statlingo.html)
 * [Source code](https://github.com/bgreenwell/statlingo/tree/main/r)

@@ -200,8 +200,9 @@ The data set is simulated. We want to understand key drivers of sales and how to
 Next, let's use the Google Gemini model to generate an explanation of the model's output, targeting a `"student"` audience with `"detailed"` verbosity.
 
 ```{r carseats_lm_explain, results="asis"}
-explain(fm_carseats, client = client, context = carseats_context,
-        audience = "novice", verbosity = "detailed")
+ex_carseats <- explain(fm_carseats, client = client, context = carseats_context,
+                       audience = "novice", verbosity = "detailed")
+ex_carseats
 ```
 
 
@@ -372,6 +373,17 @@ ex <- explain(fm_sleep, client = client, context = sleepstudy_context,
 # The 'text' component of the statlingo_explanation object now holds a JSON
 # string which can be parsed using the jsonlite package
 jsonlite::prettify(ex$text)
+```
+
+## Suggesting Next Coding Steps
+
+After receiving an explanation, students and researchers often wonder: *what diagnostics code should I run next?*
+
+**statlingo** provides the `suggest_code()` helper function to generate relevant diagnostic R code tailored to the model class you just explained:
+
+```{r suggest_code_example, eval = TRUE}
+# Get suggested diagnostics code for the child car seats OLS model
+suggest_code(ex_carseats)
 ```
 
 ## Inspecting LLM Interaction

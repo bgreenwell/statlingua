@@ -18,8 +18,6 @@ website:
             text: Get started
           - href: r/reference/index.html
             text: Function reference
-          - href: r/articles/statlingo.html
-            text: Vignette
       - text: "Python package"
         menu:
           - href: get-started-python.qmd

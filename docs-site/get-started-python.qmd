@@ -43,6 +43,10 @@ client = ChatGoogle()
 # 3. Get a high-level explanation of the model results
 explanation = explain(model_object=model, client=client, audience="student")
 print(explanation["text"])
+
+# 4. Suggest next diagnostic code steps based on the explanation
+from statlingo import suggest_code
+print(suggest_code(explanation))
 ```
 
 ## Learn more
