@@ -56,8 +56,4 @@ quartodoc:
       contents:
         - explain
         - suggest_code
-    - title: Diagnostics
-      desc: Agentic model diagnostics and assumption verification.
-      contents:
-        - diagnose
-        - diagnose_agent
+

@@ -42,11 +42,9 @@ statlingo/
 │   ├── src/statlingo/    # Python package source code
 │   │   ├── prompts/      # Python prompt copy ( wholesale-regenerated, DO NOT edit )
 │   │   ├── explain.py    # Public explain() & suggest_code() functions
-│   │   ├── diagnostic.py # Agentic diagnostic functions (diagnose, diagnose_agent)
 │   │   ├── model_handlers.py # Registered model summary extraction handlers
 │   │   └── _prompting.py # System/user prompt builder & interpolator
 │   ├── tests/            # Test suite (uses pytest)
-│   └── experimental/     # Visual examples & scripts for Chatlas-based agents
 │
 ├── evals/                # LLM-as-a-Judge Evaluation System
 │   ├── judge_prompt.md   # System prompt for LLM judge grading explanations
