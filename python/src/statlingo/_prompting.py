@@ -29,12 +29,20 @@ _ENGINE_NOTE_FILES = {
 }
 
 
-def _read_prompt_file(*path_parts: str) -> str:
-    """Read a file from the installed ``statlingo/prompts`` data directory.
-
-    Returns an empty string if the file doesn't exist, mirroring the R
-    implementation's graceful-fallback behavior.
+def _read_prompt_file(*path_parts: str, prompt_dir: Optional[str] = None) -> str:
+    """Read a file from the custom prompt directory if provided and exists,
+    otherwise fall back to the installed ``statlingo/prompts`` data directory.
     """
+    if prompt_dir is not None:
+        import os
+        custom_path = os.path.join(prompt_dir, *path_parts)
+        if os.path.exists(custom_path) and os.path.isfile(custom_path):
+            try:
+                with open(custom_path, "r", encoding="utf-8") as f:
+                    return f.read()
+            except Exception:
+                pass
+
     try:
         return (
             importlib.resources.files("statlingo")
@@ -45,10 +53,10 @@ def _read_prompt_file(*path_parts: str) -> str:
         return ""
 
 
-@lru_cache(maxsize=1)
-def _prompt_config() -> dict:
+@lru_cache(maxsize=8)
+def _prompt_config(prompt_dir: Optional[str] = None) -> dict:
     """Read and cache ``prompts/config.yaml`` (audience/verbosity/style)."""
-    raw = _read_prompt_file("config.yaml")
+    raw = _read_prompt_file("config.yaml", prompt_dir=prompt_dir)
     return yaml.safe_load(raw) or {}
 
 
@@ -67,11 +75,11 @@ def _interpolate(template: str, **kwargs: str) -> str:
     return _PLACEHOLDER_RE.sub(_replace, template)
 
 
-def _has_model_instructions(model_name: str) -> bool:
-    return bool(_read_prompt_file("models", model_name, "instructions.md"))
+def _has_model_instructions(model_name: str, prompt_dir: Optional[str] = None) -> bool:
+    return bool(_read_prompt_file("models", model_name, "instructions.md", prompt_dir=prompt_dir))
 
 
-def _read_engine_notes(model_name: str, engine: Optional[str]) -> str:
+def _read_engine_notes(model_name: str, engine: Optional[str], prompt_dir: Optional[str] = None) -> str:
     """Read optional engine-specific notes for a model/engine pair."""
     if engine is None:
         return ""
@@ -80,7 +88,7 @@ def _read_engine_notes(model_name: str, engine: Optional[str]) -> str:
     if not filename:
         return ""
 
-    return _read_prompt_file("models", model_name, "engines", filename).strip()
+    return _read_prompt_file("models", model_name, "engines", filename, prompt_dir=prompt_dir).strip()
 
 
 def assemble_system_prompt(
@@ -90,6 +98,7 @@ def assemble_system_prompt(
     style: str,
     engine: Optional[str] = None,
     language: Optional[str] = None,
+    prompt_dir: Optional[str] = None,
 ) -> str:
     """Assemble the full system prompt for a model type/audience/verbosity/style.
 
@@ -119,11 +128,11 @@ def assemble_system_prompt(
     str
         The fully assembled system prompt.
     """
-    if not _has_model_instructions(model_name):
+    if not _has_model_instructions(model_name, prompt_dir=prompt_dir):
         model_name = "default"
 
-    config = _prompt_config()
-    engine_notes = _read_engine_notes(model_name, engine)
+    config = _prompt_config(prompt_dir=prompt_dir)
+    engine_notes = _read_engine_notes(model_name, engine, prompt_dir=prompt_dir)
     engine_section = (
         f"## Output Format Notes\n\n{engine_notes}\n" if engine_notes else ""
     )
@@ -135,13 +144,13 @@ def assemble_system_prompt(
         else ""
     )
 
-    role_base = _read_prompt_file("common", "role_base.md").strip()
+    role_base = _read_prompt_file("common", "role_base.md", prompt_dir=prompt_dir).strip()
     role_specific = _read_prompt_file(
-        "models", model_name, "role_specific.md"
+        "models", model_name, "role_specific.md", prompt_dir=prompt_dir
     ).strip()
     role_instruction = "\n\n".join(p for p in (role_base, role_specific) if p)
 
-    template = _read_prompt_file("system_prompt_template.md")
+    template = _read_prompt_file("system_prompt_template.md", prompt_dir=prompt_dir)
 
     def _title_case(value: str) -> str:
         """Capitalize only the first character, mirroring R's
@@ -163,10 +172,10 @@ def assemble_system_prompt(
         style_instruction=config["style"][style],
         language_section=language_section,
         model_instructions=_read_prompt_file(
-            "models", model_name, "instructions.md"
+            "models", model_name, "instructions.md", prompt_dir=prompt_dir
         ).strip(),
         engine_section=engine_section,
-        caution_instruction=_read_prompt_file("common", "caution.md").strip(),
+        caution_instruction=_read_prompt_file("common", "caution.md", prompt_dir=prompt_dir).strip(),
     ).strip()
 
 

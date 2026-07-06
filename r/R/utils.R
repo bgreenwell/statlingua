@@ -14,7 +14,17 @@
 
 #' @noRd
 #' @keywords internal
-.read_prompt_file <- function(...) {
+.read_prompt_file <- function(..., prompt_dir = NULL) {
+  if (!is.null(prompt_dir) && nzchar(prompt_dir)) {
+    file_path <- file.path(prompt_dir, ...)
+    if (file.exists(file_path)) {
+      file_size <- file.info(file_path)$size
+      if (file_size > 0) {
+        return(readChar(file_path, nchars = file_size))
+      }
+    }
+  }
+
   # Construct path like "prompts/common/role_base.md"; the components passed
   # in '...' are joined by file.path separator.
   relative_path <- do.call(file.path, as.list(c("prompts", ...)))
@@ -36,14 +46,22 @@
 #' Python packages. Cached in the package namespace since the file never
 #' changes at runtime.
 .prompt_config <- local({
-  cache <- NULL
-  function() {
-    if (is.null(cache)) {
+  cache <- list()
+  function(prompt_dir = NULL) {
+    key <- if (is.null(prompt_dir) || !nzchar(prompt_dir)) "default" else prompt_dir
+    if (is.null(cache[[key]])) {
+      if (!is.null(prompt_dir) && nzchar(prompt_dir)) {
+        config_path <- file.path(prompt_dir, "config.yaml")
+        if (file.exists(config_path)) {
+          cache[[key]] <<- yaml::read_yaml(config_path)
+          return(cache[[key]])
+        }
+      }
       config_path <- system.file("prompts", "config.yaml",
                                   package = "statlingo")
-      cache <<- yaml::read_yaml(config_path)
+      cache[[key]] <<- yaml::read_yaml(config_path)
     }
-    cache
+    cache[[key]]
   }
 })
 
@@ -51,7 +69,7 @@
 #' @keywords internal
 #'
 #' Read engine-specific prompt notes for a model when available.
-.read_engine_notes <- function(model_name, engine = "r") {
+.read_engine_notes <- function(model_name, engine = "r", prompt_dir = NULL) {
   engine_file_map <- list(
     r = c(
       linear_model = "r-lm",
@@ -74,7 +92,8 @@
   }
 
   .read_prompt_file(
-    "models", model_name, "engines", paste0(engine_file, ".md")
+    "models", model_name, "engines", paste0(engine_file, ".md"),
+    prompt_dir = prompt_dir
   )
 }
 
@@ -88,27 +107,33 @@
 #' The pieces are interpolated into `inst/prompts/system_prompt_template.md`
 #' via [ellmer::interpolate_package()].
 .assemble_sys_prompt <- function(model_name, audience, verbosity, style,
-                                 language = NULL) {
+                                 language = NULL, prompt_dir = NULL) {
   # Fall back to the "default" model instructions if this model has none
-  has_model_instructions <- nzchar(system.file(
-    "prompts", "models", model_name, "instructions.md",
-    package = "statlingo"
-  ))
+  has_model_instructions <- FALSE
+  if (!is.null(prompt_dir) && nzchar(prompt_dir)) {
+    has_model_instructions <- file.exists(file.path(prompt_dir, "models", model_name, "instructions.md"))
+  }
+  if (!has_model_instructions) {
+    has_model_instructions <- nzchar(system.file(
+      "prompts", "models", model_name, "instructions.md",
+      package = "statlingo"
+    ))
+  }
   if (!has_model_instructions) {
     model_name <- "default"
   }
 
-  config <- .prompt_config()
+  config <- .prompt_config(prompt_dir = prompt_dir)
 
   role_instruction <- trimws(paste(
-    trimws(.read_prompt_file("common", "role_base.md")),
-    trimws(.read_prompt_file("models", model_name, "role_specific.md")),
+    trimws(.read_prompt_file("common", "role_base.md", prompt_dir = prompt_dir)),
+    trimws(.read_prompt_file("models", model_name, "role_specific.md", prompt_dir = prompt_dir)),
     sep = "\n\n"
   ))
 
   model_instructions <-
-    trimws(.read_prompt_file("models", model_name, "instructions.md"))
-  engine_notes <- trimws(.read_engine_notes(model_name, engine = "r"))
+    trimws(.read_prompt_file("models", model_name, "instructions.md", prompt_dir = prompt_dir))
+  engine_notes <- trimws(.read_engine_notes(model_name, engine = "r", prompt_dir = prompt_dir))
   engine_section <- if (nzchar(engine_notes)) {
     paste0("## Output Format Notes\n\n", engine_notes, "\n")
   } else {
@@ -124,9 +149,10 @@
     )
   }
 
-  ellmer::interpolate_package(
-    package = "statlingo",
-    path = "system_prompt_template.md",
+  template <- .read_prompt_file("system_prompt_template.md", prompt_dir = prompt_dir)
+
+  ellmer::interpolate(
+    template,
     role_instruction = role_instruction,
     audience_title = tools::toTitleCase(audience),
     audience_instruction = config$audience[[audience]],
@@ -137,7 +163,7 @@
     language_section = language_section,
     model_instructions = model_instructions,
     engine_section = engine_section,
-    caution_instruction = trimws(.read_prompt_file("common", "caution.md"))
+    caution_instruction = trimws(.read_prompt_file("common", "caution.md", prompt_dir = prompt_dir))
   )
 }
 
@@ -254,11 +280,11 @@
 #' @param verbosity Character string specifying the desired level of detail.
 .explain_core <- function(object, client, context, name, model,
                           audience = "novice", verbosity = "moderate",
-                          style = "markdown", language = NULL) {
+                          style = "markdown", language = NULL, prompt_dir = NULL) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
   sys_prompt <- .assemble_sys_prompt(name, audience = audience,
                                      verbosity = verbosity, style = style,
-                                     language = language)
+                                     language = language, prompt_dir = prompt_dir)
   output <- summarize(object)  # create text summary of object
   usr_prompt <- .build_usr_prompt(model, output = output, context = context)
   

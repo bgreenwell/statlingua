@@ -24,6 +24,7 @@ explain(
   verbosity = c("moderate", "brief", "detailed"),
   style = c("markdown", "html", "json", "text", "latex"),
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -35,6 +36,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -46,6 +48,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -57,6 +60,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -68,6 +72,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -79,6 +84,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -90,6 +96,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -101,6 +108,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -112,6 +120,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -123,6 +132,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -134,6 +144,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -145,6 +156,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 
@@ -156,6 +168,7 @@ explain(
   verbosity = "moderate",
   style = "markdown",
   language = NULL,
+  prompt_dir = NULL,
   ...
 )
 }
@@ -206,6 +219,10 @@ should be written in (e.g. \code{"Spanish"}, \code{"French"},
 \code{"Mandarin Chinese"}). If \code{NULL} (the default), no language
 constraint is added and the LLM will typically respond in the same
 language as the input/context or its default language.}
+
+\item{prompt_dir}{Optional character string specifying a custom directory
+containing custom prompt templates to override or overlay the package's
+default templates.}
 
 \item{...}{Additional optional arguments. (Currently ignored.)}
 }

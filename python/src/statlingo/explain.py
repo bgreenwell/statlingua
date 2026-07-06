@@ -51,6 +51,7 @@ def explain(
     audience: str = "novice",
     verbosity: str = "moderate",
     style: str = "markdown",
+    prompt_dir: Optional[str] = None,
 ) -> dict:
     """Explain a statistical model's output using an LLM.
 
@@ -94,7 +95,7 @@ def explain(
     model_name, engine, summary_text = handler(model_object)
 
     system_prompt = assemble_system_prompt(
-        model_name, audience, verbosity, style, engine=engine, language=language
+        model_name, audience, verbosity, style, engine=engine, language=language, prompt_dir=prompt_dir
     )
     user_prompt = build_user_prompt(
         model_description=f"{model_name} model", output=summary_text, context=context

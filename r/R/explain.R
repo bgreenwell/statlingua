@@ -43,6 +43,10 @@
 #'   constraint is added and the LLM will typically respond in the same
 #'   language as the input/context or its default language.
 #'
+#' @param prompt_dir Optional character string specifying a custom directory
+#'   containing custom prompt templates to override or overlay the package's
+#'   default templates.
+#'
 #' @param ... Additional optional arguments. (Currently ignored.)
 #'
 #' @returns An object of class `"statlingo_explanation"`. Essentially a list
@@ -110,6 +114,7 @@ explain <- function(
     verbosity = c("moderate", "brief", "detailed"),
     style = c("markdown", "html", "json", "text", "latex"),
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   audience <- match.arg(audience)
@@ -129,6 +134,7 @@ explain.default <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   stopifnot(inherits(client, what = c("Chat", "R6")))
@@ -174,6 +180,7 @@ explain.htest <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .explain_core(
@@ -184,6 +191,7 @@ explain.htest <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "hypothesis_test",
     model = object$method
   )
@@ -200,6 +208,7 @@ explain.lm <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .explain_core(
@@ -210,6 +219,7 @@ explain.lm <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "linear_model",
     model = "linear regression model"
   )
@@ -226,6 +236,7 @@ explain.glm <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .family <- stats::family(object)$family
@@ -238,6 +249,7 @@ explain.glm <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "generalized_linear_model",
     model = paste(.family, "generalized linear model with", .link, "link")
   )
@@ -256,6 +268,7 @@ explain.polr <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .method <- object$method
@@ -267,6 +280,7 @@ explain.polr <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "proportional_odds_logistic_regression",
     model = paste("proportional odds", .method, "regression model")
   )
@@ -285,6 +299,7 @@ explain.lme <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .explain_core(
@@ -295,6 +310,7 @@ explain.lme <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "linear_mixed_model_nlme",
     model = "linear mixed-effects model"
   )
@@ -313,6 +329,7 @@ explain.lmerMod <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .explain_core(
@@ -323,6 +340,7 @@ explain.lmerMod <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "linear_mixed_model_lme4",
     model = "linear mixed-effects model"
   )
@@ -339,6 +357,7 @@ explain.glmerMod <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .family <- stats::family(object)$family
@@ -351,6 +370,7 @@ explain.glmerMod <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "generalized_linear_mixed_model",
     model = paste(.family, "generalized linear mixed-effects model with",
                   .link, "link")
@@ -370,6 +390,7 @@ explain.gam <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .family <- stats::family(object)$family
@@ -382,6 +403,7 @@ explain.gam <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "generalized_additive_model",
     model = paste(.family, "generalized additive model with", .link, "link")
   )
@@ -400,6 +422,7 @@ explain.survreg <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .explain_core(
@@ -410,6 +433,7 @@ explain.survreg <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "survival_regression",
     model = "parametric survival regression model"
   )
@@ -426,6 +450,7 @@ explain.coxph <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .explain_core(
@@ -436,6 +461,7 @@ explain.coxph <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "cox_proportional_hazards",
     model = "Cox proportional hazards regression model"
   )
@@ -454,6 +480,7 @@ explain.rpart <- function(
     verbosity = "moderate",
     style = "markdown",
     language = NULL,
+    prompt_dir = NULL,
     ...
   ) {
   .explain_core(
@@ -464,6 +491,7 @@ explain.rpart <- function(
     verbosity = verbosity,
     style = style,
     language = language,
+    prompt_dir = prompt_dir,
     name = "recursive_partitioning_tree",
     model = "recursive partitioning tree model"
   )

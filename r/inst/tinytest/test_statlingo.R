@@ -250,3 +250,27 @@ suggestions <- statlingo::suggest_code(explanation_mock)
 expect_true(inherits(suggestions, "statlingo_code_suggestions"))
 expect_true(any(grepl("plot(model, which = 1)", suggestions$suggestions, fixed = TRUE)))
 
+
+# Test custom prompt_dir
+temp_dir <- tempfile("custom_prompts")
+dir.create(temp_dir)
+dir.create(file.path(temp_dir, "common"))
+writeLines("CUSTOM BASE ROLE", file.path(temp_dir, "common", "role_base.md"))
+writeLines("CUSTOM CAUTION", file.path(temp_dir, "common", "caution.md"))
+writeLines("Template: {{role_instruction}} | {{caution_instruction}}", file.path(temp_dir, "system_prompt_template.md"))
+
+sys_prompt_custom <- statlingo:::.assemble_sys_prompt(
+  model_name = "linear_model",
+  audience = "novice",
+  verbosity = "moderate",
+  style = "markdown",
+  prompt_dir = temp_dir
+)
+
+expect_true(grepl("CUSTOM BASE ROLE", sys_prompt_custom, fixed = TRUE))
+expect_true(grepl("CUSTOM CAUTION", sys_prompt_custom, fixed = TRUE))
+
+# Clean up
+unlink(temp_dir, recursive = TRUE)
+
+

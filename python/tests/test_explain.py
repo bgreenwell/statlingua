@@ -419,3 +419,35 @@ def test_explain_handles_pygam():
     assert result["model_type"] == "generalized_additive_model"
 
 
+def test_explain_handles_custom_prompt_dir(tmp_path):
+    mock_chat = MockChat()
+    ols_model = _fit_ols()
+
+    # 1. Create a custom prompts directory structure
+    custom_dir = tmp_path / "custom_prompts"
+    custom_dir.mkdir()
+    
+    # Create common folder
+    common_dir = custom_dir / "common"
+    common_dir.mkdir()
+    (common_dir / "role_base.md").write_text("CUSTOM BASE ROLE INSTRUCTION", encoding="utf-8")
+    (common_dir / "caution.md").write_text("CUSTOM CAUTION INSTRUCTION", encoding="utf-8")
+    
+    # Create system_prompt_template.md
+    (custom_dir / "system_prompt_template.md").write_text(
+        "Template: {{ role_instruction }} | {{ caution_instruction }}", encoding="utf-8"
+    )
+
+    # 2. Call explain with prompt_dir
+    explain(
+        model_object=ols_model,
+        client=mock_chat,
+        prompt_dir=str(custom_dir)
+    )
+
+    system_prompt = mock_chat.recorder["last_system_prompt"]
+    assert "CUSTOM BASE ROLE INSTRUCTION" in system_prompt
+    assert "CUSTOM CAUTION INSTRUCTION" in system_prompt
+
+
+
