@@ -27,11 +27,6 @@ target parity for the `explain()` workflow.
   * **Extensible by design:** Built to be easily extended with support for
     new statistical models via a simple handler registry.
 
-> Agentic, tool-calling diagnostic features (`diagnose()`/`diagnose_agent()`)
-> that previously lived here have been moved to
-> [`experimental/`](experimental) while this package focuses on bringing
-> `explain()` to parity with the R implementation. They are not part of the
-> public API for now.
 
 ## Installation
 

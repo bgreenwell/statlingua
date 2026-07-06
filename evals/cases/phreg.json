@@ -1,0 +1,22 @@
+{
+  "model_type": "cox_proportional_hazards",
+  "engine": "statsmodels",
+  "summary": "                    Results: PHReg\n======================================================\nModel:                   PH Reg     Sample size:    19\nDependent variable:      y          Num. events:    16\nTies:                    Breslow                      \n------------------------------------------------------\n   log HR log HR SE   HR     t    P>|t|  [0.025 0.975]\n------------------------------------------------------\nx1 0.7391    0.3606 2.0941 2.0500 0.0404 1.0330 4.2454\n======================================================\nConfidence intervals are for the hazard ratios",
+  "ground_truth": {
+    "dependent_variable": "y",
+    "sample_size": 19,
+    "num_events": 16,
+    "ties_method": "Breslow",
+    "coefficients": {
+      "x1": {
+        "log_hr": 0.7391,
+        "log_hr_std_err": 0.3606,
+        "hazard_ratio": 2.0941,
+        "t_stat": 2.0500,
+        "p_value": 0.0404,
+        "conf_int_95": [1.0330, 4.2454],
+        "significant": true
+      }
+    }
+  }
+}

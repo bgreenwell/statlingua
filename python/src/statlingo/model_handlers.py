@@ -12,6 +12,9 @@
 from __future__ import annotations
 
 from typing import Any, Callable, Optional, Tuple
+import io
+from contextlib import redirect_stdout
+
 
 # The registry to hold our model handlers
 MODEL_HANDLERS: dict[type, Callable[[Any], Tuple[str, Optional[str], str]]] = {}
@@ -50,7 +53,14 @@ def get_handler(model_object: Any) -> Callable[[Any], Tuple[str, Optional[str], 
     Callable[[Any], Tuple[str, Optional[str], str]]
         The handler function to be used for the object.
     """
-    return MODEL_HANDLERS.get(type(model_object), handle_default)
+    # Try exact class match first
+    if type(model_object) in MODEL_HANDLERS:
+        return MODEL_HANDLERS[type(model_object)]
+    # Fallback to subclass check
+    for registered_type, handler in MODEL_HANDLERS.items():
+        if isinstance(model_object, registered_type):
+            return handler
+    return handle_default
 
 
 # Define Handlers --------------------------------------------------------------
@@ -170,14 +180,176 @@ try:
             (``"generalized_linear_model"``), engine (``"statsmodels"``), and
             its summary.
         """
-        # We can extract more details like the family for a better description
         family_name = model_object.model.family.__class__.__name__
-        model_description = f"Generalized Linear Model (GLM) with {family_name} family"
+        link_name = model_object.model.family.link.__class__.__name__
+        model_description = f"{family_name} generalized linear model with {link_name} link"
         return (
             "generalized_linear_model",
             "statsmodels",
             model_description + "\n\n" + str(model_object.summary()),
         )
+
+except ImportError:
+    pass
+
+# Add support for MixedLM (Linear Mixed-Effects Models)
+try:
+    from statsmodels.regression.mixed_linear_model import MixedLMResultsWrapper
+
+    @register_handler(MixedLMResultsWrapper)
+    def handle_mixedlm(model_object: MixedLMResultsWrapper) -> Tuple[str, Optional[str], str]:
+        """Handler for statsmodels MixedLM.
+
+        Parameters
+        ----------
+        model_object : MixedLMResultsWrapper
+            The fitted mixed linear model object.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"linear_mixed_model_nlme"``),
+            engine (``"statsmodels"``), and its summary.
+        """
+        return ("linear_mixed_model_nlme", "statsmodels", str(model_object.summary()))
+
+except ImportError:
+    pass
+
+# Add support for ARIMA/SARIMAX time series models
+try:
+    from statsmodels.tsa.arima.model import ARIMAResultsWrapper
+    from statsmodels.tsa.statespace.sarimax import SARIMAXResultsWrapper
+
+    @register_handler(ARIMAResultsWrapper)
+    @register_handler(SARIMAXResultsWrapper)
+    def handle_arima(model_object: Any) -> Tuple[str, Optional[str], str]:
+        """Handler for statsmodels ARIMA/SARIMAX time series models.
+
+        Parameters
+        ----------
+        model_object : Any
+            The fitted time series model object.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"arima_time_series"``),
+            engine (``"statsmodels"``), and its summary.
+        """
+        return ("arima_time_series", "statsmodels", str(model_object.summary()))
+
+except ImportError:
+    pass
+
+# Add support for statsmodels survival analysis (PHReg)
+try:
+    from statsmodels.duration.hazard_regression import PHRegResults
+
+    @register_handler(PHRegResults)
+    def handle_phreg(model_object: PHRegResults) -> Tuple[str, Optional[str], str]:
+        """Handler for statsmodels PHReg.
+
+        Parameters
+        ----------
+        model_object : PHRegResults
+            The fitted PHReg model object.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"cox_proportional_hazards"``),
+            engine (``"statsmodels"``), and its summary.
+        """
+        return ("cox_proportional_hazards", "statsmodels", str(model_object.summary()))
+
+except ImportError:
+    pass
+
+# Add support for lifelines survival analysis models
+try:
+    from lifelines import CoxPHFitter, WeibullAFTFitter, LogNormalAFTFitter, LogLogisticAFTFitter
+
+    @register_handler(CoxPHFitter)
+    def handle_lifelines_cox(model_object: CoxPHFitter) -> Tuple[str, Optional[str], str]:
+        """Handler for lifelines CoxPHFitter.
+
+        Parameters
+        ----------
+        model_object : CoxPHFitter
+            The fitted Cox proportional hazards model.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"cox_proportional_hazards"``),
+            engine (``"lifelines"``), and its summary.
+        """
+        f = io.StringIO()
+        with redirect_stdout(f):
+            model_object.print_summary()
+        summary_text = f.getvalue()
+        if not summary_text.strip():
+            summary_text = str(model_object.summary)
+        return ("cox_proportional_hazards", "lifelines", summary_text)
+
+    @register_handler(WeibullAFTFitter)
+    @register_handler(LogNormalAFTFitter)
+    @register_handler(LogLogisticAFTFitter)
+    def handle_lifelines_aft(model_object: Any) -> Tuple[str, Optional[str], str]:
+        """Handler for lifelines parametric AFT models.
+
+        Parameters
+        ----------
+        model_object : Any
+            The fitted parametric AFT model.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"survival_regression"``),
+            engine (``"lifelines"``), and its summary.
+        """
+        f = io.StringIO()
+        with redirect_stdout(f):
+            model_object.print_summary()
+        summary_text = f.getvalue()
+        if not summary_text.strip():
+            summary_text = str(model_object.summary)
+        return ("survival_regression", "lifelines", summary_text)
+
+except ImportError:
+    pass
+
+# Add support for pygam Generalized Additive Models (GAM)
+try:
+    from pygam import GAM
+
+    @register_handler(GAM)
+    def handle_pygam(model_object: GAM) -> Tuple[str, Optional[str], str]:
+        """Handler for pygam GAM models.
+
+        Parameters
+        ----------
+        model_object : GAM
+            The fitted GAM model.
+
+        Returns
+        -------
+        tuple[str, Optional[str], str]
+            A tuple containing the model name (``"generalized_additive_model"``),
+            engine (``"pygam"``), and its summary.
+        """
+        f = io.StringIO()
+        with redirect_stdout(f):
+            try:
+                model_object.summary()
+            except Exception as e:
+                f.write(f"Error generating summary: {e}")
+        summary_text = f.getvalue()
+        if not summary_text.strip():
+            summary_text = f"Generalized Additive Model (GAM) using pygam\n{str(model_object)}"
+        return ("generalized_additive_model", "pygam", summary_text)
 
 except ImportError:
     pass

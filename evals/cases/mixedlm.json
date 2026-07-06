@@ -1,0 +1,39 @@
+{
+  "model_type": "linear_mixed_model_nlme",
+  "engine": "statsmodels",
+  "summary": "        Mixed Linear Model Regression Results\n======================================================\nModel:            MixedLM Dependent Variable: y       \nNo. Observations: 20      Method:             REML    \nNo. Groups:       5       Scale:              0.6639  \nMin. group size:  4       Log-Likelihood:     -29.9288\nMax. group size:  4       Converged:          Yes     \nMean group size:  4.0                                 \n------------------------------------------------------\n              Coef. Std.Err.   z   P>|z| [0.025 0.975]\n------------------------------------------------------\nconst         3.928    0.750 5.237 0.000  2.458  5.398\nx1            1.326    0.325 4.077 0.000  0.688  1.963\nGroup Var     2.639    2.763                          \n======================================================",
+  "ground_truth": {
+    "dependent_variable": "y",
+    "observations": 20,
+    "number_of_groups": 5,
+    "min_group_size": 4,
+    "max_group_size": 4,
+    "mean_group_size": 4.0,
+    "method": "REML",
+    "scale": 0.6639,
+    "log_likelihood": -29.9288,
+    "converged": "Yes",
+    "coefficients": {
+      "const": {
+        "coef": 3.928,
+        "std_err": 0.750,
+        "z_stat": 5.237,
+        "p_value": 0.000,
+        "conf_int_95": [2.458, 5.398],
+        "significant": true
+      },
+      "x1": {
+        "coef": 1.326,
+        "std_err": 0.325,
+        "z_stat": 4.077,
+        "p_value": 0.000,
+        "conf_int_95": [0.688, 1.963],
+        "significant": true
+      }
+    },
+    "random_effects": {
+      "group_variance": 2.639,
+      "group_variance_std_err": 2.763
+    }
+  }
+}

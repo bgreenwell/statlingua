@@ -1,0 +1,48 @@
+{
+  "model_type": "arima_time_series",
+  "engine": "statsmodels",
+  "summary": "                               SARIMAX Results                                \n==============================================================================\nDep. Variable:                      y   No. Observations:                   50\nModel:                 ARIMA(1, 0, 0)   Log Likelihood                 -63.750\nDate:                Sun, 05 Jul 2026   AIC                            133.499\nTime:                        19:26:04   Sample:                             0\n                                 - 50                                         \nCovariance Type:                  opg                                         \n==============================================================================\n                 coef    std err          z      P>|z|      [0.025      0.975]\n------------------------------------------------------------------------------\nconst         -4.7641      2.960     -1.610      0.107     -10.565       1.037\nar.L1          0.9796      0.033     29.985      0.000       0.916       1.044\nsigma2         0.7032      0.177      3.967      0.000       0.356       1.051\n===================================================================================\nLjung-Box (L1) (Q):                   0.19   Jarque-Bera (JB):                 1.11\nProb(Q):                              0.66   Prob(JB):                         0.57\nHeteroskedasticity (H):               1.25   Skew:                             0.11\nProb(H) (two-sided):                  0.65   Kurtosis:                         2.31\n===================================================================================",
+  "ground_truth": {
+    "dependent_variable": "y",
+    "observations": 50,
+    "model": "ARIMA(1, 0, 0)",
+    "log_likelihood": -63.750,
+    "aic": 133.499,
+    "coefficients": {
+      "const": {
+        "coef": -4.7641,
+        "std_err": 2.960,
+        "z_stat": -1.610,
+        "p_value": 0.107,
+        "conf_int_95": [-10.565, 1.037],
+        "significant": false
+      },
+      "ar.L1": {
+        "coef": 0.9796,
+        "std_err": 0.033,
+        "z_stat": 29.985,
+        "p_value": 0.000,
+        "conf_int_95": [0.916, 1.044],
+        "significant": true
+      },
+      "sigma2": {
+        "coef": 0.7032,
+        "std_err": 0.177,
+        "z_stat": 3.967,
+        "p_value": 0.000,
+        "conf_int_95": [0.356, 1.051],
+        "significant": true
+      }
+    },
+    "diagnostics": {
+      "ljung_box_q": 0.19,
+      "prob_q": 0.66,
+      "jarque_bera": 1.11,
+      "prob_jb": 0.57,
+      "heteroskedasticity_h": 1.25,
+      "prob_h": 0.65,
+      "skew": 0.11,
+      "kurtosis": 2.31
+    }
+  }
+}

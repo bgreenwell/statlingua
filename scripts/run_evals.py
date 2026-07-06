@@ -10,16 +10,18 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from statlingo import explain
 
-# Custom mock object for OLS model to pass to explain()
+# Custom mock object for models to pass to explain()
 class DummyModel:
-    def __init__(self, summary_text):
+    def __init__(self, model_type, engine, summary_text):
+        self.model_type = model_type
+        self.engine = engine
         self.summary_text = summary_text
 
 # Register handler for DummyModel so we can pass it directly to explain()
 from statlingo.model_handlers import register_handler
 @register_handler(DummyModel)
 def dummy_handler(model):
-    return "DummyModel", "statsmodels", model.summary_text
+    return model.model_type, model.engine, model.summary_text
 
 def run_evals():
     if not os.getenv("GEMINI_API_KEY") and not os.getenv("GOOGLE_API_KEY"):
@@ -52,8 +54,12 @@ def run_evals():
         with open(case_file, "r") as f:
             case_data = json.load(f)
 
-        # Instantiate DummyModel with the OLS summary
-        model = DummyModel(case_data["summary"])
+        # Instantiate DummyModel with the case details
+        model = DummyModel(
+            case_data.get("model_type", "linear_model"),
+            case_data.get("engine", "statsmodels"),
+            case_data["summary"]
+        )
 
         # target config
         audience = "student"

@@ -174,7 +174,7 @@ def test_explain_handles_glm():
         "Explain the following generalized_linear_model model output:"
         in user_prompt
     )
-    assert "Generalized Linear Model (GLM) with Poisson family" in user_prompt
+    assert "Poisson generalized linear model with Log link" in user_prompt
     assert "Link Function" in system_prompt
     assert "confidence intervals uniquely available in this output" in system_prompt
     assert result["model_type"] == "generalized_linear_model"
@@ -278,4 +278,144 @@ def test_suggest_code():
     assert "Suggested Python Coding Diagnostics" in suggestions
     assert "sns.residplot" in suggestions
     assert "durbin_watson" in suggestions
+
+
+def _fit_glm_binomial():
+    rng = np.random.default_rng(0)
+    x = sm.add_constant(rng.random((20, 1)))
+    y = rng.binomial(1, 0.5, size=20)
+    return sm.GLM(y, x, family=sm.families.Binomial()).fit()
+
+
+def _fit_glm_gamma():
+    rng = np.random.default_rng(0)
+    x = sm.add_constant(rng.random((20, 1)) + 0.1)
+    y = rng.exponential(scale=1.0, size=20) + 0.1
+    return sm.GLM(y, x, family=sm.families.Gamma()).fit()
+
+
+def _fit_glm_negative_binomial():
+    rng = np.random.default_rng(0)
+    x = sm.add_constant(rng.random((20, 1)))
+    y = rng.poisson(5, size=20)
+    return sm.GLM(y, x, family=sm.families.NegativeBinomial()).fit()
+
+
+def _fit_mixedlm():
+    rng = np.random.default_rng(0)
+    groups = np.repeat(np.arange(5), 4)
+    x = rng.normal(size=20)
+    y = 2 + 1.5 * x + groups + rng.normal(size=20)
+    return sm.MixedLM(y, sm.add_constant(x), groups=groups).fit()
+
+
+def _fit_arima():
+    rng = np.random.default_rng(0)
+    y = np.cumsum(rng.normal(size=30))
+    return sm.tsa.arima.ARIMA(y, order=(1, 0, 0)).fit()
+
+
+def _fit_phreg():
+    from statsmodels.duration.hazard_regression import PHReg
+    rng = np.random.default_rng(0)
+    time = rng.exponential(10, size=20)
+    status = rng.binomial(1, 0.8, size=20)
+    x = rng.normal(size=20)
+    return PHReg(time, x, status=status).fit()
+
+
+def _fit_lifelines_cox():
+    lifelines = pytest.importorskip("lifelines")
+    import pandas as pd
+    rng = np.random.default_rng(0)
+    df = pd.DataFrame({
+        "time": rng.exponential(10, size=20),
+        "status": rng.binomial(1, 0.8, size=20),
+        "x": rng.normal(size=20)
+    })
+    cph = lifelines.CoxPHFitter()
+    cph.fit(df, duration_col="time", event_col="status")
+    return cph
+
+
+def _fit_lifelines_weibull_aft():
+    lifelines = pytest.importorskip("lifelines")
+    import pandas as pd
+    rng = np.random.default_rng(0)
+    df = pd.DataFrame({
+        "time": rng.exponential(10, size=20) + 0.1,
+        "status": rng.binomial(1, 0.8, size=20),
+        "x": rng.normal(size=20)
+    })
+    aft = lifelines.WeibullAFTFitter()
+    aft.fit(df, duration_col="time", event_col="status")
+    return aft
+
+
+def _fit_pygam_gam():
+    pygam = pytest.importorskip("pygam")
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=(20, 1))
+    y = 2 * x[:, 0] + rng.normal(size=20)
+    gam = pygam.LinearGAM().fit(x, y)
+    return gam
+
+
+def test_explain_handles_glm_families():
+    mock_chat = MockChat()
+    for fit_func in [_fit_glm_binomial, _fit_glm_gamma, _fit_glm_negative_binomial]:
+        model = fit_func()
+        result = explain(model_object=model, client=mock_chat)
+        assert result["model_type"] == "generalized_linear_model"
+        user_prompt = mock_chat.recorder["last_user_prompt"]
+        assert "generalized_linear_model" in user_prompt
+
+
+def test_explain_handles_mixedlm():
+    mock_chat = MockChat()
+    model = _fit_mixedlm()
+    result = explain(model_object=model, client=mock_chat)
+    assert result["model_type"] == "linear_mixed_model_nlme"
+    user_prompt = mock_chat.recorder["last_user_prompt"]
+    assert "linear_mixed_model_nlme" in user_prompt
+
+
+def test_explain_handles_arima():
+    mock_chat = MockChat()
+    model = _fit_arima()
+    result = explain(model_object=model, client=mock_chat)
+    assert result["model_type"] == "arima_time_series"
+    user_prompt = mock_chat.recorder["last_user_prompt"]
+    assert "arima_time_series" in user_prompt
+
+
+def test_explain_handles_phreg():
+    mock_chat = MockChat()
+    model = _fit_phreg()
+    result = explain(model_object=model, client=mock_chat)
+    assert result["model_type"] == "cox_proportional_hazards"
+    user_prompt = mock_chat.recorder["last_user_prompt"]
+    assert "cox_proportional_hazards" in user_prompt
+
+
+def test_explain_handles_lifelines():
+    mock_chat = MockChat()
+    
+    # CoxPHFitter
+    cox = _fit_lifelines_cox()
+    result = explain(model_object=cox, client=mock_chat)
+    assert result["model_type"] == "cox_proportional_hazards"
+    
+    # WeibullAFTFitter
+    weibull = _fit_lifelines_weibull_aft()
+    result = explain(model_object=weibull, client=mock_chat)
+    assert result["model_type"] == "survival_regression"
+
+
+def test_explain_handles_pygam():
+    mock_chat = MockChat()
+    gam = _fit_pygam_gam()
+    result = explain(model_object=gam, client=mock_chat)
+    assert result["model_type"] == "generalized_additive_model"
+
 
