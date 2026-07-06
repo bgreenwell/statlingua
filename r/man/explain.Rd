@@ -244,6 +244,43 @@ Use an LLM to explain the output from various statistical objects using
 straightforward, understandable, and context-aware natural language
 descriptions.
 }
+\details{
+The following models and package classes are supported:
+\itemize{
+\item \strong{stats} (Base R):
+\itemize{
+\item \code{htest} (Hypothesis tests, e.g., \link[stats:t.test]{t.test()}, \link[stats:wilcox.test]{wilcox.test()}, \link[stats:cor.test]{cor.test()})
+\item \code{lm} (Linear regression models via \link[stats:lm]{lm()})
+\item \code{glm} (Generalized linear models via \link[stats:glm]{glm()})
+}
+\item \strong{MASS}:
+\itemize{
+\item \code{polr} (Proportional odds logistic regression via \link[MASS:polr]{polr()})
+}
+\item \strong{nlme}:
+\itemize{
+\item \code{lme} (Linear mixed-effects models via \link[nlme:lme]{lme()})
+}
+\item \strong{lme4}:
+\itemize{
+\item \code{lmerMod} (Linear mixed-effects models via \link[lme4:lmer]{lmer()})
+\item \code{glmerMod} (Generalized linear mixed-effects models via \link[lme4:glmer]{glmer()})
+}
+\item \strong{mgcv}:
+\itemize{
+\item \code{gam} (Generalized additive models via \link[mgcv:gam]{gam()})
+}
+\item \strong{survival}:
+\itemize{
+\item \code{survreg} (Parametric survival regression via \link[survival:survreg]{survreg()})
+\item \code{coxph} (Cox proportional hazards models via \link[survival:coxph]{coxph()})
+}
+\item \strong{rpart}:
+\itemize{
+\item \code{rpart} (Recursive partitioning decision trees via \link[rpart:rpart]{rpart()})
+}
+}
+}
 \examples{
 \dontrun{
 # Polynomial regression

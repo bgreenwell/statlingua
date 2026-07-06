@@ -55,6 +55,23 @@ def explain(
 ) -> dict:
     """Explain a statistical model's output using an LLM.
 
+    Supported Models
+    ----------------
+    This function supports fitted model objects from the following packages:
+    * **statsmodels**:
+      - ``OLS`` (Ordinary Least Squares regression)
+      - ``GLM`` (Generalized Linear Models, e.g., Binomial, Gamma, NegBinomial)
+      - ``MixedLM`` (Linear Mixed Effects models)
+      - ``ARIMA`` / ``SARIMAX`` (Time Series models)
+      - ``PHReg`` (Cox Proportional Hazards regression)
+    * **lifelines** (optional):
+      - ``CoxPHFitter`` (Cox Proportional Hazards survival models)
+      - ``WeibullAFTFitter`` / ``LogNormalAFTFitter`` / ``LogLogisticAFTFitter``
+        (Parametric Accelerated Failure Time survival models)
+    * **pygam** (optional):
+      - ``GAM`` / ``LinearGAM`` / ``LogisticGAM`` / ``PoissonGAM``
+        (Generalized Additive Models)
+
     Parameters
     ----------
     model_object : Any
@@ -80,6 +97,8 @@ def explain(
     style : str, optional
         The output format style: one of "markdown" (default), "html",
         "json", "text", or "latex".
+    prompt_dir : str, optional
+        Custom prompts directory path to override package prompts.
 
     Returns
     -------

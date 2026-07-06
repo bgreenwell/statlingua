@@ -25,6 +25,7 @@ the example model below.
 First, import the required packages, check environment variables, load data, and fit an OLS model:
 
 ```{python}
+#| eval: false
 import os
 import statsmodels.api as sm
 
@@ -43,6 +44,7 @@ This checks for local API credentials and fits an ordinary least squares regress
 Next, initialize the `chatlas` chat client using Google Gemini:
 
 ```{python}
+#| eval: false
 from chatlas import ChatGoogle
 
 # 2. Create a chatlas Chat client using Google Gemini (never mutated by explain())
@@ -54,6 +56,7 @@ This initializes a Google Gemini chat client from `chatlas`. This client is deep
 Generate the natural language explanation using `explain()`, targeting a student audience:
 
 ```{python}
+#| eval: false
 from statlingo import explain
 
 # 3. Get a high-level explanation of the model results
@@ -66,6 +69,7 @@ This generates a dictionary output whose `text` key contains the formatted stude
 Finally, request diagnostic code recommendations based on the generated explanation using `suggest_code()`:
 
 ```{python}
+#| eval: false
 from statlingo import suggest_code
 
 # 4. Suggest next diagnostic code steps based on the explanation

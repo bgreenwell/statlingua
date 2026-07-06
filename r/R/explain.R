@@ -4,6 +4,27 @@
 #' straightforward, understandable, and context-aware natural language
 #' descriptions.
 #'
+#' @details
+#' The following models and package classes are supported:
+#' * **stats** (Base R):
+#'   - `htest` (Hypothesis tests, e.g., [t.test()][stats::t.test], [wilcox.test()][stats::wilcox.test], [cor.test()][stats::cor.test])
+#'   - `lm` (Linear regression models via [lm()][stats::lm])
+#'   - `glm` (Generalized linear models via [glm()][stats::glm])
+#' * **MASS**:
+#'   - `polr` (Proportional odds logistic regression via [polr()][MASS::polr])
+#' * **nlme**:
+#'   - `lme` (Linear mixed-effects models via [lme()][nlme::lme])
+#' * **lme4**:
+#'   - `lmerMod` (Linear mixed-effects models via [lmer()][lme4::lmer])
+#'   - `glmerMod` (Generalized linear mixed-effects models via [glmer()][lme4::glmer])
+#' * **mgcv**:
+#'   - `gam` (Generalized additive models via [gam()][mgcv::gam])
+#' * **survival**:
+#'   - `survreg` (Parametric survival regression via [survreg()][survival::survreg])
+#'   - `coxph` (Cox proportional hazards models via [coxph()][survival::coxph])
+#' * **rpart**:
+#'   - `rpart` (Recursive partitioning decision trees via [rpart()][rpart::rpart])
+#'
 #' @param object An appropriate statistical object. For example, `object` can be
 #' the output from calling [t.test()][stats::t.test] or [glm()][stats::glm].
 #'
