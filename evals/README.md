@@ -1,15 +1,15 @@
-# LLM-as-a-Judge Evaluation System (`evals/`)
+# LLM-as-a-judge evaluation system (`evals/`)
 
 This directory contains the assets for testing and grading `statlingo`'s natural language explanations using an LLM-as-a-Judge system.
 
 ---
 
-## Where Are Evals Sent?
+## Where are evals sent?
 Evaluation scores are **not sent to any external dashboard or tracking service**. They are printed directly to the console (`stdout`). When run as part of the GitHub Actions CI pipeline, they are logged in the runner workflow output.
 
 ---
 
-## How It Works
+## How it works
 The evaluation suite uses a dual-LLM approach:
 1. **Generator**: Takes a mock statistical model's summary output and uses `statlingo`'s prompt interpolation to produce a structured natural language explanation.
 2. **Judge**: Takes the generated explanation and evaluates it against a structured `ground_truth` JSON block using the system instructions defined in [judge_prompt.md](judge_prompt.md).
@@ -23,7 +23,7 @@ If any criterion falls below `3/5` for any test case, the evaluation run fails (
 
 ---
 
-## Running Evaluations Locally
+## Running evaluations locally
 
 Ensure your `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) is set, then execute the runner script from the repository root:
 
@@ -37,11 +37,11 @@ python3 scripts/run_evals.py
 
 ---
 
-## How to Add a New Test Case
+## How to add a new test case
 
 Follow these steps to add a test case for a new model or family:
 
-### 1. Generate the Raw Summary Output
+### 1. Generate the raw summary output
 Write a quick script to fit your model and print its summary. For example:
 ```python
 import statsmodels.api as sm
@@ -49,7 +49,7 @@ import statsmodels.api as sm
 print(model.summary())
 ```
 
-### 2. Create the Case JSON File
+### 2. Create the case JSON file
 Create a new JSON file in `evals/cases/` (e.g. `evals/cases/my_model.json`). Use the following structure:
 
 ```json
@@ -76,4 +76,4 @@ Create a new JSON file in `evals/cases/` (e.g. `evals/cases/my_model.json`). Use
 ```
 
 > [!IMPORTANT]
-> **List All Summary Fields in Ground Truth**: The Judge is extremely strict about the **Hallucination** score. If the generator correctly explains a field (e.g. a convergence flag, degrees of freedom, or diagnostic test) that was in the raw `summary` but was omitted from your `"ground_truth"` JSON block, the Judge will flag it as a hallucination. Make sure all numbers and metrics present in your raw summary are documented under `"ground_truth"`.
+> **List all summary fields in ground truth**: The Judge is extremely strict about the **Hallucination** score. If the generator correctly explains a field (e.g. a convergence flag, degrees of freedom, or diagnostic test) that was in the raw `summary` but was omitted from your `"ground_truth"` JSON block, the Judge will flag it as a hallucination. Make sure all numbers and metrics present in your raw summary are documented under `"ground_truth"`.
