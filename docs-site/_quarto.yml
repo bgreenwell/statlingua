@@ -2,6 +2,9 @@ project:
   type: website
   output-dir: _site
 
+execute:
+  freeze: true
+
 website:
   title: "statlingo"
   description: "Explain statistical model output with LLMs, in R and Python."
