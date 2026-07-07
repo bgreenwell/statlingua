@@ -28,7 +28,6 @@ This guide shows how to run `statlingo` offline using locally hosted models via 
 The R package integrates with Ollama via `ellmer::chat_ollama()`.
 
 ```{r}
-#| eval: false
 library(statlingo)
 library(ellmer)
 
@@ -47,7 +46,6 @@ print(explanation)
 The Python package integrates with Ollama via `chatlas.ChatOllama`.
 
 ```{python}
-#| eval: false
 import statsmodels.api as sm
 from chatlas import ChatOllama
 from statlingo import explain
