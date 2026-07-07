@@ -1,0 +1,126 @@
+---
+title: "Local LLM Support"
+---
+
+Running `statlingo` with local, offline Large Language Models (LLMs) is an excellent way to avoid internet dependencies, external API costs, and API key requirements. This is particularly useful in classroom settings, private enterprise environments, or when working with sensitive data.
+
+This guide shows how to run `statlingo` offline using locally hosted models via **Ollama** or **Llama.cpp**.
+
+---
+
+## 1. Using Ollama (Recommended)
+
+[Ollama](https://ollama.com/) is a lightweight, easy-to-use framework for running LLMs locally on macOS, Linux, and Windows.
+
+### Step A: Set up Ollama and Pull a Model
+1. Download and install Ollama from [ollama.com](https://ollama.com/).
+2. Start the Ollama application.
+3. Open your terminal and pull a small, lightweight model of your choice:
+   ```bash
+   # Llama 3.2 (1-billion parameters) - Recommended for speed and basic capability
+   ollama pull llama3.2:1b
+   
+   # Gemma 2 (2-billion parameters) - Recommended for higher quality explanations
+   ollama pull gemma2:2b
+   ```
+
+### Step B: Run with the R Package
+The R package integrates with Ollama via `ellmer::chat_ollama()`.
+
+```{r}
+#| eval: false
+library(statlingo)
+library(ellmer)
+
+# 1. Fit your statistical model
+model <- lm(dist ~ speed, data = cars)
+
+# 2. Initialize the local Ollama client (default port is 11434)
+client <- chat_ollama(model = "llama3.2:1b")
+
+# 3. Generate the natural language explanation
+explanation <- explain(model, client = client, audience = "student")
+print(explanation)
+```
+
+### Step C: Run with the Python Package
+The Python package integrates with Ollama via `chatlas.ChatOllama`.
+
+```{python}
+#| eval: false
+import statsmodels.api as sm
+from chatlas import ChatOllama
+from statlingo import explain
+
+# 1. Fit your statistical model
+duncan_data = sm.datasets.get_rdataset("Duncan", "carData").data
+y = duncan_data["prestige"]
+X = sm.add_constant(duncan_data[["income"]])
+model = sm.OLS(y, X).fit()
+
+# 2. Initialize the local Ollama client (default port is 11434)
+client = ChatOllama(model="llama3.2:1b")
+
+# 3. Generate the natural language explanation
+explanation = explain(model_object=model, client=client, audience="student")
+print(explanation["text"])
+```
+
+---
+
+## 2. Using Llama.cpp (via OpenAI-Compatible Server)
+
+[Llama.cpp](https://github.com/ggerganov/llama.cpp) allows highly optimized local LLM inference. You can use it with `statlingo` by running its built-in HTTP server (`llama-server`), which exposes an API compatible with OpenAI's endpoint.
+
+### Step A: Start the Llama.cpp Server
+Run the local server on your machine, specifying your downloaded GGUF model file and a port (e.g. `8080`):
+```bash
+./llama-server -m models/llama-3.2-1b-instruct.Q4_K_M.gguf -c 2048 --port 8080
+```
+
+### Step B: Run with the R Package
+Use `ellmer::chat_openai_compatible()` to point to your local Llama.cpp server port:
+
+```{r}
+#| eval: false
+library(statlingo)
+library(ellmer)
+
+model <- lm(dist ~ speed, data = cars)
+
+# Connect to the local llama-server
+client <- chat_openai_compatible(
+  model = "local-model",
+  base_url = "http://localhost:8080/v1",
+  api_key = "not-needed"
+)
+
+explanation <- explain(model, client = client, audience = "student")
+print(explanation)
+```
+
+### Step C: Run with the Python Package
+Use `chatlas.ChatOpenAICompletions` to point to your local Llama.cpp server port:
+
+```{python}
+#| eval: false
+import statsmodels.api as sm
+from chatlas import ChatOpenAICompletions
+from statlingo import explain
+
+# Fit a model
+duncan_data = sm.datasets.get_rdataset("Duncan", "carData").data
+y = duncan_data["prestige"]
+X = sm.add_constant(duncan_data[["income"]])
+model = sm.OLS(y, X).fit()
+
+# Connect to the local llama-server
+client = ChatOpenAICompletions(
+    model="local-model",
+    base_url="http://localhost:8080/v1",
+    api_key="not-needed"
+)
+
+explanation = explain(model_object=model, client=client, audience="student")
+print(explanation["text"])
+```

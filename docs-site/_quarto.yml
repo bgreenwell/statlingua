@@ -27,6 +27,8 @@ website:
             text: Get started
           - href: python/reference/index.qmd
             text: API reference
+      - href: local-llms.qmd
+        text: "Local LLMs"
       - href: changelog.qmd
         text: Changelog
     right:
