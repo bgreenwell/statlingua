@@ -20,8 +20,8 @@ This guide shows how to run `statlingo` offline using locally hosted models via 
    # Llama 3.2 (1-billion parameters) - Recommended for speed and basic capability
    ollama pull llama3.2:1b
    
-   # Gemma 2 (2-billion parameters) - Recommended for higher quality explanations
-   ollama pull gemma2:2b
+   # Gemma 4 (8-billion parameters) - Recommended for high-quality offline explanations
+   ollama pull gemma4
    ```
 
 ### Step B: Run with the R Package
@@ -35,7 +35,7 @@ library(ellmer)
 model <- lm(dist ~ speed, data = cars)
 
 # 2. Initialize the local Ollama client (default port is 11434)
-client <- chat_ollama(model = "llama3.2:1b")
+client <- chat_ollama(model = "gemma4", params = ellmer::params(max_tokens = 2048))
 
 # 3. Generate the natural language explanation
 explanation <- explain(model, client = client, audience = "student")
@@ -57,7 +57,8 @@ X = sm.add_constant(duncan_data[["income"]])
 model = sm.OLS(y, X).fit()
 
 # 2. Initialize the local Ollama client (default port is 11434)
-client = ChatOllama(model="llama3.2:1b")
+client = ChatOllama(model="gemma4", kwargs={"timeout": 300.0})
+client.set_model_params(max_tokens=2048)
 
 # 3. Generate the natural language explanation
 explanation = explain(model_object=model, client=client, audience="student")
