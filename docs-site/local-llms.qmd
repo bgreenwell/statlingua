@@ -2,7 +2,23 @@
 title: "Local LLM Support"
 ---
 
+```{r setup, include=FALSE}
+options(timeout = 600)
+library(reticulate)
+py_run_string("import socket; socket.setdefaulttimeout(600.0)")
+```
+
 Running `statlingo` with local, offline Large Language Models (LLMs) is an excellent way to avoid internet dependencies, external API costs, and API key requirements. This is particularly useful in classroom settings, private enterprise environments, or when working with sensitive data.
+
+::: {.callout-warning}
+## Important Notice: Local Model Capabilities & Hallucinations
+While local/offline LLMs are highly convenient, smaller parameter models (such as `1B` to `3B` parameters like `llama3.2:1b`) are prone to severe statistical hallucinations. They frequently:
+* Confuse predictor and response variables.
+* Invert the direction of effects (e.g., interpreting positive coefficients as negative).
+* Misdefine statistics (e.g. confusing F-statistics with t-statistics) or misinterpret Adjusted $R^2$ behaviors.
+
+For reliable statistical explanations, we **highly recommend** using at least an `8B`+ parameter model (such as `gemma4`) locally, or using production cloud APIs (such as Gemini 1.5 Flash/Pro, Claude 3.5 Sonnet, or GPT-4o).
+:::
 
 This guide shows how to run `statlingo` offline using locally hosted models via **Ollama** or **Llama.cpp**.
 
@@ -23,6 +39,21 @@ This guide shows how to run `statlingo` offline using locally hosted models via 
    # Gemma 4 (8-billion parameters) - Recommended for high-quality offline explanations
    ollama pull gemma4
    ```
+4. **Create a custom model with expanded context (highly recommended)**:
+   By default, Ollama enforces a default context size of 2048 tokens. When using OpenAI-compatible libraries like Python's `chatlas`, the model output can easily be truncated before it is finished. To avoid this, you can define a custom model utilizing an Ollama `Modelfile` to increase both the context size (`num_ctx`) and maximum generation limit (`num_predict`).
+   
+   Create a file named `Modelfile` with the following content:
+   ```dockerfile
+   FROM gemma4
+   PARAMETER num_ctx 8192
+   PARAMETER num_predict 8192
+   ```
+   
+   Then build the new model in your terminal:
+   ```bash
+   ollama create gemma4-long -f Modelfile
+   ```
+   Now you can use `"gemma4-long"` in your code, and Ollama will automatically allocate a larger context window on the server side!
 
 ### Step B: Run with the R Package
 The R package integrates with Ollama via `ellmer::chat_ollama()`.
@@ -35,7 +66,7 @@ library(ellmer)
 model <- lm(dist ~ speed, data = cars)
 
 # 2. Initialize the local Ollama client (default port is 11434)
-client <- chat_ollama(model = "gemma4", params = ellmer::params(max_tokens = 2048))
+client <- chat_ollama(model = "gemma4-long")
 
 # 3. Generate the natural language explanation
 explanation <- explain(model, client = client, audience = "student")
@@ -57,8 +88,7 @@ X = sm.add_constant(duncan_data[["income"]])
 model = sm.OLS(y, X).fit()
 
 # 2. Initialize the local Ollama client (default port is 11434)
-client = ChatOllama(model="gemma4", kwargs={"timeout": 300.0})
-client.set_model_params(max_tokens=2048)
+client = ChatOllama(model="gemma4-long", kwargs={"timeout": 600.0})
 
 # 3. Generate the natural language explanation
 explanation = explain(model_object=model, client=client, audience="student")
