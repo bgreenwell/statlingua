@@ -13,11 +13,12 @@ Running `statlingo` with local, offline Large Language Models (LLMs) is an excel
 ::: {.callout-warning}
 ## Important Notice: Local Model Capabilities & Hallucinations
 While local/offline LLMs are highly convenient, smaller parameter models (such as `1B` to `3B` parameters like `llama3.2:1b`) are prone to severe statistical hallucinations. They frequently:
+
 * Confuse predictor and response variables.
 * Invert the direction of effects (e.g., interpreting positive coefficients as negative).
 * Misdefine statistics (e.g. confusing F-statistics with t-statistics) or misinterpret Adjusted $R^2$ behaviors.
 
-For reliable statistical explanations, we **highly recommend** using at least an `8B`+ parameter model (such as `gemma4`) locally, or using production cloud APIs (such as Gemini 1.5 Flash/Pro, Claude 3.5 Sonnet, or GPT-4o).
+For reliable statistical explanations, we **highly recommend** using at least an `8B`+ parameter model (such as `gemma4`) locally, or using production cloud APIs (such as Gemini 3.5 Flash/Pro, Claude Sonnet 5, etc.).
 :::
 
 This guide shows how to run `statlingo` offline using locally hosted models via **Ollama** or **Llama.cpp**.
