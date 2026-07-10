@@ -183,3 +183,10 @@ The R reference site must be generated *after* Quarto renders. Build workflow (f
 - **R Style:** Tidyverse style guide (snake_case).
 - **Python Style:** PEP 8 compliance, with type hints included on all public functions.
 - **Git Commit Messages:** Follow Conventional Commits format (e.g. `feat: add suggest_code for OLS`).
+
+---
+
+## 10. Local LLM & Ollama Guidelines
+* **Avoid Small Models**: Models < 8B parameters (like `llama3.2:1b`) suffer from frequent statistical hallucinations (e.g. reversing direction of effects, confusing predictors). For local testing or freezes, use at least an 8B+ model like `gemma4`.
+* **Context Size Limits**: Python `chatlas` uses the OpenAI completions endpoint which ignores dynamic Ollama parameter overrides like `num_ctx`. To prevent token truncation with reasoning/thinking models (like `gemma4`), create a custom model tag locally using a `Modelfile` setting `num_ctx 8192` and `num_predict 8192`.
+
